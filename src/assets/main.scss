@@ -1,0 +1,182 @@
+@use "css-template/import" as template;
+
+@include template.init(
+  $custom-colors: (
+    "red": (
+      "light": #ed1a2c,
+      "dark": #ed1a2c,
+    ),
+    "on-red": (
+      "light": #ffffff,
+      "dark": #ffffff,
+    ),
+    "red-gradient-1": (
+      "light": #ff3500,
+      "dark": #ff3500,
+    ),
+    "red-gradient-2": (
+      "light": #dc0057,
+      "dark": #dc0057,
+    ),
+    "orange": (
+      "light": #ee7100,
+      "dark": #ee7100,
+    ),
+    "on-orange": (
+      "light": #ffffff,
+      "dark": #ffffff,
+    ),
+    "orange-gradient-1": (
+      "light": #ffa000,
+      "dark": #ffa000,
+    ),
+    "orange-gradient-2": (
+      "light": #dc4200,
+      "dark": #dc4200,
+    ),
+    "yellow": (
+      "light": #f3c500,
+      "dark": #f3c500,
+    ),
+    "on-yellow": (
+      "light": #000000,
+      "dark": #000000,
+    ),
+    "yellow-gradient-1": (
+      "light": #e8e500,
+      "dark": #e8e500,
+    ),
+    "yellow-gradient-2": (
+      "light": #fea400,
+      "dark": #fea400,
+    ),
+    "green": (
+      "light": #47c10b,
+      "dark": #47c10b,
+    ),
+    "on-green": (
+      "light": #ffffff,
+      "dark": #ffffff,
+    ),
+    "green-gradient-1": (
+      "light": #88db00,
+      "dark": #88db00,
+    ),
+    "green-gradient-2": (
+      "light": #00a517,
+      "dark": #00a517,
+    ),
+    "cyan": (
+      "light": #00e2b6,
+      "dark": #00e2b6,
+    ),
+    "on-cyan": (
+      "light": #000000,
+      "dark": #000000,
+    ),
+    "cyan-gradient-1": (
+      "light": #00ffa4,
+      "dark": #00ffa4,
+    ),
+    "cyan-gradient-2": (
+      "light": #00c4c8,
+      "dark": #00c4c8,
+    ),
+    "blue": (
+      "light": #0084f1,
+      "dark": #0084f1,
+    ),
+    "on-blue": (
+      "light": #ffffff,
+      "dark": #ffffff,
+    ),
+    "blue-gradient-1": (
+      "light": #00b0ff,
+      "dark": #00b0ff,
+    ),
+    "blue-gradient-2": (
+      "light": #005ae4,
+      "dark": #005ae4,
+    ),
+    "purple": (
+      "light": #8200f1,
+      "dark": #8200f1,
+    ),
+    "on-purple": (
+      "light": #ffffff,
+      "dark": #ffffff,
+    ),
+    "purple-gradient-1": (
+      "light": #a900ff,
+      "dark": #a900ff,
+    ),
+    "purple-gradient-2": (
+      "light": #5c00e4,
+      "dark": #5c00e4,
+    ),
+    "pink": (
+      "light": #db00be,
+      "dark": #db00be,
+    ),
+    "on-pink": (
+      "light": #ffffff,
+      "dark": #ffffff,
+    ),
+    "pink-gradient-1": (
+      "light": #ff0098,
+      "dark": #ff0098,
+    ),
+    "pink-gradient-2": (
+      "light": #b600e4,
+      "dark": #b600e4,
+    ),
+    "error": (
+      "light": #dc0f0f,
+      "dark": #ff5252,
+    ),
+  )
+);
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/ah-400.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/ah-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+:root {
+  font-family: "Atkinson Hyperlegible", sans-serif;
+  --line-spacing: 0.3em;
+}
+
+.link {
+  @include template.link;
+}
+
+html,
+body,
+#app {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+:root.light {
+  @include template.theme-light;
+}
+:root.dark {
+  @include template.theme-dark;
+}
