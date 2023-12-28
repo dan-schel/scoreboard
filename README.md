@@ -1,0 +1,3 @@
+# Scoreboard
+
+Multi-purpose scoreboard.
