@@ -1,10 +1,9 @@
+import { Game, GameState, PlayerCount } from "../game";
 import {
-  Game,
   GameConfig,
-  GameConfigDefinition,
-  GameState,
-  PlayerCount,
-} from "./game";
+  GameConfigShape,
+  IntegerGameConfigProp,
+} from "../game-config";
 
 export class BasicGame extends Game<BasicGameConfig, BasicGameState> {
   readonly defaultConfig = BasicGameConfig.default;
@@ -25,26 +24,31 @@ export class BasicGameState extends GameState<BasicGameState> {
   }
 }
 
-export class BasicGameConfigDefinition extends GameConfigDefinition<BasicGameConfig> {
-  static readonly winningScore = "winning-score";
-  static readonly requiredMargin = "required-margin";
+export class BasicGameConfigShape extends GameConfigShape<BasicGameConfig> {
+  static readonly winningScore = new IntegerGameConfigProp("winning-score", {
+    min: 1,
+  });
+
+  static readonly requiredMargin = new IntegerGameConfigProp(
+    "required-margin",
+    {
+      min: 1,
+    },
+  );
+
+  readonly props = [
+    BasicGameConfigShape.winningScore,
+    BasicGameConfigShape.requiredMargin,
+  ];
 
   parse(values: Map<string, unknown>): BasicGameConfig {
-    const winningScore = GameConfigDefinition.requireNumber(
+    const winningScore = GameConfigShape.getValue(
+      BasicGameConfigShape.winningScore,
       values,
-      BasicGameConfigDefinition.winningScore,
-      {
-        integer: true,
-        min: 1,
-      },
     );
-    const requiredMargin = GameConfigDefinition.requireNumber(
+    const requiredMargin = GameConfigShape.getValue(
+      BasicGameConfigShape.requiredMargin,
       values,
-      BasicGameConfigDefinition.requiredMargin,
-      {
-        integer: true,
-        min: 1,
-      },
     );
 
     return new BasicGameConfig(winningScore, requiredMargin);

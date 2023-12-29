@@ -1,10 +1,10 @@
+import { Game, GameState, PlayerCount } from "../game";
 import {
-  Game,
+  GameConfigShape,
   GameConfig,
-  GameConfigDefinition,
-  GameState,
-  PlayerCount,
-} from "./game";
+  IntegerGameConfigProp,
+} from "../game-config";
+import { TennisScore } from "./tennis-score";
 
 export class Tennis extends Game<TennisConfig, TennisState> {
   readonly defaultConfig = TennisConfig.default;
@@ -25,17 +25,17 @@ export class TennisState extends GameState<TennisState> {
   }
 }
 
-export class TennisConfigDefinition extends GameConfigDefinition<TennisConfig> {
-  static readonly setsToWin = "sets-to-win";
+export class TennisConfigDefinition extends GameConfigShape<TennisConfig> {
+  static readonly setsToWin = new IntegerGameConfigProp("sets-to-win", {
+    min: 1,
+  });
+
+  readonly props = [TennisConfigDefinition.setsToWin];
 
   parse(values: Map<string, unknown>): TennisConfig {
-    const setsToWin = GameConfigDefinition.requireNumber(
-      values,
+    const setsToWin = GameConfigShape.getValue(
       TennisConfigDefinition.setsToWin,
-      {
-        integer: true,
-        min: 1,
-      },
+      values,
     );
 
     return new TennisConfig(setsToWin);
@@ -48,23 +48,4 @@ export class TennisConfig extends GameConfig {
   constructor(readonly setsToWin: number) {
     super();
   }
-}
-
-export type TennisPoints = "0" | "15" | "30" | "40" | "advantage";
-
-export class TennisScore {
-  static readonly zero = new TennisScore("0", 0, []);
-
-  constructor(
-    readonly points: TennisPoints,
-    readonly games: number,
-    readonly setHistory: TennisSetHistory[],
-  ) {}
-}
-
-export class TennisSetHistory {
-  constructor(
-    readonly winner: boolean,
-    readonly gamesWon: number,
-  ) {}
 }
