@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { gameLibrary } from "@/data/games/game-library";
+import { gameLibrary } from "@/data/game-library/game-library";
 import { RouterLink } from "vue-router";
 </script>
 

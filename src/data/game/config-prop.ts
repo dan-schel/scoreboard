@@ -1,4 +1,4 @@
-import { PlayerColors, type PlayerColor } from "./player-color";
+import { PlayerColors, type PlayerColor } from "../game-utils/player-color";
 
 export abstract class ConfigProp<
   PropType extends string = string,

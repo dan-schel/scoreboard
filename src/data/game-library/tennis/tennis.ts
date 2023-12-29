@@ -1,5 +1,5 @@
-import { BasicPlayerConfig } from "../basic-player-config";
-import { Game, GameState } from "../game";
+import { BasicPlayerConfig } from "../../game-utils/basic-player-config";
+import { Game, GameState } from "../../game/game";
 import { TennisConfig, TennisConfigAdapter } from "./tennis-config";
 import { TennisScore } from "./tennis-score";
 

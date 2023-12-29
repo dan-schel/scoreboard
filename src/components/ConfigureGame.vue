@@ -6,9 +6,9 @@
     GameConfigType extends GameConfig<PlayerConfigType>
   "
 >
-import type { Game } from "@/data/games/game";
-import type { GameConfig } from "@/data/games/game-config";
-import type { PlayerConfig } from "@/data/games/player-config";
+import type { Game } from "@/data/game/game";
+import type { GameConfig } from "@/data/game/game-config";
+import type { PlayerConfig } from "@/data/game/player-config";
 
 const props = defineProps<{
   game: Game<PlayerConfigType, GameConfigType>;

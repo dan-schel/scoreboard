@@ -7,12 +7,12 @@
     GameStateType extends GameState<any>
   "
 >
-import type { Game, GameState } from "@/data/games/game";
-import { GameConfig } from "@/data/games/game-config";
+import type { Game, GameState } from "@/data/game/game";
+import { GameConfig } from "@/data/game/game-config";
 import ConfigureGame from "./ConfigureGame.vue";
 import { ref, type Ref } from "vue";
 import PlayGame from "./PlayGame.vue";
-import type { PlayerConfig } from "@/data/games/player-config";
+import type { PlayerConfig } from "@/data/game/player-config";
 
 const config = ref<GameConfigType | null>(null) as Ref<GameConfigType | null>;
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import GameController from "@/components/GameController.vue";
-import { gameLibrary } from "@/data/games/game-library";
+import { gameLibrary } from "@/data/game-library/game-library";
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -24,10 +24,10 @@ const game = computed(() => {
   </main>
   <main v-else class="not-found">
     <h1>Error 404 - Game not found</h1>
+    <p>This page doesn&apos;t exist, at least not anymore!</p>
     <p>
-      This page doesn&apos;t exist, at least not anymore! The game you&apos;re
-      looking for might have been renamed or removed. Check the homepage to see
-      which games are available.
+      The game you&apos;re looking for might have been renamed or removed. Check
+      the homepage to see which games are available.
     </p>
     <p>
       <RouterLink class="link" :to="{ name: 'home' }">

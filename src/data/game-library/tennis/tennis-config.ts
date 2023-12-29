@@ -1,9 +1,13 @@
 import {
   BasicPlayerConfig,
   BasicPlayerConfigAdapter,
-} from "../basic-player-config";
-import { IntegerConfigProp } from "../config-prop";
-import { GameConfigAdapter, PlayerCount, GameConfig } from "../game-config";
+} from "../../game-utils/basic-player-config";
+import { IntegerConfigProp } from "../../game/config-prop";
+import {
+  GameConfigAdapter,
+  PlayerCount,
+  GameConfig,
+} from "../../game/game-config";
 
 export class TennisConfig extends GameConfig<BasicPlayerConfig> {
   static readonly default = new TennisConfig(BasicPlayerConfig.twoPlayers, 2);

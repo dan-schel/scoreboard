@@ -1,6 +1,6 @@
-import { PlayerColorConfigProp } from "./config-prop";
+import { PlayerColorConfigProp } from "../game/config-prop";
 import type { PlayerColor } from "./player-color";
-import { PlayerConfig, PlayerConfigAdapter } from "./player-config";
+import { PlayerConfig, PlayerConfigAdapter } from "../game/player-config";
 
 export class BasicPlayerConfig extends PlayerConfig {
   static readonly twoPlayers = [

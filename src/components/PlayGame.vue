@@ -7,14 +7,37 @@
     GameStateType extends GameState<any>
   "
 >
-import type { Game, GameState } from "@/data/games/game";
-import type { GameConfig } from "@/data/games/game-config";
-import type { PlayerConfig } from "@/data/games/player-config";
+import { Game, type GameState } from "@/data/game/game";
+import type { GameConfig } from "@/data/game/game-config";
+import type { PlayerConfig } from "@/data/game/player-config";
+import {
+  GameStateManager,
+  LocalGameStateManager,
+} from "@/data/game/state-manager";
+import { onMounted, onUnmounted, ref, type Ref } from "vue";
 
-defineProps<{
+const props = defineProps<{
   game: Game<PlayerConfigType, GameConfigType, GameStateType>;
   config: GameConfigType;
 }>();
+
+const gameState = ref(
+  props.game.initialState(props.config),
+) as Ref<GameStateType>;
+const stateManager = ref<GameStateManager<GameStateType>>(
+  new LocalGameStateManager(gameState.value),
+);
+
+function handleStateUpdate(newState: GameStateType) {
+  gameState.value = newState;
+}
+
+onMounted(() => {
+  stateManager.value.addEventListener("stateupdate", handleStateUpdate);
+});
+onUnmounted(() => {
+  stateManager.value.removeEventListener("stateupdate", handleStateUpdate);
+});
 </script>
 
 <template>

@@ -1,14 +1,17 @@
 import {
   BasicPlayerConfig,
   BasicPlayerConfigAdapter,
-} from "../basic-player-config";
-import { IntegerConfigProp } from "../config-prop";
-import { Game, GameState } from "../game";
-import { GameConfig, GameConfigAdapter, PlayerCount } from "../game-config";
-import { PlayerConfig } from "../player-config";
+} from "../../game-utils/basic-player-config";
+import { IntegerConfigProp } from "../../game/config-prop";
+import { Game, GameState } from "../../game/game";
+import {
+  GameConfig,
+  GameConfigAdapter,
+  PlayerCount,
+} from "../../game/game-config";
 
 export class BasicGame extends Game<
-  PlayerConfig,
+  BasicPlayerConfig,
   BasicGameConfig,
   BasicGameState
 > {
