@@ -6,7 +6,9 @@ import {
 } from "../game-config";
 
 export class BasicGame extends Game<BasicGameConfig, BasicGameState> {
-  readonly defaultConfig = BasicGameConfig.default;
+  readonly id = "basic";
+  readonly name = "Basic";
+  readonly configShape = new BasicGameConfigShape();
   readonly playerCount = PlayerCount.exactly(2);
 
   initialState(_config: BasicGameConfig): BasicGameState {
@@ -40,6 +42,7 @@ export class BasicGameConfigShape extends GameConfigShape<BasicGameConfig> {
     BasicGameConfigShape.winningScore,
     BasicGameConfigShape.requiredMargin,
   ];
+  readonly defaultConfig = BasicGameConfig.default;
 
   parse(values: Map<string, unknown>): BasicGameConfig {
     const winningScore = GameConfigShape.getValue(
@@ -52,6 +55,13 @@ export class BasicGameConfigShape extends GameConfigShape<BasicGameConfig> {
     );
 
     return new BasicGameConfig(winningScore, requiredMargin);
+  }
+
+  toMap(config: BasicGameConfig): Map<string, unknown> {
+    return new Map([
+      [BasicGameConfigShape.winningScore.key, config.winningScore],
+      [BasicGameConfigShape.requiredMargin.key, config.requiredMargin],
+    ]);
   }
 }
 

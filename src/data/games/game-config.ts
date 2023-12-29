@@ -6,9 +6,23 @@ export abstract class GameConfig {
 }
 
 export abstract class GameConfigShape<GameConfigType extends GameConfig> {
-  abstract readonly props: GameConfigProp<string, any>[];
+  abstract readonly props: GameConfigProp<string, unknown>[];
+
+  abstract readonly defaultConfig: GameConfigType;
 
   abstract parse(values: Map<string, unknown>): GameConfigType;
+
+  abstract toMap(config: GameConfigType): Map<string, unknown>;
+
+  with(
+    config: GameConfigType,
+    prop: GameConfigProp<string, unknown>,
+    value: unknown,
+  ): GameConfigType {
+    const values = this.toMap(config);
+    values.set(prop.key, value);
+    return this.parse(values);
+  }
 
   static getValue<T>(
     prop: GameConfigProp<string, T>,

@@ -1,11 +1,13 @@
-import type { GameConfig } from "./game-config";
+import type { GameConfig, GameConfigShape } from "./game-config";
 
 export abstract class Game<
-  GameConfigType extends GameConfig,
-  GameStateType extends GameState<any>,
+  GameConfigType extends GameConfig = GameConfig,
+  GameStateType extends GameState<any> = GameState<any>,
 > {
-  abstract readonly defaultConfig: GameConfigType;
+  abstract readonly configShape: GameConfigShape<GameConfigType>;
   abstract readonly playerCount: PlayerCount;
+  abstract readonly id: string;
+  abstract readonly name: string;
 
   constructor() {}
 

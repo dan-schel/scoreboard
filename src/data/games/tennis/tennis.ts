@@ -7,7 +7,9 @@ import {
 import { TennisScore } from "./tennis-score";
 
 export class Tennis extends Game<TennisConfig, TennisState> {
-  readonly defaultConfig = TennisConfig.default;
+  readonly id = "tennis";
+  readonly name = "Tennis";
+  readonly configShape = new TennisConfigShape();
   readonly playerCount = PlayerCount.exactly(2);
 
   initialState(_config: TennisConfig): TennisState {
@@ -25,20 +27,25 @@ export class TennisState extends GameState<TennisState> {
   }
 }
 
-export class TennisConfigDefinition extends GameConfigShape<TennisConfig> {
+export class TennisConfigShape extends GameConfigShape<TennisConfig> {
   static readonly setsToWin = new IntegerGameConfigProp("sets-to-win", {
     min: 1,
   });
 
-  readonly props = [TennisConfigDefinition.setsToWin];
+  readonly props = [TennisConfigShape.setsToWin];
+  readonly defaultConfig = TennisConfig.default;
 
   parse(values: Map<string, unknown>): TennisConfig {
     const setsToWin = GameConfigShape.getValue(
-      TennisConfigDefinition.setsToWin,
+      TennisConfigShape.setsToWin,
       values,
     );
 
     return new TennisConfig(setsToWin);
+  }
+
+  toMap(config: TennisConfig): Map<string, unknown> {
+    return new Map([[TennisConfigShape.setsToWin.key, config.setsToWin]]);
   }
 }
 
