@@ -2,16 +2,17 @@ import type { GameState } from "./game";
 
 export type StateUpdateType = "new" | "undo" | "redo";
 
-export type StateUpdateListener<GameStateType extends GameState<any>> = (
+export type StateUpdateListener<GameStateType extends GameState> = (
   newState: GameStateType,
   updateType: StateUpdateType,
 ) => void;
+
 export type UndoRedoAvailabilityListener = (
   canUndo: boolean,
   canRedo: boolean,
 ) => void;
 
-export abstract class GameStateManager<GameStateType extends GameState<any>> {
+export abstract class GameStateManager<GameStateType extends GameState> {
   private _state: GameStateType;
   private _stateUpdateListeners: StateUpdateListener<GameStateType>[] = [];
   private _undoRedoAvailabilityListeners: UndoRedoAvailabilityListener[] = [];
@@ -38,6 +39,7 @@ export abstract class GameStateManager<GameStateType extends GameState<any>> {
   ): void {
     this._undoRedoAvailabilityListeners.forEach((x) => x(canUndo, canRedo));
   }
+
   addStateUpdateListener(handler: StateUpdateListener<GameStateType>): void {
     this._stateUpdateListeners.push(handler);
   }
@@ -58,7 +60,7 @@ export abstract class GameStateManager<GameStateType extends GameState<any>> {
 }
 
 export class LocalGameStateManager<
-  GameStateType extends GameState<any>,
+  GameStateType extends GameState,
 > extends GameStateManager<GameStateType> {
   private _undoStack: GameStateType[] = [];
   private _redoStack: GameStateType[] = [];

@@ -19,18 +19,18 @@ export class BasicGame extends Game<
   readonly name = "Basic";
   readonly configAdapter = new BasicGameConfigAdapter();
 
-  initialState(_config: BasicGameConfig): BasicGameState {
-    return new BasicGameState(this, 0, 0);
+  initialState(config: BasicGameConfig): BasicGameState {
+    return new BasicGameState(config, 0, 0);
   }
 }
 
-export class BasicGameState extends GameState<BasicGameState> {
+export class BasicGameState extends GameState<BasicGameConfig> {
   constructor(
-    readonly game: BasicGame,
+    config: BasicGameConfig,
     readonly player1Score: number,
     readonly player2Score: number,
   ) {
-    super(game);
+    super(config);
   }
 }
 

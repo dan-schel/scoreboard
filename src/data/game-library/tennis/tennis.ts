@@ -8,17 +8,17 @@ export class Tennis extends Game<BasicPlayerConfig, TennisConfig, TennisState> {
   readonly name = "Tennis";
   readonly configAdapter = new TennisConfigAdapter();
 
-  initialState(_config: TennisConfig): TennisState {
-    return new TennisState(this, TennisScore.zero, TennisScore.zero);
+  initialState(config: TennisConfig): TennisState {
+    return new TennisState(config, TennisScore.zero, TennisScore.zero);
   }
 }
 
-export class TennisState extends GameState<TennisState> {
+export class TennisState extends GameState<TennisConfig> {
   constructor(
-    readonly game: Tennis,
+    config: TennisConfig,
     readonly player1Score: TennisScore,
     readonly player2Score: TennisScore,
   ) {
-    super(game);
+    super(config);
   }
 }

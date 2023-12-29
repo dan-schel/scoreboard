@@ -4,7 +4,7 @@
   generic="
     PlayerConfigType extends PlayerConfig,
     GameConfigType extends GameConfig<PlayerConfigType>,
-    GameStateType extends GameState<any>
+    GameStateType extends GameState
   "
 >
 import { Game, type GameState } from "@/data/game/game";

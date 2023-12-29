@@ -5,22 +5,23 @@ export abstract class Game<
   PlayerConfigType extends PlayerConfig = PlayerConfig,
   GameConfigType extends
     GameConfig<PlayerConfigType> = GameConfig<PlayerConfigType>,
-  GameStateType extends GameState<any> = GameState<any>,
+  GameStateType extends GameState = GameState,
 > {
+  abstract readonly id: string;
+  abstract readonly name: string;
+
   abstract readonly configAdapter: GameConfigAdapter<
     PlayerConfigType,
     GameConfigType
   >;
-  abstract readonly id: string;
-  abstract readonly name: string;
 
   constructor() {}
 
   abstract initialState(config: GameConfigType): GameStateType;
 }
 
-export abstract class GameState<GameStateType extends GameState<any>> {
-  constructor(
-    readonly game: Game<PlayerConfig, GameConfig<PlayerConfig>, GameStateType>,
-  ) {}
+export abstract class GameState<
+  GameConfigType extends GameConfig<any> = GameConfig<any>,
+> {
+  constructor(readonly config: GameConfigType) {}
 }
