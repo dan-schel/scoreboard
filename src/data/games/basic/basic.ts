@@ -1,15 +1,20 @@
+import { IntegerConfigProp } from "../config-prop";
 import { Game, GameState, PlayerCount } from "../game";
 import {
   GameConfig,
   GameConfigShape,
-  IntegerGameConfigProp,
+  type RawGameConfig,
 } from "../game-config";
+import { PlayerConfig, PlayerConfigShape } from "../player-config";
 
-export class BasicGame extends Game<BasicGameConfig, BasicGameState> {
+export class BasicGame extends Game<
+  PlayerConfig,
+  BasicGameConfig,
+  BasicGameState
+> {
   readonly id = "basic";
   readonly name = "Basic";
   readonly configShape = new BasicGameConfigShape();
-  readonly playerCount = PlayerCount.exactly(2);
 
   initialState(_config: BasicGameConfig): BasicGameState {
     return new BasicGameState(this, 0, 0);
@@ -26,25 +31,29 @@ export class BasicGameState extends GameState<BasicGameState> {
   }
 }
 
-export class BasicGameConfigShape extends GameConfigShape<BasicGameConfig> {
-  static readonly winningScore = new IntegerGameConfigProp("winning-score", {
+export class BasicGameConfigShape extends GameConfigShape<
+  PlayerConfig,
+  BasicGameConfig
+> {
+  static readonly winningScore = new IntegerConfigProp("winning-score", {
+    min: 1,
+  });
+  static readonly requiredMargin = new IntegerConfigProp("required-margin", {
     min: 1,
   });
 
-  static readonly requiredMargin = new IntegerGameConfigProp(
-    "required-margin",
-    {
-      min: 1,
-    },
-  );
-
+  readonly playerCount = PlayerCount.exactly(2);
+  readonly playerConfigShape = new PlayerConfigShape();
   readonly props = [
     BasicGameConfigShape.winningScore,
     BasicGameConfigShape.requiredMargin,
   ];
   readonly defaultConfig = BasicGameConfig.default;
 
-  parse(values: Map<string, unknown>): BasicGameConfig {
+  parseGameConfig(
+    values: Map<string, unknown>,
+    players: PlayerConfig[],
+  ): BasicGameConfig {
     const winningScore = GameConfigShape.getValue(
       BasicGameConfigShape.winningScore,
       values,
@@ -53,25 +62,28 @@ export class BasicGameConfigShape extends GameConfigShape<BasicGameConfig> {
       BasicGameConfigShape.requiredMargin,
       values,
     );
-
-    return new BasicGameConfig(winningScore, requiredMargin);
+    return new BasicGameConfig(players, winningScore, requiredMargin);
   }
 
-  toMap(config: BasicGameConfig): Map<string, unknown> {
-    return new Map([
-      [BasicGameConfigShape.winningScore.key, config.winningScore],
-      [BasicGameConfigShape.requiredMargin.key, config.requiredMargin],
-    ]);
+  gameConfigToMap(config: BasicGameConfig): RawGameConfig<PlayerConfig> {
+    return {
+      values: new Map([
+        [BasicGameConfigShape.winningScore.key, config.winningScore],
+        [BasicGameConfigShape.requiredMargin.key, config.requiredMargin],
+      ]),
+      players: config.players,
+    };
   }
 }
 
-export class BasicGameConfig extends GameConfig {
-  static readonly default = new BasicGameConfig(10, 2);
+export class BasicGameConfig extends GameConfig<PlayerConfig> {
+  static readonly default = new BasicGameConfig(PlayerConfig.twoPlayers, 10, 2);
 
   constructor(
+    players: PlayerConfig[],
     readonly winningScore: number,
     readonly requiredMargin: number,
   ) {
-    super();
+    super(players);
   }
 }

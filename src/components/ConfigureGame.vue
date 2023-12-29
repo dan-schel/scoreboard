@@ -1,9 +1,17 @@
-<script setup lang="ts" generic="GameConfigType extends GameConfig">
+<script
+  setup
+  lang="ts"
+  generic="
+    PlayerConfigType extends PlayerConfig,
+    GameConfigType extends GameConfig<PlayerConfigType>
+  "
+>
 import type { Game } from "@/data/games/game";
 import type { GameConfig } from "@/data/games/game-config";
+import type { PlayerConfig } from "@/data/games/player-config";
 
 const props = defineProps<{
-  game: Game<GameConfigType>;
+  game: Game<PlayerConfigType, GameConfigType>;
 }>();
 const emit = defineEmits<{
   (e: "submit", config: GameConfigType): void;

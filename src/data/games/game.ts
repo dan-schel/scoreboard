@@ -1,11 +1,16 @@
 import type { GameConfig, GameConfigShape } from "./game-config";
+import type { PlayerConfig } from "./player-config";
 
 export abstract class Game<
-  GameConfigType extends GameConfig = GameConfig,
+  PlayerConfigType extends PlayerConfig = PlayerConfig,
+  GameConfigType extends
+    GameConfig<PlayerConfigType> = GameConfig<PlayerConfigType>,
   GameStateType extends GameState<any> = GameState<any>,
 > {
-  abstract readonly configShape: GameConfigShape<GameConfigType>;
-  abstract readonly playerCount: PlayerCount;
+  abstract readonly configShape: GameConfigShape<
+    PlayerConfigType,
+    GameConfigType
+  >;
   abstract readonly id: string;
   abstract readonly name: string;
 
@@ -15,7 +20,9 @@ export abstract class Game<
 }
 
 export abstract class GameState<GameStateType extends GameState<any>> {
-  constructor(readonly game: Game<GameConfig, GameStateType>) {}
+  constructor(
+    readonly game: Game<PlayerConfig, GameConfig<PlayerConfig>, GameStateType>,
+  ) {}
 }
 
 export class PlayerCount {

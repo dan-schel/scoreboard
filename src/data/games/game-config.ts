@@ -1,31 +1,30 @@
-export abstract class GameConfig {
-  // Typescript doesn't type check the GameConfigType generic is actually a
-  // GameConfig if GameConfig is an empty class. If GameConfig has another
-  // property or method to give it shape then this field can be removed.
-  private readonly _isGameConfig = true;
+import type { ConfigProp } from "./config-prop";
+import type { PlayerCount } from "./game";
+import { type PlayerConfig } from "./player-config";
+
+export abstract class GameConfig<PlayerConfigType extends PlayerConfig> {
+  constructor(readonly players: PlayerConfigType[]) {}
 }
 
-export abstract class GameConfigShape<GameConfigType extends GameConfig> {
-  abstract readonly props: GameConfigProp<string, unknown>[];
+export abstract class ConfigShape<ConfigType> {
+  abstract readonly props: ConfigProp<string, unknown>[];
 
-  abstract readonly defaultConfig: GameConfigType;
+  abstract parse(values: Map<string, unknown>): ConfigType;
 
-  abstract parse(values: Map<string, unknown>): GameConfigType;
-
-  abstract toMap(config: GameConfigType): Map<string, unknown>;
+  abstract toMap(config: ConfigType): Map<string, unknown>;
 
   with(
-    config: GameConfigType,
-    prop: GameConfigProp<string, unknown>,
+    config: ConfigType,
+    prop: ConfigProp<string, unknown>,
     value: unknown,
-  ): GameConfigType {
+  ): ConfigType {
     const values = this.toMap(config);
     values.set(prop.key, value);
     return this.parse(values);
   }
 
   static getValue<T>(
-    prop: GameConfigProp<string, T>,
+    prop: ConfigProp<string, T>,
     values: Map<string, unknown>,
   ): T {
     const value = values.get(prop.key);
@@ -36,38 +35,32 @@ export abstract class GameConfigShape<GameConfigType extends GameConfig> {
   }
 }
 
-export abstract class GameConfigProp<PropType extends string, ValueType> {
-  constructor(
-    readonly key: string,
-    readonly type: PropType,
-  ) {}
+export type RawGameConfig<PlayerConfigType> = {
+  values: Map<string, unknown>;
+  players: PlayerConfigType[];
+};
 
-  abstract parse(value: unknown): ValueType;
-}
+export abstract class GameConfigShape<
+  PlayerConfigType extends PlayerConfig,
+  GameConfigType extends GameConfig<PlayerConfigType>,
+> extends ConfigShape<GameConfigType> {
+  abstract readonly defaultConfig: GameConfigType;
+  abstract readonly playerCount: PlayerCount;
+  abstract readonly playerConfigShape: ConfigShape<PlayerConfigType>;
 
-export class IntegerGameConfigProp extends GameConfigProp<"integer", number> {
-  readonly min: number | null;
-  readonly max: number | null;
-
-  constructor(key: string, { min, max }: { min?: number; max?: number } = {}) {
-    super(key, "integer");
-    this.min = min ?? null;
-    this.max = max ?? null;
+  parse(values: Map<string, unknown>): GameConfigType {
+    const players = this.playerConfigShape.parse(values);
+    return this.parseGameConfig(values, players);
   }
 
-  parse(value: unknown): number {
-    if (typeof value !== "number") {
-      throw new Error(`Expected number for "${this.key}".`);
-    }
-    if (!Number.isInteger(value)) {
-      throw new Error(`Expected integer for "${this.key}".`);
-    }
-    if (this.min !== null && value < this.min) {
-      throw new Error(`Expected "${this.key}" to be at least ${this.min}.`);
-    }
-    if (this.max !== null && value > this.max) {
-      throw new Error(`Expected "${this.key}" to be at most ${this.max}.`);
-    }
-    return value;
-  }
+  abstract parseGameConfig(
+    values: Map<string, unknown>,
+    players: PlayerConfigType[],
+  ): GameConfigType;
+
+  toMap(config: GameConfigType): Map<string, unknown> {}
+
+  abstract gameConfigToMap(
+    config: GameConfigType,
+  ): RawGameConfig<PlayerConfigType>;
 }

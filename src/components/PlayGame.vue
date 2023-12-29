@@ -2,15 +2,17 @@
   setup
   lang="ts"
   generic="
-    GameConfigType extends GameConfig,
+    PlayerConfigType extends PlayerConfig,
+    GameConfigType extends GameConfig<PlayerConfigType>,
     GameStateType extends GameState<any>
   "
 >
 import type { Game, GameState } from "@/data/games/game";
 import type { GameConfig } from "@/data/games/game-config";
+import type { PlayerConfig } from "@/data/games/player-config";
 
 defineProps<{
-  game: Game<GameConfigType, GameStateType>;
+  game: Game<PlayerConfigType, GameConfigType, GameStateType>;
   config: GameConfigType;
 }>();
 </script>

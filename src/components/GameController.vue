@@ -2,7 +2,8 @@
   setup
   lang="ts"
   generic="
-    GameConfigType extends GameConfig,
+    PlayerConfigType extends PlayerConfig,
+    GameConfigType extends GameConfig<PlayerConfigType>,
     GameStateType extends GameState<any>
   "
 >
@@ -11,11 +12,12 @@ import { GameConfig } from "@/data/games/game-config";
 import ConfigureGame from "./ConfigureGame.vue";
 import { ref, type Ref } from "vue";
 import PlayGame from "./PlayGame.vue";
+import type { PlayerConfig } from "@/data/games/player-config";
 
 const config = ref<GameConfigType | null>(null) as Ref<GameConfigType | null>;
 
 defineProps<{
-  game: Game<GameConfigType, GameStateType>;
+  game: Game<PlayerConfigType, GameConfigType, GameStateType>;
 }>();
 
 function handleGameConfigured(newConfig: GameConfigType) {
@@ -26,7 +28,6 @@ function handleGameConfigured(newConfig: GameConfigType) {
 
 <template>
   <h1>{{ game.name }}</h1>
-  <p>{{ game.id }}</p>
   <ConfigureGame
     v-if="config == null"
     :game="game"
