@@ -1,66 +1,67 @@
 import type { ConfigProp } from "./config-prop";
-import type { PlayerCount } from "./game";
-import { type PlayerConfig } from "./player-config";
+import { PlayerConfigAdapter, type PlayerConfig } from "./player-config";
 
 export abstract class GameConfig<PlayerConfigType extends PlayerConfig> {
   constructor(readonly players: PlayerConfigType[]) {}
 }
 
-export abstract class ConfigShape<ConfigType> {
-  abstract readonly props: ConfigProp<string, unknown>[];
+export class PlayerCount {
+  private constructor(
+    readonly min: number,
+    readonly max: number,
+  ) {}
 
-  abstract parse(values: Map<string, unknown>): ConfigType;
-
-  abstract toMap(config: ConfigType): Map<string, unknown>;
-
-  with(
-    config: ConfigType,
-    prop: ConfigProp<string, unknown>,
-    value: unknown,
-  ): ConfigType {
-    const values = this.toMap(config);
-    values.set(prop.key, value);
-    return this.parse(values);
+  static exactly(n: number) {
+    return new PlayerCount(n, n);
   }
 
-  static getValue<T>(
-    prop: ConfigProp<string, T>,
-    values: Map<string, unknown>,
-  ): T {
-    const value = values.get(prop.key);
-    if (value === undefined) {
-      throw new Error(`Expected "${prop.key}" prop.`);
-    }
-    return prop.parse(value);
+  static range(min: number, max: number) {
+    return new PlayerCount(min, max);
   }
 }
 
-export type RawGameConfig<PlayerConfigType> = {
-  values: Map<string, unknown>;
-  players: PlayerConfigType[];
-};
-
-export abstract class GameConfigShape<
+export abstract class GameConfigAdapter<
   PlayerConfigType extends PlayerConfig,
   GameConfigType extends GameConfig<PlayerConfigType>,
-> extends ConfigShape<GameConfigType> {
+> {
+  abstract readonly props: ConfigProp[];
   abstract readonly defaultConfig: GameConfigType;
   abstract readonly playerCount: PlayerCount;
-  abstract readonly playerConfigShape: ConfigShape<PlayerConfigType>;
+  abstract readonly playerConfigAdapter: PlayerConfigAdapter<PlayerConfigType>;
 
-  parse(values: Map<string, unknown>): GameConfigType {
-    const players = this.playerConfigShape.parse(values);
-    return this.parseGameConfig(values, players);
-  }
+  abstract get(config: GameConfigType, prop: string): unknown;
 
-  abstract parseGameConfig(
-    values: Map<string, unknown>,
-    players: PlayerConfigType[],
+  abstract set(
+    config: GameConfigType,
+    prop: string,
+    value: unknown,
   ): GameConfigType;
 
-  toMap(config: GameConfigType): Map<string, unknown> {}
-
-  abstract gameConfigToMap(
+  protected abstract _setPlayer(
     config: GameConfigType,
-  ): RawGameConfig<PlayerConfigType>;
+    playerIndex: number,
+    player: PlayerConfigType,
+  ): GameConfigType;
+
+  getForPlayer(
+    config: GameConfigType,
+    playerIndex: number,
+    prop: string,
+  ): unknown {
+    return this.playerConfigAdapter.get(config.players[playerIndex], prop);
+  }
+
+  setForPlayer(
+    config: GameConfigType,
+    playerIndex: number,
+    prop: string,
+    value: unknown,
+  ): GameConfigType {
+    const playerConfig = this.playerConfigAdapter.set(
+      config.players[playerIndex],
+      prop,
+      value,
+    );
+    return this._setPlayer(config, playerIndex, playerConfig);
+  }
 }

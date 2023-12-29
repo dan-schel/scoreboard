@@ -1,39 +1,21 @@
-import { PlayerColorConfigProp } from "./config-prop";
-import { ConfigShape } from "./game-config";
+import type { ConfigProp } from "./config-prop";
 
-export class PlayerConfig {
-  static readonly twoPlayers = [
-    new PlayerConfig("red"),
-    new PlayerConfig("blue"),
-  ];
-
-  constructor(readonly color: PlayerColor) {}
+export abstract class PlayerConfig {
+  // This is a hack to make the type system work. It can be removed if other
+  // fields/methods are added.
+  readonly _isPlayerConfig = true;
 }
 
-export class PlayerConfigShape extends ConfigShape<PlayerConfig> {
-  static readonly color = new PlayerColorConfigProp("color");
+export abstract class PlayerConfigAdapter<
+  PlayerConfigType extends PlayerConfig,
+> {
+  abstract readonly props: ConfigProp[];
 
-  readonly props = [PlayerConfigShape.color];
+  abstract get(config: PlayerConfigType, prop: string): unknown;
 
-  parse(values: Map<string, unknown>): PlayerConfig {
-    const color = ConfigShape.getValue(PlayerConfigShape.color, values);
-    return new PlayerConfig(color);
-  }
-
-  toMap(config: PlayerConfig): Map<string, unknown> {
-    return new Map([[PlayerConfigShape.color.key, config.color]]);
-  }
+  abstract set(
+    config: PlayerConfigType,
+    prop: string,
+    value: unknown,
+  ): PlayerConfigType;
 }
-
-export const PlayerColors = [
-  "red",
-  "orange",
-  "yellow",
-  "green",
-  "cyan",
-  "blue",
-  "purple",
-  "pink",
-] as const;
-
-export type PlayerColor = (typeof PlayerColors)[number];

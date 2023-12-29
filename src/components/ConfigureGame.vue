@@ -19,7 +19,7 @@ const emit = defineEmits<{
 
 function handleFormSubmit(e: Event) {
   e.preventDefault();
-  emit("submit", props.game.configShape.defaultConfig);
+  emit("submit", props.game.configAdapter.defaultConfig);
 }
 </script>
 

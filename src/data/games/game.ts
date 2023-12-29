@@ -1,4 +1,4 @@
-import type { GameConfig, GameConfigShape } from "./game-config";
+import type { GameConfig, GameConfigAdapter } from "./game-config";
 import type { PlayerConfig } from "./player-config";
 
 export abstract class Game<
@@ -7,7 +7,7 @@ export abstract class Game<
     GameConfig<PlayerConfigType> = GameConfig<PlayerConfigType>,
   GameStateType extends GameState<any> = GameState<any>,
 > {
-  abstract readonly configShape: GameConfigShape<
+  abstract readonly configAdapter: GameConfigAdapter<
     PlayerConfigType,
     GameConfigType
   >;
@@ -23,19 +23,4 @@ export abstract class GameState<GameStateType extends GameState<any>> {
   constructor(
     readonly game: Game<PlayerConfig, GameConfig<PlayerConfig>, GameStateType>,
   ) {}
-}
-
-export class PlayerCount {
-  private constructor(
-    readonly min: number,
-    readonly max: number,
-  ) {}
-
-  static exactly(n: number) {
-    return new PlayerCount(n, n);
-  }
-
-  static range(min: number, max: number) {
-    return new PlayerCount(min, max);
-  }
 }

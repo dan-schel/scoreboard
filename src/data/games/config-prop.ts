@@ -1,7 +1,9 @@
-import type { ConfigShape } from "./game-config";
-import { type PlayerColor, PlayerColors, PlayerConfig } from "./player-config";
+import { PlayerColors, type PlayerColor } from "./player-color";
 
-export abstract class ConfigProp<PropType extends string, ValueType> {
+export abstract class ConfigProp<
+  PropType extends string = string,
+  ValueType = unknown,
+> {
   constructor(
     readonly key: string,
     readonly type: PropType,
@@ -50,23 +52,5 @@ export class PlayerColorConfigProp extends ConfigProp<
       throw new Error(`Expected "${this.key}" to be a valid player color.`);
     }
     return value as PlayerColor;
-  }
-}
-
-export class PlayerConfigProp<
-  PlayerConfigType extends PlayerConfig,
-> extends ConfigProp<"player-config", PlayerConfigType> {
-  constructor(
-    key: string,
-    readonly playerConfigShape: ConfigShape<PlayerConfigType>,
-  ) {
-    super(key, "player-config");
-  }
-
-  parse(value: unknown): PlayerConfigType {
-    if (!(value instanceof Map)) {
-      throw new Error(`Expected map for "${this.key}".`);
-    }
-    return this.playerConfigShape.parse(value);
   }
 }
