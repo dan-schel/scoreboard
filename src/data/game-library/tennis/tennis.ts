@@ -1,24 +1,22 @@
-import { BasicPlayerConfig } from "../../game-utils/basic-player-config";
 import { Game, GameState } from "../../game/game";
-import { TennisConfig, TennisConfigAdapter } from "./tennis-config";
+import { TennisConfig, TennisConfigWriter } from "./tennis-config";
 import { TennisScore } from "./tennis-score";
 
-export class Tennis extends Game<BasicPlayerConfig, TennisConfig, TennisState> {
+export class Tennis extends Game<TennisConfig, TennisState> {
   readonly id = "tennis";
   readonly name = "Tennis";
-  readonly configAdapter = new TennisConfigAdapter();
+  readonly configWriter = new TennisConfigWriter();
 
-  initialState(config: TennisConfig): TennisState {
-    return new TennisState(config, TennisScore.zero, TennisScore.zero);
+  initialState(_config: TennisConfig): TennisState {
+    return new TennisState(TennisScore.zero, TennisScore.zero);
   }
 }
 
-export class TennisState extends GameState<TennisConfig> {
+export class TennisState extends GameState {
   constructor(
-    config: TennisConfig,
     readonly player1Score: TennisScore,
     readonly player2Score: TennisScore,
   ) {
-    super(config);
+    super();
   }
 }

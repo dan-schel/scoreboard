@@ -1,15 +1,10 @@
 <script
   setup
   lang="ts"
-  generic="
-    PlayerConfigType extends PlayerConfig,
-    GameConfigType extends GameConfig<PlayerConfigType>,
-    GameStateType extends GameState
-  "
+  generic="GameConfigType extends GameConfig, GameStateType extends GameState"
 >
 import { Game, type GameState } from "@/data/game/game";
 import type { GameConfig } from "@/data/game/game-config";
-import type { PlayerConfig } from "@/data/game/player-config";
 import {
   GameStateManager,
   LocalGameStateManager,
@@ -18,7 +13,7 @@ import {
 import { onMounted, onUnmounted, ref, type Ref } from "vue";
 
 const props = defineProps<{
-  game: Game<PlayerConfigType, GameConfigType, GameStateType>;
+  game: Game<GameConfigType, GameStateType>;
   config: GameConfigType;
 }>();
 

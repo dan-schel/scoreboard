@@ -1,10 +1,10 @@
 import {
   BasicPlayerConfig,
-  BasicPlayerConfigAdapter,
+  BasicPlayerConfigWriter,
 } from "../../game-utils/basic-player-config";
 import { IntegerConfigProp } from "../../game/config-prop";
 import {
-  GameConfigAdapter,
+  GameConfigWriter,
   PlayerCount,
   GameConfig,
 } from "../../game/game-config";
@@ -33,22 +33,19 @@ export class TennisConfig extends GameConfig<BasicPlayerConfig> {
   }
 }
 
-export class TennisConfigAdapter extends GameConfigAdapter<
-  BasicPlayerConfig,
-  TennisConfig
-> {
+export class TennisConfigWriter extends GameConfigWriter<TennisConfig> {
   static readonly setsToWin = new IntegerConfigProp("sets-to-win", {
     min: 1,
   });
 
-  readonly props = [TennisConfigAdapter.setsToWin];
+  readonly props = [TennisConfigWriter.setsToWin];
   readonly defaultConfig = TennisConfig.default;
   readonly playerCount = PlayerCount.exactly(2);
-  readonly playerConfigAdapter = new BasicPlayerConfigAdapter();
+  readonly playerConfigWriter = new BasicPlayerConfigWriter();
 
   get(config: TennisConfig, prop: string): unknown {
     switch (prop) {
-      case TennisConfigAdapter.setsToWin.key:
+      case TennisConfigWriter.setsToWin.key:
         return config.setsToWin;
       default:
         throw new Error(`Unknown prop "${prop}".`);
@@ -57,9 +54,9 @@ export class TennisConfigAdapter extends GameConfigAdapter<
 
   set(config: TennisConfig, prop: string, value: unknown): TennisConfig {
     switch (prop) {
-      case TennisConfigAdapter.setsToWin.key:
+      case TennisConfigWriter.setsToWin.key:
         return config.with({
-          setsToWin: TennisConfigAdapter.setsToWin.parse(value),
+          setsToWin: TennisConfigWriter.setsToWin.parse(value),
         });
       default:
         throw new Error(`Unknown prop "${prop}".`);

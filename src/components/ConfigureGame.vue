@@ -1,17 +1,9 @@
-<script
-  setup
-  lang="ts"
-  generic="
-    PlayerConfigType extends PlayerConfig,
-    GameConfigType extends GameConfig<PlayerConfigType>
-  "
->
+<script setup lang="ts" generic="GameConfigType extends GameConfig">
 import type { Game } from "@/data/game/game";
 import type { GameConfig } from "@/data/game/game-config";
-import type { PlayerConfig } from "@/data/game/player-config";
 
 const props = defineProps<{
-  game: Game<PlayerConfigType, GameConfigType>;
+  game: Game<GameConfigType>;
 }>();
 const emit = defineEmits<{
   (e: "submit", config: GameConfigType): void;
@@ -19,7 +11,7 @@ const emit = defineEmits<{
 
 function handleFormSubmit(e: Event) {
   e.preventDefault();
-  emit("submit", props.game.configAdapter.defaultConfig);
+  emit("submit", props.game.configWriter.defaultConfig);
 }
 </script>
 

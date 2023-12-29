@@ -1,27 +1,28 @@
-import type { GameConfig, GameConfigAdapter } from "./game-config";
-import type { PlayerConfig } from "./player-config";
+import type { GameConfig, GameConfigWriter } from "./game-config";
 
 export abstract class Game<
-  PlayerConfigType extends PlayerConfig = PlayerConfig,
-  GameConfigType extends
-    GameConfig<PlayerConfigType> = GameConfig<PlayerConfigType>,
+  GameConfigType extends GameConfig = GameConfig,
   GameStateType extends GameState = GameState,
 > {
   abstract readonly id: string;
   abstract readonly name: string;
 
-  abstract readonly configAdapter: GameConfigAdapter<
-    PlayerConfigType,
-    GameConfigType
-  >;
+  abstract readonly configWriter: GameConfigWriter<GameConfigType>;
 
   constructor() {}
 
   abstract initialState(config: GameConfigType): GameStateType;
 }
 
-export abstract class GameState<
-  GameConfigType extends GameConfig<any> = GameConfig<any>,
-> {
-  constructor(readonly config: GameConfigType) {}
+export abstract class GameState {
+  constructor() {}
 }
+
+// export abstract class GameStateMachine<
+//   GameConfigType extends GameConfig,
+//   GameStateType extends GameState,
+// > {
+//   constructor(readonly config: GameConfigType) {}
+
+//   abstract initialState(): GameStateType;
+// }

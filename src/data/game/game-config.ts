@@ -1,7 +1,9 @@
 import type { ConfigProp } from "./config-prop";
-import { PlayerConfigAdapter, type PlayerConfig } from "./player-config";
+import { PlayerConfigWriter, type PlayerConfig } from "./player-config";
 
-export abstract class GameConfig<PlayerConfigType extends PlayerConfig> {
+export abstract class GameConfig<
+  PlayerConfigType extends PlayerConfig = PlayerConfig,
+> {
   constructor(readonly players: PlayerConfigType[]) {}
 }
 
@@ -20,14 +22,18 @@ export class PlayerCount {
   }
 }
 
-export abstract class GameConfigAdapter<
-  PlayerConfigType extends PlayerConfig,
-  GameConfigType extends GameConfig<PlayerConfigType>,
-> {
+export type PlayerConfigTypeOf<GameConfigType extends GameConfig> =
+  GameConfigType extends GameConfig<infer PlayerConfigType>
+    ? PlayerConfigType
+    : never;
+
+export abstract class GameConfigWriter<GameConfigType extends GameConfig> {
   abstract readonly props: ConfigProp[];
   abstract readonly defaultConfig: GameConfigType;
   abstract readonly playerCount: PlayerCount;
-  abstract readonly playerConfigAdapter: PlayerConfigAdapter<PlayerConfigType>;
+  abstract readonly playerConfigWriter: PlayerConfigWriter<
+    PlayerConfigTypeOf<GameConfigType>
+  >;
 
   abstract get(config: GameConfigType, prop: string): unknown;
 
@@ -40,7 +46,7 @@ export abstract class GameConfigAdapter<
   protected abstract _setPlayer(
     config: GameConfigType,
     playerIndex: number,
-    player: PlayerConfigType,
+    player: PlayerConfigTypeOf<GameConfigType>,
   ): GameConfigType;
 
   getForPlayer(
@@ -48,7 +54,10 @@ export abstract class GameConfigAdapter<
     playerIndex: number,
     prop: string,
   ): unknown {
-    return this.playerConfigAdapter.get(config.players[playerIndex], prop);
+    const playerConfig = config.players[
+      playerIndex
+    ] as PlayerConfigTypeOf<GameConfigType>;
+    return this.playerConfigWriter.get(playerConfig, prop);
   }
 
   setForPlayer(
@@ -57,11 +66,14 @@ export abstract class GameConfigAdapter<
     prop: string,
     value: unknown,
   ): GameConfigType {
-    const playerConfig = this.playerConfigAdapter.set(
-      config.players[playerIndex],
+    const currentPlayerConfig = config.players[
+      playerIndex
+    ] as PlayerConfigTypeOf<GameConfigType>;
+    const newPlayerConfig = this.playerConfigWriter.set(
+      currentPlayerConfig,
       prop,
       value,
     );
-    return this._setPlayer(config, playerIndex, playerConfig);
+    return this._setPlayer(config, playerIndex, newPlayerConfig);
   }
 }

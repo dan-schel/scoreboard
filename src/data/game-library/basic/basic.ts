@@ -1,36 +1,31 @@
 import {
   BasicPlayerConfig,
-  BasicPlayerConfigAdapter,
+  BasicPlayerConfigWriter,
 } from "../../game-utils/basic-player-config";
 import { IntegerConfigProp } from "../../game/config-prop";
 import { Game, GameState } from "../../game/game";
 import {
   GameConfig,
-  GameConfigAdapter,
+  GameConfigWriter,
   PlayerCount,
 } from "../../game/game-config";
 
-export class BasicGame extends Game<
-  BasicPlayerConfig,
-  BasicGameConfig,
-  BasicGameState
-> {
+export class BasicGame extends Game<BasicGameConfig, BasicGameState> {
   readonly id = "basic";
   readonly name = "Basic";
-  readonly configAdapter = new BasicGameConfigAdapter();
+  readonly configWriter = new BasicGameConfigWriter();
 
-  initialState(config: BasicGameConfig): BasicGameState {
-    return new BasicGameState(config, 0, 0);
+  initialState(_config: BasicGameConfig): BasicGameState {
+    return new BasicGameState(0, 0);
   }
 }
 
-export class BasicGameState extends GameState<BasicGameConfig> {
+export class BasicGameState extends GameState {
   constructor(
-    config: BasicGameConfig,
     readonly player1Score: number,
     readonly player2Score: number,
   ) {
-    super(config);
+    super();
   }
 }
 
@@ -66,10 +61,7 @@ export class BasicGameConfig extends GameConfig<BasicPlayerConfig> {
   }
 }
 
-export class BasicGameConfigAdapter extends GameConfigAdapter<
-  BasicPlayerConfig,
-  BasicGameConfig
-> {
+export class BasicGameConfigWriter extends GameConfigWriter<BasicGameConfig> {
   static readonly winningScore = new IntegerConfigProp("winning-score", {
     min: 1,
   });
@@ -78,37 +70,39 @@ export class BasicGameConfigAdapter extends GameConfigAdapter<
   });
 
   readonly props = [
-    BasicGameConfigAdapter.winningScore,
-    BasicGameConfigAdapter.requiredMargin,
+    BasicGameConfigWriter.winningScore,
+    BasicGameConfigWriter.requiredMargin,
   ];
   readonly defaultConfig = BasicGameConfig.default;
   readonly playerCount = PlayerCount.exactly(2);
-  readonly playerConfigAdapter = new BasicPlayerConfigAdapter();
+  readonly playerConfigWriter = new BasicPlayerConfigWriter();
 
   get(config: BasicGameConfig, prop: string): unknown {
     switch (prop) {
-      case BasicGameConfigAdapter.winningScore.key:
+      case BasicGameConfigWriter.winningScore.key:
         return config.winningScore;
-      case BasicGameConfigAdapter.requiredMargin.key:
+      case BasicGameConfigWriter.requiredMargin.key:
         return config.requiredMargin;
       default:
         throw new Error(`Unknown prop "${prop}".`);
     }
   }
+
   set(config: BasicGameConfig, prop: string, value: unknown): BasicGameConfig {
     switch (prop) {
-      case BasicGameConfigAdapter.winningScore.key:
+      case BasicGameConfigWriter.winningScore.key:
         return config.with({
-          winningScore: BasicGameConfigAdapter.winningScore.parse(value),
+          winningScore: BasicGameConfigWriter.winningScore.parse(value),
         });
-      case BasicGameConfigAdapter.requiredMargin.key:
+      case BasicGameConfigWriter.requiredMargin.key:
         return config.with({
-          requiredMargin: BasicGameConfigAdapter.requiredMargin.parse(value),
+          requiredMargin: BasicGameConfigWriter.requiredMargin.parse(value),
         });
       default:
         throw new Error(`Unknown prop "${prop}".`);
     }
   }
+
   protected _setPlayer(
     config: BasicGameConfig,
     playerIndex: number,

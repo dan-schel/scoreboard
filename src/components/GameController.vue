@@ -1,23 +1,18 @@
 <script
   setup
   lang="ts"
-  generic="
-    PlayerConfigType extends PlayerConfig,
-    GameConfigType extends GameConfig<PlayerConfigType>,
-    GameStateType extends GameState
-  "
+  generic="GameConfigType extends GameConfig, GameStateType extends GameState"
 >
 import type { Game, GameState } from "@/data/game/game";
 import { GameConfig } from "@/data/game/game-config";
 import ConfigureGame from "./ConfigureGame.vue";
 import { ref, type Ref } from "vue";
 import PlayGame from "./PlayGame.vue";
-import type { PlayerConfig } from "@/data/game/player-config";
 
 const config = ref<GameConfigType | null>(null) as Ref<GameConfigType | null>;
 
 defineProps<{
-  game: Game<PlayerConfigType, GameConfigType, GameStateType>;
+  game: Game<GameConfigType, GameStateType>;
 }>();
 
 function handleGameConfigured(newConfig: GameConfigType) {

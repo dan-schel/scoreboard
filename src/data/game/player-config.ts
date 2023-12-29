@@ -6,7 +6,7 @@ export abstract class PlayerConfig {
   readonly _isPlayerConfig = true;
 }
 
-export abstract class PlayerConfigAdapter<
+export abstract class PlayerConfigWriter<
   PlayerConfigType extends PlayerConfig,
 > {
   abstract readonly props: ConfigProp[];

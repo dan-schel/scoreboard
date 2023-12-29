@@ -1,6 +1,6 @@
 import { PlayerColorConfigProp } from "../game/config-prop";
 import type { PlayerColor } from "./player-color";
-import { PlayerConfig, PlayerConfigAdapter } from "../game/player-config";
+import { PlayerConfig, PlayerConfigWriter } from "../game/player-config";
 
 export class BasicPlayerConfig extends PlayerConfig {
   static readonly twoPlayers = [
@@ -17,13 +17,13 @@ export class BasicPlayerConfig extends PlayerConfig {
   }
 }
 
-export class BasicPlayerConfigAdapter extends PlayerConfigAdapter<BasicPlayerConfig> {
+export class BasicPlayerConfigWriter extends PlayerConfigWriter<BasicPlayerConfig> {
   static readonly color = new PlayerColorConfigProp("color");
-  readonly props = [BasicPlayerConfigAdapter.color];
+  readonly props = [BasicPlayerConfigWriter.color];
 
   get(config: BasicPlayerConfig, prop: string): unknown {
     switch (prop) {
-      case BasicPlayerConfigAdapter.color.key:
+      case BasicPlayerConfigWriter.color.key:
         return config.color;
       default:
         throw new Error(`Unknown prop "${prop}".`);
@@ -36,9 +36,9 @@ export class BasicPlayerConfigAdapter extends PlayerConfigAdapter<BasicPlayerCon
     value: unknown,
   ): BasicPlayerConfig {
     switch (prop) {
-      case BasicPlayerConfigAdapter.color.key:
+      case BasicPlayerConfigWriter.color.key:
         return config.with({
-          color: BasicPlayerConfigAdapter.color.parse(value),
+          color: BasicPlayerConfigWriter.color.parse(value),
         });
       default:
         throw new Error(`Unknown prop "${prop}".`);
