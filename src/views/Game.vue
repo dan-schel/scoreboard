@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import GameController from "@/components/GameController.vue";
 import { gameLibrary } from "@/data/games/game-library";
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
@@ -19,8 +20,7 @@ const game = computed(() => {
 
 <template>
   <main v-if="game != null">
-    <h1>{{ game.name }}</h1>
-    <p>{{ params.game }}</p>
+    <GameController :game="game"></GameController>
   </main>
   <main v-else class="not-found">
     <h1>Error 404 - Game not found</h1>
