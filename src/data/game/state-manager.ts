@@ -65,12 +65,19 @@ export class LocalGameStateManager<
   private _undoStack: GameStateType[] = [];
   private _redoStack: GameStateType[] = [];
 
-  constructor(initialState: GameStateType) {
+  constructor(
+    initialState: GameStateType,
+    readonly undoLimit: number = 10,
+  ) {
     super(initialState);
   }
 
   private _pushNewState(newState: GameStateType): void {
     this._undoStack.push(this.getState());
+    if (this._undoStack.length > this.undoLimit) {
+      this._undoStack.shift();
+    }
+
     this._redoStack = [];
     this.updateState(newState, "new");
     this.updateUndoRedoAvailability(this.canUndo(), this.canRedo());
