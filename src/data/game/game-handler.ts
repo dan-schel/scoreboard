@@ -26,6 +26,7 @@ export abstract class GameHandler<GameStateType extends GameState> {
   abstract requestUndo(): void;
   abstract requestRedo(): void;
 
+  abstract getPlayerCount(): number;
   abstract getScoreTypes(): ScoreType[];
   abstract do(action: Action): void;
 }
@@ -48,8 +49,8 @@ export class LocalGameHandler<
   }
 
   private _editState(newState: GameStateType): void {
-    this._state = newState;
     this.undoStack.push(this._state);
+    this._state = newState;
     this.notifyChange();
   }
   getState(): GameStateType {
@@ -62,20 +63,23 @@ export class LocalGameHandler<
     return this.undoStack.canRedo();
   }
   requestUndo(): void {
-    const prevState = this.undoStack.undo();
+    const prevState = this.undoStack.undo(this._state);
     if (prevState != null) {
       this._state = prevState;
       this.notifyChange();
     }
   }
   requestRedo(): void {
-    const prevState = this.undoStack.redo();
+    const prevState = this.undoStack.redo(this._state);
     if (prevState != null) {
       this._state = prevState;
       this.notifyChange();
     }
   }
 
+  getPlayerCount(): number {
+    return this._game.getPlayerCount();
+  }
   getScoreTypes(): ScoreType[] {
     return this._game.getScoreTypes();
   }

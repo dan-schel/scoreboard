@@ -2,7 +2,7 @@ export class UndoStack<T> {
   private _undoStack: T[] = [];
   private _redoStack: T[] = [];
 
-  constructor(readonly undoLimit: number = 10) {}
+  constructor(readonly undoLimit: number = 50) {}
 
   push(newValue: T): void {
     this._undoStack.push(newValue);
@@ -19,21 +19,21 @@ export class UndoStack<T> {
     return this._redoStack.length > 0;
   }
 
-  undo(): T | null {
+  undo(currentState: T): T | null {
     const newState = this._undoStack.pop();
     if (newState == null) {
       return null;
     }
-    this._redoStack.push(newState);
+    this._redoStack.push(currentState);
     return newState;
   }
 
-  redo(): T | null {
+  redo(currentState: T): T | null {
     const newState = this._redoStack.pop();
     if (newState == null) {
       return null;
     }
-    this._undoStack.push(newState);
+    this._undoStack.push(currentState);
     return newState;
   }
 }
