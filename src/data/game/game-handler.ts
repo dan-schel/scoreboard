@@ -1,0 +1,90 @@
+import { UndoStack } from "../game-utils/undo-stack";
+import type { GameBuilder, GameInstance, GameState, ScoreType } from "./game";
+import type { GameConfig } from "./game-config";
+
+export abstract class GameHandler<GameStateType extends GameState> {
+  private _changeListeners: (() => void)[] = [];
+  addChangeListener(listener: () => void): void {
+    this._changeListeners.push(listener);
+  }
+  removeChangeListener(listener: () => void): void {
+    this._changeListeners = this._changeListeners.filter((l) => l !== listener);
+  }
+  protected notifyChange(): void {
+    this._changeListeners.forEach((l) => l());
+  }
+
+  abstract getState(): GameStateType;
+  abstract canUndo(): boolean;
+  abstract canRedo(): boolean;
+  abstract requestUndo(): void;
+  abstract requestRedo(): void;
+
+  abstract getScoreTypes(): ScoreType[];
+  abstract canIncrementScore(scoreID: string, playerIndex: number): boolean;
+  abstract incrementScore(scoreID: string, playerIndex: number): void;
+}
+
+export class LocalGameHandler<
+  GameConfigType extends GameConfig,
+  GameStateType extends GameState,
+> extends GameHandler<GameStateType> {
+  private _game: GameInstance<GameConfigType, GameStateType>;
+  private _state: GameStateType;
+  private readonly undoStack = new UndoStack<GameStateType>();
+
+  constructor(
+    builder: GameBuilder<GameConfigType, GameStateType>,
+    config: GameConfigType,
+  ) {
+    super();
+    this._game = builder.build(config);
+    this._state = this._game.getInitialState();
+  }
+
+  private _editState(newState: GameStateType): void {
+    this._state = newState;
+    this.undoStack.push(this._state);
+    this.notifyChange();
+  }
+  getState(): GameStateType {
+    return this._state;
+  }
+  canUndo(): boolean {
+    return this.undoStack.canUndo();
+  }
+  canRedo(): boolean {
+    return this.undoStack.canRedo();
+  }
+  requestUndo(): void {
+    const prevState = this.undoStack.undo();
+    if (prevState != null) {
+      this._state = prevState;
+      this.notifyChange();
+    }
+  }
+  requestRedo(): void {
+    const prevState = this.undoStack.redo();
+    if (prevState != null) {
+      this._state = prevState;
+      this.notifyChange();
+    }
+  }
+
+  getScoreTypes(): ScoreType[] {
+    return this._game.getScoreTypes();
+  }
+  canIncrementScore(scoreID: string, playerIndex: number): boolean {
+    return this._game.canIncrementScore(this._state, scoreID, playerIndex);
+  }
+  incrementScore(scoreID: string, playerIndex: number): void {
+    this._editState(
+      this._game.incrementScore(this._state, scoreID, playerIndex),
+    );
+  }
+}
+
+// In future if desired:
+// export class OnlineGameHandler<
+//   GameStateType extends GameState,
+// > extends GameHandler<GameStateType> {}

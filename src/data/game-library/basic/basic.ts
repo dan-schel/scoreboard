@@ -1,18 +1,23 @@
-import { Game, GameState, ScoreSystem } from "../../game/game";
+import {
+  GameBuilder,
+  GameInstance,
+  GameState,
+  ScoreType,
+} from "../../game/game";
 import { BasicGameConfig, BasicGameConfigWriter } from "./basic-config";
 
-export class BasicGame extends Game<BasicGameConfig, BasicGameState> {
+export class BasicGameBuilder extends GameBuilder<
+  BasicGameConfig,
+  BasicGameState
+> {
   readonly id = "basic";
   readonly name = "Basic";
   readonly configWriter = new BasicGameConfigWriter();
 
-  getInitialState(_config: BasicGameConfig): BasicGameState {
-    return new BasicGameState(0, 0);
-  }
-
-  getScoreSystem(_config: BasicGameConfig): ScoreSystem {
-    // return new BasicScoreSystem(config);
-    return new BasicScoreSystem();
+  build(
+    config: BasicGameConfig,
+  ): GameInstance<BasicGameConfig, BasicGameState> {
+    return new BasicGameInstance(config);
   }
 }
 
@@ -38,28 +43,25 @@ export class BasicGameState extends GameState {
   }
 }
 
-export class BasicScoreSystem extends ScoreSystem {
-  // constructor(private readonly _config: BasicGameConfig) {
-  //   super();
-  // }
-
-  getScore(state: BasicGameState, playerIndex: number): number {
-    if (playerIndex === 0) {
-      return state.player1Score;
-    } else if (playerIndex === 1) {
-      return state.player2Score;
-    } else {
-      throw new Error("Invalid player index");
-    }
+export class BasicGameInstance extends GameInstance<
+  BasicGameConfig,
+  BasicGameState
+> {
+  getInitialState(): BasicGameState {
+    return new BasicGameState(0, 0);
   }
 
-  incrementScore(state: BasicGameState, playerIndex: number): BasicGameState {
-    if (playerIndex === 0) {
-      return state.with({ player1Score: state.player1Score + 1 });
-    } else if (playerIndex === 1) {
-      return state.with({ player2Score: state.player2Score + 1 });
-    } else {
-      throw new Error("Invalid player index");
-    }
-  }
+  getScoreTypes(): ScoreType[] {}
+
+  canIncrementScore(
+    state: BasicGameState,
+    scoreID: string,
+    playerIndex: number,
+  ): boolean {}
+
+  incrementScore(
+    state: BasicGameState,
+    scoreID: string,
+    playerIndex: number,
+  ): BasicGameState {}
 }

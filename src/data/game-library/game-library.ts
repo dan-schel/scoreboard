@@ -1,9 +1,9 @@
-import type { Game } from "../game/game";
-import { BasicGame } from "./basic/basic";
-import { Tennis } from "./tennis/tennis";
+import type { GameBuilder } from "../game/game";
+import { BasicGameBuilder } from "./basic/basic";
+import { TennisBuilder } from "./tennis/tennis";
 
-const gamesArray = [new BasicGame(), new Tennis()];
+const gamesArray = [new BasicGameBuilder(), new TennisBuilder()];
 
-export const gameLibrary = new Map<string, Game>(
+export const gameLibrary = new Map<string, GameBuilder>(
   gamesArray.map((x) => [x.id, x]),
 );

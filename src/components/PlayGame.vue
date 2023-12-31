@@ -3,62 +3,40 @@
   lang="ts"
   generic="GameConfigType extends GameConfig, GameStateType extends GameState"
 >
-import { Game, type GameState } from "@/data/game/game";
+import { GameBuilder, type GameState } from "@/data/game/game";
 import type { GameConfig } from "@/data/game/game-config";
-import {
-  GameStateManager,
-  LocalGameStateManager,
-  type StateUpdateType,
-} from "@/data/game/state-manager";
 import { onMounted, onUnmounted, ref, type Ref } from "vue";
-import UndoRedoButtons from "./UndoRedoButtons.vue";
+import { LocalGameHandler, type GameHandler } from "@/data/game/game-handler";
 
 const props = defineProps<{
-  game: Game<GameConfigType, GameStateType>;
+  game: GameBuilder<GameConfigType, GameStateType>;
   config: GameConfigType;
 }>();
 
-const gameState = ref(
-  props.game.getInitialState(props.config),
-) as Ref<GameStateType>;
-const stateManager = ref<GameStateManager<GameStateType>>(
-  new LocalGameStateManager(gameState.value),
-) as Ref<GameStateManager<GameStateType>>;
-const canUndo = ref(stateManager.value.canUndo());
-const canRedo = ref(stateManager.value.canRedo());
+const gameHandler = ref<GameHandler<GameStateType>>(
+  new LocalGameHandler(props.game, props.config),
+) as Ref<GameHandler<GameStateType>>;
 
-function handleStateUpdate(
-  newState: GameStateType,
-  _updateType: StateUpdateType,
-) {
-  gameState.value = newState;
-}
-function handleUndoRedoAvailabilityChange(
-  nowCanUndo: boolean,
-  nowCanRedo: boolean,
-) {
-  canUndo.value = nowCanUndo;
-  canRedo.value = nowCanRedo;
+const gameState = ref(gameHandler.value.getState()) as Ref<GameStateType>;
+const canUndo = ref(gameHandler.value.canUndo());
+const canRedo = ref(gameHandler.value.canUndo());
+
+function handleStateUpdate() {
+  gameState.value = gameHandler.value.getState();
 }
 
 onMounted(() => {
-  stateManager.value.addStateUpdateListener(handleStateUpdate);
-  stateManager.value.addUndoRedoAvailabilityListener(
-    handleUndoRedoAvailabilityChange,
-  );
+  gameHandler.value.addChangeListener(handleStateUpdate);
 });
-
 onUnmounted(() => {
-  stateManager.value.removeStateUpdateListener(handleStateUpdate);
-  stateManager.value.removeUndoRedoAvailabilityListener(
-    handleUndoRedoAvailabilityChange,
-  );
+  gameHandler.value.removeChangeListener(handleStateUpdate);
 });
 </script>
 
 <template>
   <p>Play game</p>
-  <UndoRedoButtons :state-manager="stateManager"></UndoRedoButtons>
+  <button @click="gameHandler.requestUndo()" :disabled="!canUndo">Undo</button>
+  <button @click="gameHandler.requestRedo()" :disabled="!canRedo">Redo</button>
 </template>
 
 <style scoped lang="scss">

@@ -3,14 +3,14 @@
   lang="ts"
   generic="GameConfigType extends GameConfig, GameStateType extends GameState"
 >
-import type { Game, GameState } from "@/data/game/game";
+import type { GameBuilder, GameState } from "@/data/game/game";
 import { GameConfig } from "@/data/game/game-config";
 import ConfigureGame from "./ConfigureGame.vue";
 import { ref, watch, type Ref } from "vue";
 import PlayGame from "./PlayGame.vue";
 
 const props = defineProps<{
-  game: Game<GameConfigType, GameStateType>;
+  game: GameBuilder<GameConfigType, GameStateType>;
 }>();
 
 const config = ref<GameConfigType | null>(null) as Ref<GameConfigType | null>;
