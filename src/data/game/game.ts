@@ -11,18 +11,11 @@ export abstract class Game<
 
   constructor() {}
 
-  abstract initialState(config: GameConfigType): GameStateType;
+  abstract getInitialState(config: GameConfigType): GameStateType;
+
+  abstract getScoreSystem(config: GameConfigType): ScoreSystem;
 }
 
-export abstract class GameState {
-  constructor() {}
-}
+export abstract class GameState {}
 
-// export abstract class GameStateMachine<
-//   GameConfigType extends GameConfig,
-//   GameStateType extends GameState,
-// > {
-//   constructor(readonly config: GameConfigType) {}
-
-//   abstract initialState(): GameStateType;
-// }
+export abstract class ScoreSystem {}

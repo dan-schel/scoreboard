@@ -6,17 +6,23 @@
 import type { Game, GameState } from "@/data/game/game";
 import { GameConfig } from "@/data/game/game-config";
 import ConfigureGame from "./ConfigureGame.vue";
-import { ref, type Ref } from "vue";
+import { ref, watch, type Ref } from "vue";
 import PlayGame from "./PlayGame.vue";
 
-const config = ref<GameConfigType | null>(null) as Ref<GameConfigType | null>;
-
-defineProps<{
+const props = defineProps<{
   game: Game<GameConfigType, GameStateType>;
 }>();
 
+const config = ref<GameConfigType | null>(null) as Ref<GameConfigType | null>;
+
+watch(
+  () => props.game,
+  () => {
+    config.value = null;
+  },
+);
+
 function handleGameConfigured(newConfig: GameConfigType) {
-  console.log("Config submitted", newConfig);
   config.value = newConfig;
 }
 </script>

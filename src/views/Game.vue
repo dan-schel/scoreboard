@@ -5,19 +5,20 @@ import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-const gameID = ref(route.params.game);
+const gameID = ref(route.params.game as string);
 watch(
   () => route.params.game,
   () => {
-    gameID.value = route.params.game;
+    gameID.value = route.params.game as string;
   },
 );
 const game = computed(() => {
-  return gameLibrary.get(gameID.value as string) ?? null;
+  return gameLibrary.get(gameID.value) ?? null;
 });
 </script>
 
 <template>
+  <RouterLink class="link" :to="{ name: 'home' }">&lt; Back home</RouterLink>
   <main v-if="game != null">
     <GameController :game="game"></GameController>
   </main>

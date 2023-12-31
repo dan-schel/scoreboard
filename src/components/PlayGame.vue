@@ -11,6 +11,7 @@ import {
   type StateUpdateType,
 } from "@/data/game/state-manager";
 import { onMounted, onUnmounted, ref, type Ref } from "vue";
+import UndoRedoButtons from "./UndoRedoButtons.vue";
 
 const props = defineProps<{
   game: Game<GameConfigType, GameStateType>;
@@ -18,11 +19,11 @@ const props = defineProps<{
 }>();
 
 const gameState = ref(
-  props.game.initialState(props.config),
+  props.game.getInitialState(props.config),
 ) as Ref<GameStateType>;
 const stateManager = ref<GameStateManager<GameStateType>>(
   new LocalGameStateManager(gameState.value),
-);
+) as Ref<GameStateManager<GameStateType>>;
 const canUndo = ref(stateManager.value.canUndo());
 const canRedo = ref(stateManager.value.canRedo());
 
@@ -57,8 +58,7 @@ onUnmounted(() => {
 
 <template>
   <p>Play game</p>
-  <button @click="stateManager.requestUndo()" :disabled="!canUndo">Undo</button>
-  <button @click="stateManager.requestRedo()" :disabled="!canRedo">Redo</button>
+  <UndoRedoButtons :state-manager="stateManager"></UndoRedoButtons>
 </template>
 
 <style scoped lang="scss">
