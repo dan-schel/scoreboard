@@ -5,16 +5,15 @@ import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-const params = ref(route.params);
-watch(route, () => {
-  // This is called even when navigating away from the page, hence the check.
-  if (route.name == "game") {
-    params.value = route.params;
-  }
-});
-
+const gameID = ref(route.params.game);
+watch(
+  () => route.params.game,
+  () => {
+    gameID.value = route.params.game;
+  },
+);
 const game = computed(() => {
-  return gameLibrary.get(params.value.game as string) ?? null;
+  return gameLibrary.get(gameID.value as string) ?? null;
 });
 </script>
 

@@ -2,7 +2,8 @@ import type { Game } from "../game/game";
 import { BasicGame } from "./basic/basic";
 import { Tennis } from "./tennis/tennis";
 
-export const gameLibrary = new Map<string, Game>([
-  ["basic", new BasicGame()],
-  ["tennis", new Tennis()],
-]);
+const gamesArray = [new BasicGame(), new Tennis()];
+
+export const gameLibrary = new Map<string, Game>(
+  gamesArray.map((x) => [x.id, x]),
+);
