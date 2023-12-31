@@ -8,6 +8,7 @@ import {
   GameConfigWriter,
   PlayerCount,
 } from "@/data/game/game-config";
+import { z } from "zod";
 
 export class BasicGameConfig extends GameConfig<BasicPlayerConfig> {
   static readonly default = new BasicGameConfig(
@@ -22,6 +23,24 @@ export class BasicGameConfig extends GameConfig<BasicPlayerConfig> {
     readonly requiredMargin: number,
   ) {
     super(players);
+  }
+
+  static readonly json = z
+    .object({
+      players: BasicPlayerConfig.json.array(),
+      winningScore: z.number(),
+      requiredMargin: z.number(),
+    })
+    .transform(
+      (x) => new BasicGameConfig(x.players, x.winningScore, x.requiredMargin),
+    );
+
+  toJSON(): z.input<typeof BasicGameConfig.json> {
+    return {
+      players: this.players.map((x) => x.toJSON()),
+      winningScore: this.winningScore,
+      requiredMargin: this.requiredMargin,
+    };
   }
 
   with({

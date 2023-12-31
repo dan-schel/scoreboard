@@ -1,5 +1,11 @@
 import { UndoStack } from "../game-utils/undo-stack";
-import type { GameBuilder, GameInstance, GameState, ScoreType } from "./game";
+import type {
+  Action,
+  GameBuilder,
+  GameInstance,
+  GameState,
+  ScoreType,
+} from "./game";
 import type { GameConfig } from "./game-config";
 
 export abstract class GameHandler<GameStateType extends GameState> {
@@ -21,8 +27,7 @@ export abstract class GameHandler<GameStateType extends GameState> {
   abstract requestRedo(): void;
 
   abstract getScoreTypes(): ScoreType[];
-  abstract canIncrementScore(scoreID: string, playerIndex: number): boolean;
-  abstract incrementScore(scoreID: string, playerIndex: number): void;
+  abstract do(action: Action): void;
 }
 
 export class LocalGameHandler<
@@ -74,13 +79,8 @@ export class LocalGameHandler<
   getScoreTypes(): ScoreType[] {
     return this._game.getScoreTypes();
   }
-  canIncrementScore(scoreID: string, playerIndex: number): boolean {
-    return this._game.canIncrementScore(this._state, scoreID, playerIndex);
-  }
-  incrementScore(scoreID: string, playerIndex: number): void {
-    this._editState(
-      this._game.incrementScore(this._state, scoreID, playerIndex),
-    );
+  do(action: Action): void {
+    this._editState(this._state.do(action, this._game.config));
   }
 }
 

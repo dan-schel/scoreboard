@@ -1,6 +1,7 @@
 import { PlayerColorConfigProp } from "../game/config-prop";
-import type { PlayerColor } from "./player-color";
+import { PlayerColors, type PlayerColor } from "./player-color";
 import { PlayerConfig, PlayerConfigWriter } from "../game/player-config";
+import { z } from "zod";
 
 export class BasicPlayerConfig extends PlayerConfig {
   static readonly twoPlayers = [
@@ -10,6 +11,18 @@ export class BasicPlayerConfig extends PlayerConfig {
 
   constructor(readonly color: PlayerColor) {
     super();
+  }
+
+  static readonly json = z
+    .object({
+      color: z.enum(PlayerColors),
+    })
+    .transform((x) => new BasicPlayerConfig(x.color));
+
+  toJSON(): z.input<typeof BasicPlayerConfig.json> {
+    return {
+      color: this.color,
+    };
   }
 
   with({ color }: { color?: PlayerColor }) {

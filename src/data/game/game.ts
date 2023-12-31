@@ -13,9 +13,10 @@ export abstract class GameBuilder<
   abstract build(
     config: GameConfigType,
   ): GameInstance<GameConfigType, GameStateType>;
-}
 
-export abstract class GameState {}
+  abstract serializeConfig(config: GameConfigType): string;
+  abstract deserializeConfig(input: string): GameConfigType;
+}
 
 export abstract class GameInstance<
   GameConfigType extends GameConfig = GameConfig,
@@ -25,31 +26,44 @@ export abstract class GameInstance<
 
   abstract getInitialState(): GameStateType;
 
+  abstract serializeState(state: GameStateType): string;
+  abstract deserializeState(input: string): GameStateType;
+
   abstract getScoreTypes(): ScoreType[];
+}
+
+export abstract class GameState<
+  GameConfigType extends GameConfig = GameConfig,
+  GameStateType extends GameState = any,
+> {
+  abstract do(action: Action, config: GameConfigType): GameStateType;
+}
+
+export abstract class ScoreType {
+  constructor(readonly id: string) {}
+}
+
+export type Action<T = unknown> = {
+  id: string;
+  data: T;
+};
+
+export abstract class IncrementScoreType<
+  GameStateType extends GameState,
+> extends ScoreType {
+  constructor(id: string) {
+    super(id);
+  }
+
+  abstract getScore(state: GameStateType, playerIndex: number): number;
 
   abstract canIncrementScore(
     state: GameStateType,
-    scoreID: string,
     playerIndex: number,
   ): boolean;
 
-  abstract incrementScore(
+  abstract getIncrementAction(
     state: GameStateType,
-    scoreID: string,
     playerIndex: number,
-  ): GameStateType;
-
-  // For basketball:
-  // abstract addScore(state, scoreID, playerIndex, )
-}
-
-export type ScoreEntryMethod =
-  | { type: "none" }
-  | { type: "increment" }
-  | { type: "discrete"; actions: { id: string; text: string }[] }
-  | { type: "add" }
-  | { type: "replace" };
-
-export class ScoreType {
-  constructor(readonly id: string) {}
+  ): Action;
 }
