@@ -2,7 +2,7 @@ import {
   GameBuilder,
   GameInstance,
   GameState,
-  IncrementScoreType,
+  SimpleScoreType,
   ScoreType,
   type Action,
 } from "../../game/game";
@@ -84,7 +84,7 @@ export class BasicGameState extends GameState<BasicGameConfig, BasicGameState> {
   }
 
   do(action: Action, _config: BasicGameConfig): BasicGameState {
-    if (action.id == "increment") {
+    if (action.id == IncrementAction.id) {
       return IncrementAction.execute(this, action.data);
     } else {
       throw new Error(`Unknown action "${action}".`);
@@ -92,12 +92,12 @@ export class BasicGameState extends GameState<BasicGameConfig, BasicGameState> {
   }
 }
 
-export class BasicScoreType extends IncrementScoreType<BasicGameState> {
-  getScore(state: BasicGameState, playerIndex: number): number {
+export class BasicScoreType extends SimpleScoreType<BasicGameState> {
+  getScoreString(state: BasicGameState, playerIndex: number): string {
     if (playerIndex == 0) {
-      return state.player1Score;
+      return state.player1Score.toFixed();
     } else if (playerIndex == 1) {
-      return state.player2Score;
+      return state.player2Score.toFixed();
     } else {
       throw new Error(`Invalid player index "${playerIndex}".`);
     }
@@ -111,6 +111,8 @@ export class BasicScoreType extends IncrementScoreType<BasicGameState> {
 }
 
 class IncrementAction {
+  static readonly id = "increment";
+
   static readonly json = z.object({
     playerIndex: z.number(),
   });
@@ -119,7 +121,7 @@ class IncrementAction {
     playerIndex: number,
   ): Action<z.input<typeof IncrementAction.json>> {
     return {
-      id: "increment",
+      id: IncrementAction.id,
       data: {
         playerIndex: playerIndex,
       },

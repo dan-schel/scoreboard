@@ -48,14 +48,14 @@ export type Action<T = unknown> = {
   data: T;
 };
 
-export abstract class IncrementScoreType<
+export abstract class SimpleScoreType<
   GameStateType extends GameState,
 > extends ScoreType {
   constructor(id: string) {
     super(id);
   }
 
-  abstract getScore(state: GameStateType, playerIndex: number): number;
+  abstract getScoreString(state: GameStateType, playerIndex: number): string;
 
   abstract canIncrementScore(
     state: GameStateType,
