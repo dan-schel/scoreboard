@@ -84,7 +84,7 @@ export class BasicGameState extends GameState<BasicGameConfig, BasicGameState> {
   }
 
   do(action: Action, _config: BasicGameConfig): BasicGameState {
-    if (action.id == IncrementAction.id) {
+    if (action.id === IncrementAction.id) {
       return IncrementAction.execute(this, action.data);
     } else {
       throw new Error(`Unknown action "${action}".`);
@@ -94,9 +94,9 @@ export class BasicGameState extends GameState<BasicGameConfig, BasicGameState> {
 
 export class BasicScoreType extends SimpleScoreType<BasicGameState> {
   getScoreString(state: BasicGameState, playerIndex: number): string {
-    if (playerIndex == 0) {
+    if (playerIndex === 0) {
       return state.player1Score.toFixed();
-    } else if (playerIndex == 1) {
+    } else if (playerIndex === 1) {
       return state.player2Score.toFixed();
     } else {
       throw new Error(`Invalid player index "${playerIndex}".`);
@@ -131,9 +131,9 @@ class IncrementAction {
   static execute(state: BasicGameState, data: unknown): BasicGameState {
     const { playerIndex } = IncrementAction.json.parse(data);
 
-    if (playerIndex == 0) {
+    if (playerIndex === 0) {
       return state.with({ player1Score: state.player1Score + 1 });
-    } else if (playerIndex == 1) {
+    } else if (playerIndex === 1) {
       return state.with({ player2Score: state.player2Score + 1 });
     } else {
       throw new Error(`Invalid player index "${playerIndex}".`);
