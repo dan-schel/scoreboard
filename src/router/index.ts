@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { uuid } from "@schel-d/js-utils";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,9 +10,15 @@ const router = createRouter({
       component: () => import("../views/Home.vue"),
     },
     {
-      path: "/:game",
+      path: "/:game/:uuid",
       name: "game",
       component: () => import("../views/Game.vue"),
+    },
+    {
+      path: "/:game",
+      redirect: (to) => {
+        return { path: `/${to.params.game}/${uuid()}` };
+      },
     },
     {
       path: "/:pathMatch(.*)*",

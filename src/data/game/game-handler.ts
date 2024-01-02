@@ -1,11 +1,5 @@
 import { UndoStack } from "../game-utils/undo-stack";
-import type {
-  Action,
-  GameBuilder,
-  GameInstance,
-  GameState,
-  ScoreType,
-} from "./game";
+import type { Action, GameInstance, GameState, ScoreType } from "./game";
 import type { GameConfig } from "./game-config";
 
 export abstract class GameHandler<GameStateType extends GameState> {
@@ -35,17 +29,15 @@ export class LocalGameHandler<
   GameConfigType extends GameConfig,
   GameStateType extends GameState,
 > extends GameHandler<GameStateType> {
-  private _game: GameInstance<GameConfigType, GameStateType>;
   private _state: GameStateType;
   private readonly undoStack = new UndoStack<GameStateType>();
 
   constructor(
-    builder: GameBuilder<GameConfigType, GameStateType>,
-    config: GameConfigType,
+    readonly game: GameInstance<GameConfigType, GameStateType>,
+    state: GameStateType,
   ) {
     super();
-    this._game = builder.build(config);
-    this._state = this._game.getInitialState();
+    this._state = state;
   }
 
   private _editState(newState: GameStateType): void {
@@ -78,13 +70,13 @@ export class LocalGameHandler<
   }
 
   getPlayerCount(): number {
-    return this._game.getPlayerCount();
+    return this.game.getPlayerCount();
   }
   getScoreTypes(): ScoreType[] {
-    return this._game.getScoreTypes();
+    return this.game.getScoreTypes();
   }
   do(action: Action): void {
-    this._editState(this._state.do(action, this._game.config));
+    this._editState(this._state.do(action, this.game.config));
   }
 }
 

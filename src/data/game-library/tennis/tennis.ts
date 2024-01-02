@@ -1,5 +1,3 @@
-import type { GameConfig } from "@/data/game/game-config";
-import type { PlayerConfig } from "@/data/game/player-config";
 import {
   GameBuilder,
   GameInstance,
@@ -15,13 +13,16 @@ export class TennisBuilder extends GameBuilder<TennisConfig, TennisState> {
   readonly name = "Tennis";
   readonly configWriter = new TennisConfigWriter();
 
-  build(config: TennisConfig): GameInstance<TennisConfig, TennisState> {
-    return new TennisGameInstance(config);
+  build(
+    config: TennisConfig,
+    uuid: string,
+  ): GameInstance<TennisConfig, TennisState> {
+    return new TennisGameInstance(this, config, uuid);
   }
-  serializeConfig(config: TennisConfig): string {
+  serializeConfig(config: TennisConfig): unknown {
     throw new Error("Method not implemented.");
   }
-  deserializeConfig(input: string): TennisConfig {
+  deserializeConfig(input: unknown): TennisConfig {
     throw new Error("Method not implemented.");
   }
 }
@@ -33,10 +34,10 @@ export class TennisGameInstance extends GameInstance<
   getInitialState(): TennisState {
     return new TennisState(TennisScore.zero, TennisScore.zero);
   }
-  serializeState(state: TennisState): string {
+  serializeState(state: TennisState): unknown {
     throw new Error("Method not implemented.");
   }
-  deserializeState(input: string): TennisState {
+  deserializeState(input: unknown): TennisState {
     throw new Error("Method not implemented.");
   }
   getScoreTypes(): ScoreType[] {
@@ -44,14 +45,14 @@ export class TennisGameInstance extends GameInstance<
   }
 }
 
-export class TennisState extends GameState {
+export class TennisState extends GameState<TennisConfig, TennisState> {
   constructor(
     readonly player1Score: TennisScore,
     readonly player2Score: TennisScore,
   ) {
     super();
   }
-  do(action: Action, config: GameConfig<PlayerConfig>) {
+  do(action: Action, config: TennisConfig): TennisState {
     throw new Error("Method not implemented.");
   }
 }

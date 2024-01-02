@@ -12,22 +12,27 @@ export abstract class GameBuilder<
 
   abstract build(
     config: GameConfigType,
+    uuid: string,
   ): GameInstance<GameConfigType, GameStateType>;
 
-  abstract serializeConfig(config: GameConfigType): string;
-  abstract deserializeConfig(input: string): GameConfigType;
+  abstract serializeConfig(config: GameConfigType): unknown;
+  abstract deserializeConfig(input: unknown): GameConfigType;
 }
 
 export abstract class GameInstance<
   GameConfigType extends GameConfig = GameConfig,
   GameStateType extends GameState = GameState,
 > {
-  constructor(readonly config: GameConfigType) {}
+  constructor(
+    readonly game: GameBuilder<GameConfigType, GameStateType>,
+    readonly config: GameConfigType,
+    readonly uuid: string,
+  ) {}
 
   abstract getInitialState(): GameStateType;
 
-  abstract serializeState(state: GameStateType): string;
-  abstract deserializeState(input: string): GameStateType;
+  abstract serializeState(state: GameStateType): unknown;
+  abstract deserializeState(input: unknown): GameStateType;
 
   getPlayerCount() {
     return this.config.players.length;

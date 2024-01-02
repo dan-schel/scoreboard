@@ -19,14 +19,15 @@ export class BasicGameBuilder extends GameBuilder<
 
   build(
     config: BasicGameConfig,
+    uuid: string,
   ): GameInstance<BasicGameConfig, BasicGameState> {
-    return new BasicGameInstance(config);
+    return new BasicGameInstance(this, config, uuid);
   }
-  serializeConfig(config: BasicGameConfig): string {
-    return JSON.stringify(config.toJSON());
+  serializeConfig(config: BasicGameConfig): unknown {
+    return config.toJSON();
   }
-  deserializeConfig(input: string): BasicGameConfig {
-    return BasicGameConfig.json.parse(JSON.parse(input));
+  deserializeConfig(input: unknown): BasicGameConfig {
+    return BasicGameConfig.json.parse(input);
   }
 }
 
@@ -37,11 +38,11 @@ export class BasicGameInstance extends GameInstance<
   getInitialState(): BasicGameState {
     return new BasicGameState(0, 0);
   }
-  serializeState(state: BasicGameState): string {
-    return JSON.stringify(state.toJSON());
+  serializeState(state: BasicGameState): unknown {
+    return state.toJSON();
   }
-  deserializeState(input: string): BasicGameState {
-    return BasicGameState.json.parse(JSON.parse(input));
+  deserializeState(input: unknown): BasicGameState {
+    return BasicGameState.json.parse(input);
   }
   getScoreTypes(): ScoreType[] {
     return [new BasicScoreType("points")];

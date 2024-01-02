@@ -6,12 +6,12 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 const gameID = ref(route.params.game as string);
-watch(
-  () => route.params.game,
-  () => {
-    gameID.value = route.params.game as string;
-  },
-);
+const uuid = ref(route.params.uuid as string);
+
+watch([() => route.params.game, () => route.params.uuid], () => {
+  gameID.value = route.params.game as string;
+  uuid.value = route.params.uuid as string;
+});
 const game = computed(() => {
   return gameLibrary.get(gameID.value) ?? null;
 });
@@ -20,7 +20,7 @@ const game = computed(() => {
 <template>
   <RouterLink class="link" :to="{ name: 'home' }">&lt; Back home</RouterLink>
   <main v-if="game != null">
-    <GameController :game="game"></GameController>
+    <GameController :game="game" :uuid="uuid"></GameController>
   </main>
   <main v-else class="not-found">
     <h1>Error 404 - Game not found</h1>

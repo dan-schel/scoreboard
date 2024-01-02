@@ -1,54 +1,55 @@
-<script
-  setup
-  lang="ts"
-  generic="GameConfigType extends GameConfig, GameStateType extends GameState"
->
-import { GameBuilder, type GameState } from "@/data/game/game";
-import type { GameConfig } from "@/data/game/game-config";
-import { onMounted, onUnmounted, ref, type Ref } from "vue";
-import { LocalGameHandler, type GameHandler } from "@/data/game/game-handler";
+<script setup lang="ts" generic="GameStateType extends GameState">
+import { type GameState } from "@/data/game/game";
+import { onMounted, onUnmounted, ref, watch, type Ref } from "vue";
+import { type GameHandler } from "@/data/game/game-handler";
 import ScoreDisplay from "./score-display/ScoreDisplay.vue";
 
 const props = defineProps<{
-  game: GameBuilder<GameConfigType, GameStateType>;
-  config: GameConfigType;
+  handler: GameHandler<GameStateType>;
 }>();
 
-const gameHandler = ref<GameHandler<GameStateType>>(
-  new LocalGameHandler(props.game, props.config),
-) as Ref<GameHandler<GameStateType>>;
-
-const gameState = ref(gameHandler.value.getState()) as Ref<GameStateType>;
-const canUndo = ref(gameHandler.value.canUndo());
-const canRedo = ref(gameHandler.value.canRedo());
+const gameState = ref(props.handler.getState()) as Ref<GameStateType>;
+const canUndo = ref(props.handler.canUndo());
+const canRedo = ref(props.handler.canRedo());
 
 function handleStateUpdate() {
-  gameState.value = gameHandler.value.getState();
-  canUndo.value = gameHandler.value.canUndo();
-  canRedo.value = gameHandler.value.canRedo();
+  gameState.value = props.handler.getState();
+  canUndo.value = props.handler.canUndo();
+  canRedo.value = props.handler.canRedo();
 }
 
+watch(
+  () => props.handler,
+  (newValue, oldValue) => {
+    if (oldValue != null) {
+      oldValue.removeChangeListener(handleStateUpdate);
+    }
+    newValue.addChangeListener(handleStateUpdate);
+    handleStateUpdate();
+  },
+);
+
 onMounted(() => {
-  gameHandler.value.addChangeListener(handleStateUpdate);
+  props.handler.addChangeListener(handleStateUpdate);
 });
 onUnmounted(() => {
-  gameHandler.value.removeChangeListener(handleStateUpdate);
+  props.handler.removeChangeListener(handleStateUpdate);
 });
 </script>
 
 <template>
   <p>Play game</p>
-  <button @click="gameHandler.requestUndo()" :disabled="!canUndo">Undo</button>
-  <button @click="gameHandler.requestRedo()" :disabled="!canRedo">Redo</button>
+  <button @click="handler.requestUndo()" :disabled="!canUndo">Undo</button>
+  <button @click="handler.requestRedo()" :disabled="!canRedo">Redo</button>
   <div>
-    <div v-for="i in gameHandler.getPlayerCount()" :key="i">
+    <div v-for="i in handler.getPlayerCount()" :key="i">
       <ScoreDisplay
-        v-for="scoreType in gameHandler.getScoreTypes()"
+        v-for="scoreType in handler.getScoreTypes()"
         :key="scoreType.id"
         :score="scoreType"
         :state="gameState"
         :playerIndex="i - 1"
-        @submit-action="(action) => gameHandler.do(action)"
+        @submit-action="(action) => handler.do(action)"
       >
       </ScoreDisplay>
     </div>

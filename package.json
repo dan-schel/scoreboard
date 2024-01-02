@@ -14,6 +14,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@schel-d/js-utils": "^2.0.1",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",
     "zod": "^3.22.4"
