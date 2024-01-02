@@ -10,7 +10,7 @@ const savedGames = ref(fetchAllSavedMatches());
 <template>
   <main>
     <h1>Scoreboard</h1>
-    <p>Start a new game:</p>
+    <h2>Start a new game:</h2>
     <ul>
       <li v-for="[id, game] in gameLibrary" :key="id">
         <RouterLink class="link" :to="{ path: `/${id}` }">{{
@@ -18,19 +18,29 @@ const savedGames = ref(fetchAllSavedMatches());
         }}</RouterLink>
       </li>
     </ul>
-    <p>Or load a saved game:</p>
-    <ul>
-      <li v-for="(save, i) in savedGames" :key="i">
-        <span v-if="save.error">Corrupted save.</span>
+    <h2>Or load a saved game:</h2>
+    <div class="saves">
+      <p v-if="savedGames.length == 0">No saved games to load.</p>
+
+      <template v-for="(save, i) in savedGames" :key="i">
+        <div class="save" v-if="save.error">
+          <h3>{{ save.game?.name ?? "Unknown game" }}</h3>
+          <p>Corrupted save.</p>
+          <p>{{ save.datetime }}</p>
+        </div>
         <RouterLink
+          class="save"
           v-else
-          class="link"
           :to="{ path: `/${save.game.id}/${save.instance.uuid}` }"
-          >{{ save.game.name }}</RouterLink
         >
-      </li>
-      <li v-if="savedGames.length == 0">No saved games to load.</li>
-    </ul>
+          <h3>{{ save.game.name }}</h3>
+          <p>
+            {{ save.state.toDisplayString(save.instance.config) }}
+          </p>
+          <p>{{ save.datetime }}</p>
+        </RouterLink>
+      </template>
+    </div>
   </main>
 </template>
 

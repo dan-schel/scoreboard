@@ -91,6 +91,12 @@ export class BasicGameState extends GameState<BasicGameConfig, BasicGameState> {
       throw new Error(`Unknown action "${action}".`);
     }
   }
+
+  toDisplayString(config: BasicGameConfig): string {
+    const p1 = `${config.players[0].color} ${this.player1Score.toFixed()}`;
+    const p2 = `${config.players[1].color} ${this.player2Score.toFixed()}`;
+    return `${p1} - ${p2}`;
+  }
 }
 
 export class BasicScoreType extends SimpleScoreType<BasicGameState> {

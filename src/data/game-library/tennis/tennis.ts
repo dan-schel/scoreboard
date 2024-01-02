@@ -55,4 +55,7 @@ export class TennisState extends GameState<TennisConfig, TennisState> {
   do(action: Action, config: TennisConfig): TennisState {
     throw new Error("Method not implemented.");
   }
+  toDisplayString(config: TennisConfig): string {
+    throw new Error("Method not implemented.");
+  }
 }
