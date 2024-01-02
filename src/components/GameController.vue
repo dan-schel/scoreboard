@@ -9,7 +9,7 @@ import ConfigureGame from "./ConfigureGame.vue";
 import { ref, watch, type Ref, onUnmounted } from "vue";
 import PlayGame from "./PlayGame.vue";
 import { LocalGameHandler, type GameHandler } from "@/data/game/game-handler";
-import { findSavedMatch, saveMatch } from "@/data/game/persistance";
+import { findSavedMatch, saveMatch } from "@/data/game/persistence";
 
 // Save the game after 200ms of inactivity.
 const saveTime = 200;
@@ -38,11 +38,13 @@ watch(
   () => {
     handler.value = null;
     const saved = findSavedMatch(props.game, props.uuid);
-    if (saved != null) {
-      handler.value = new LocalGameHandler(saved.game, saved.state);
-      console.log("Loaded saved game.");
-    } else {
+    if (saved == null) {
       console.log("No saved game found.");
+    } else if (saved.error) {
+      console.warn("Error loading saved game.");
+    } else {
+      handler.value = new LocalGameHandler(saved.instance, saved.state);
+      console.log("Loaded saved game.");
     }
   },
   { immediate: true },

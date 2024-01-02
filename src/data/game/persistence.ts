@@ -1,29 +1,41 @@
 import { z } from "zod";
 import type { GameBuilder, GameInstance, GameState } from "./game";
 import type { GameConfig } from "./game-config";
+import { gameLibrary } from "../game-library/game-library";
 
 const matchesLSKey = "scoreboard-matches";
 const maxMatchesToSave = 10;
 
-const matchJson = z
-  .object({
-    game: z.string(),
-    uuid: z.string(),
-    config: z.unknown(),
-    state: z.unknown(),
-    datetime: z.coerce.date(),
-  })
-  .array();
+const matchJsonSchema = z.object({
+  game: z.string(),
+  uuid: z.string(),
+  config: z.unknown(),
+  state: z.unknown(),
+  datetime: z.coerce.date(),
+});
 
-export type LoadedGame<GameStateType extends GameState> = {
-  game: GameInstance<GameConfig, GameStateType>;
+const matchesJsonSchema = matchJsonSchema.array();
+
+export type SuccessfullyLoadedGame<GameStateType extends GameState> = {
+  game: GameBuilder<GameConfig, GameState>;
+  instance: GameInstance<GameConfig, GameStateType>;
   state: GameStateType;
+  error: false;
+  datetime: Date;
 };
+export type CorruptedSaveGame = {
+  game: GameBuilder<GameConfig, GameState> | null;
+  error: true;
+  datetime: Date;
+};
+export type LoadResults<GameStateType extends GameState> =
+  | SuccessfullyLoadedGame<GameStateType>
+  | CorruptedSaveGame;
 
 export function findSavedMatch<GameStateType extends GameState>(
   game: GameBuilder<GameConfig, GameStateType>,
   uuid: string,
-): LoadedGame<GameStateType> | null {
+): LoadResults<GameStateType> | null {
   const allMatches = tryLoadMatches();
 
   const match = allMatches.find(
@@ -32,19 +44,25 @@ export function findSavedMatch<GameStateType extends GameState>(
 
   if (match == null) {
     return null;
+  } else {
+    return parseGame(match, game);
   }
+}
 
-  try {
-    const config = game.deserializeConfig(match.config);
-    const loadedGame = game.build(config, uuid);
-    return {
-      game: loadedGame,
-      state: loadedGame.deserializeState(match.state),
-    };
-  } catch (e) {
-    console.warn("Found match, but failed to deserialize config/state.", e);
-    return null;
-  }
+export function fetchAllSavedMatches(): LoadResults<GameState>[] {
+  const allMatches = tryLoadMatches();
+  return allMatches.map((match) => {
+    const game = gameLibrary.get(match.game);
+    if (game == null) {
+      return {
+        game: null,
+        error: true,
+        datetime: match.datetime,
+      };
+    } else {
+      return parseGame(match, game);
+    }
+  });
 }
 
 export function saveMatch<GameStateType extends GameState>(
@@ -76,14 +94,14 @@ export function saveMatch<GameStateType extends GameState>(
   saveMatches(allMatches);
 }
 
-function tryLoadMatches(): z.infer<typeof matchJson> {
+function tryLoadMatches(): z.infer<typeof matchesJsonSchema> {
   const matchesJson = localStorage.getItem(matchesLSKey);
   if (matchesJson === null) {
     return [];
   }
 
   try {
-    const matches = matchJson.parse(JSON.parse(matchesJson));
+    const matches = matchesJsonSchema.parse(JSON.parse(matchesJson));
     matches.sort((a, b) => b.datetime.getTime() - a.datetime.getTime());
     return matches;
   } catch (e) {
@@ -92,7 +110,30 @@ function tryLoadMatches(): z.infer<typeof matchJson> {
   }
 }
 
-function saveMatches(matches: z.infer<typeof matchJson>) {
+function parseGame<GameStateType extends GameState>(
+  match: z.infer<typeof matchJsonSchema>,
+  game: GameBuilder<GameConfig, GameStateType>,
+): LoadResults<GameStateType> {
+  try {
+    const config = game.deserializeConfig(match.config);
+    const loadedGame = game.build(config, match.uuid);
+    return {
+      game: game,
+      instance: loadedGame,
+      state: loadedGame.deserializeState(match.state),
+      error: false,
+      datetime: match.datetime,
+    };
+  } catch (e) {
+    return {
+      game: game,
+      error: true,
+      datetime: match.datetime,
+    };
+  }
+}
+
+function saveMatches(matches: z.infer<typeof matchesJsonSchema>) {
   // Only save the most recent 10.
   matches.sort((a, b) => b.datetime.getTime() - a.datetime.getTime());
   matches.splice(maxMatchesToSave);
