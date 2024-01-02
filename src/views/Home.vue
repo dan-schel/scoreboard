@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { gameLibrary } from "@/data/game-library/game-library";
-import { fetchAllSavedMatches } from "@/data/game/persistence";
-import { ref } from "vue";
 import { RouterLink } from "vue-router";
-
-const savedGames = ref(fetchAllSavedMatches());
+import SavedGames from "@/components/SavedGames.vue";
 </script>
 
 <template>
@@ -19,28 +16,7 @@ const savedGames = ref(fetchAllSavedMatches());
       </li>
     </ul>
     <h2>Or load a saved game:</h2>
-    <div class="saves">
-      <p v-if="savedGames.length == 0">No saved games to load.</p>
-
-      <template v-for="(save, i) in savedGames" :key="i">
-        <div class="save" v-if="save.error">
-          <h3>{{ save.game?.name ?? "Unknown game" }}</h3>
-          <p>Corrupted save.</p>
-          <p>{{ save.datetime }}</p>
-        </div>
-        <RouterLink
-          class="save"
-          v-else
-          :to="{ path: `/${save.game.id}/${save.instance.uuid}` }"
-        >
-          <h3>{{ save.game.name }}</h3>
-          <p>
-            {{ save.state.toDisplayString(save.instance.config) }}
-          </p>
-          <p>{{ save.datetime }}</p>
-        </RouterLink>
-      </template>
-    </div>
+    <SavedGames class="saves-list" />
   </main>
 </template>
 
@@ -61,5 +37,8 @@ ul {
 }
 li {
   margin-bottom: 0.5rem;
+}
+.saves-list {
+  max-width: 30rem;
 }
 </style>
