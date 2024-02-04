@@ -12,7 +12,7 @@
   }
 
   &::after {
-    // Show above content.
+    // Show above ::before, but below content.
     z-index: 0;
 
     content: "";
@@ -21,23 +21,25 @@
     top: 0;
     right: 0;
     bottom: 0;
-    background-color: #ffffff;
+    background-color: #ffffff00;
+    border: 0.2rem solid #ffffff00;
     border-radius: var(--button-rounding);
 
-    opacity: 0%;
-    transition: opacity 0.05s;
+    transition:
+      background-color 0.05s,
+      border-color 0.05s;
   }
 
   &:hover,
   &:focus-visible {
     &::after {
-      opacity: 20%;
+      border-color: #ffffff40;
     }
   }
 
   &:active {
     &::after {
-      opacity: 40%;
+      background-color: #ffffff40;
     }
   }
 
