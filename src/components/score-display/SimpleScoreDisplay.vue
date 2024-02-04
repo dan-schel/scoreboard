@@ -23,17 +23,23 @@ function handleButtonClick() {
 </script>
 
 <template>
-  <button @click="handleButtonClick" :disabled="!canIncrement">
+  <button
+    @click="handleButtonClick"
+    :disabled="!canIncrement"
+    :class="`accent-${score.getPlayerColor(playerIndex)}`"
+  >
     <p>{{ score.getScoreString(state as GameStateType, playerIndex) }}</p>
   </button>
 </template>
 
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
+@use "@/assets/player-colors" as colors;
 
 button {
   @include template.button-filled;
   @include template.content-text;
+  @include colors.accent-classes;
   align-items: center;
   justify-content: center;
 }

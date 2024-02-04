@@ -5,7 +5,7 @@ import { z } from "zod";
 
 export class BasicPlayerConfig extends PlayerConfig {
   static readonly twoPlayers = [
-    new BasicPlayerConfig("red"),
+    new BasicPlayerConfig("green"),
     new BasicPlayerConfig("blue"),
   ];
 

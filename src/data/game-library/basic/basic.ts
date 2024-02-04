@@ -1,3 +1,4 @@
+import type { PlayerColor } from "@/data/game-utils/player-color";
 import {
   GameBuilder,
   GameInstance,
@@ -45,7 +46,7 @@ export class BasicGameInstance extends GameInstance<
     return BasicGameState.json.parse(input)(this.config);
   }
   getScoreTypes(): ScoreType[] {
-    return [new BasicScoreType("points")];
+    return [new BasicScoreType("points", this.config)];
   }
 }
 
@@ -105,6 +106,16 @@ export class BasicGameState extends GameState<BasicGameState> {
 }
 
 export class BasicScoreType extends SimpleScoreType<BasicGameState> {
+  constructor(
+    id: string,
+    readonly config: BasicGameConfig,
+  ) {
+    super(id);
+  }
+
+  getPlayerColor(playerIndex: number): PlayerColor {
+    return this.config.players[playerIndex].color;
+  }
   getScoreString(state: BasicGameState, playerIndex: number): string {
     if (playerIndex === 0) {
       return state.player1Score.toFixed();

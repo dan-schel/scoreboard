@@ -1,3 +1,4 @@
+import type { PlayerColor } from "../game-utils/player-color";
 import type { GameConfig, GameConfigWriter } from "./game-config";
 
 export abstract class GameBuilder<
@@ -60,6 +61,8 @@ export abstract class SimpleScoreType<
   constructor(id: string) {
     super(id);
   }
+
+  abstract getPlayerColor(playerIndex: number): PlayerColor;
 
   abstract getScoreString(state: GameStateType, playerIndex: number): string;
 

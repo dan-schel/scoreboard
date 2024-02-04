@@ -1,0 +1,18 @@
+@mixin accent-classes {
+  &.accent-orange,
+  .accent-orange {
+    --color-accent: var(--color-accent-orange);
+  }
+  &.accent-green,
+  .accent-green {
+    --color-accent: var(--color-accent-green);
+  }
+  &.accent-blue,
+  .accent-blue {
+    --color-accent: var(--color-accent-blue);
+  }
+  &.accent-purple,
+  .accent-purple {
+    --color-accent: var(--color-accent-purple);
+  }
+}
