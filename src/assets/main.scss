@@ -1,141 +1,54 @@
 @use "css-template/import" as template;
+@use "sass:meta";
+
+@function scoreboard-paper($shade) {
+  @return #1d1e2e;
+}
+
+@function scoreboard-ink($shade) {
+  @return hsla(220, 100%, calc(80% + $shade * 0.2%), calc($shade * 1%));
+}
+
+@function theme-scoreboard-definition() {
+  @return template.theme-define(
+    $paper-shade-function: meta.get-function("scoreboard-paper"),
+    $ink-shade-function: meta.get-function("scoreboard-ink"),
+    $color-accent: #4f8fee,
+    $color-on-accent: #1d1e2e,
+    $color-shadow-100: black,
+    $color-shadow-30: rgba(0, 0, 0, 80%),
+    $color-shadow-20: rgba(0, 0, 0, 60%),
+    $color-shadow-10: rgba(0, 0, 0, 20%)
+  );
+}
 
 @include template.init(
+  $themes: (
+    "scoreboard": theme-scoreboard-definition(),
+  ),
   $custom-colors: (
+    "error": (
+      "scoreboard": #ff7171,
+    ),
     "red": (
-      "light": #ed1a2c,
-      "dark": #ed1a2c,
-    ),
-    "on-red": (
-      "light": #ffffff,
-      "dark": #ffffff,
-    ),
-    "red-gradient-1": (
-      "light": #ff3500,
-      "dark": #ff3500,
-    ),
-    "red-gradient-2": (
-      "light": #dc0057,
-      "dark": #dc0057,
-    ),
-    "orange": (
-      "light": #ee7100,
-      "dark": #ee7100,
-    ),
-    "on-orange": (
-      "light": #ffffff,
-      "dark": #ffffff,
-    ),
-    "orange-gradient-1": (
-      "light": #ffa000,
-      "dark": #ffa000,
-    ),
-    "orange-gradient-2": (
-      "light": #dc4200,
-      "dark": #dc4200,
-    ),
-    "yellow": (
-      "light": #f3c500,
-      "dark": #f3c500,
-    ),
-    "on-yellow": (
-      "light": #000000,
-      "dark": #000000,
-    ),
-    "yellow-gradient-1": (
-      "light": #e8e500,
-      "dark": #e8e500,
-    ),
-    "yellow-gradient-2": (
-      "light": #fea400,
-      "dark": #fea400,
+      "scoreboard": #ff7171,
     ),
     "green": (
-      "light": #47c10b,
-      "dark": #47c10b,
-    ),
-    "on-green": (
-      "light": #ffffff,
-      "dark": #ffffff,
-    ),
-    "green-gradient-1": (
-      "light": #88db00,
-      "dark": #88db00,
-    ),
-    "green-gradient-2": (
-      "light": #00a517,
-      "dark": #00a517,
-    ),
-    "cyan": (
-      "light": #00e2b6,
-      "dark": #00e2b6,
-    ),
-    "on-cyan": (
-      "light": #000000,
-      "dark": #000000,
-    ),
-    "cyan-gradient-1": (
-      "light": #00ffa4,
-      "dark": #00ffa4,
-    ),
-    "cyan-gradient-2": (
-      "light": #00c4c8,
-      "dark": #00c4c8,
+      "scoreboard": #7cc263,
     ),
     "blue": (
-      "light": #0084f1,
-      "dark": #0084f1,
+      "scoreboard": #4f8fee,
     ),
-    "on-blue": (
-      "light": #ffffff,
-      "dark": #ffffff,
-    ),
-    "blue-gradient-1": (
-      "light": #00b0ff,
-      "dark": #00b0ff,
-    ),
-    "blue-gradient-2": (
-      "light": #005ae4,
-      "dark": #005ae4,
+    "orange": (
+      "scoreboard": #f09561,
     ),
     "purple": (
-      "light": #8200f1,
-      "dark": #8200f1,
-    ),
-    "on-purple": (
-      "light": #ffffff,
-      "dark": #ffffff,
-    ),
-    "purple-gradient-1": (
-      "light": #a900ff,
-      "dark": #a900ff,
-    ),
-    "purple-gradient-2": (
-      "light": #5c00e4,
-      "dark": #5c00e4,
-    ),
-    "pink": (
-      "light": #db00be,
-      "dark": #db00be,
-    ),
-    "on-pink": (
-      "light": #ffffff,
-      "dark": #ffffff,
-    ),
-    "pink-gradient-1": (
-      "light": #ff0098,
-      "dark": #ff0098,
-    ),
-    "pink-gradient-2": (
-      "light": #b600e4,
-      "dark": #b600e4,
-    ),
-    "error": (
-      "light": #dc0f0f,
-      "dark": #ff5252,
+      "scoreboard": #c58aff,
     ),
   )
 );
+
+@include template.theme-apply-base("scoreboard");
 
 @font-face {
   font-family: "Space Grotesk";
@@ -172,11 +85,4 @@ body,
 #app {
   min-height: 100vh;
   min-height: 100svh;
-}
-
-:root.light {
-  @include template.theme-light;
-}
-:root.dark {
-  @include template.theme-dark;
 }
