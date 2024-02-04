@@ -41,7 +41,7 @@ onUnmounted(() => {
   <p>Play game</p>
   <button @click="handler.requestUndo()" :disabled="!canUndo">Undo</button>
   <button @click="handler.requestRedo()" :disabled="!canRedo">Redo</button>
-  <div>
+  <div class="players">
     <div v-for="i in handler.getPlayerCount()" :key="i">
       <ScoreDisplay
         v-for="scoreType in handler.getScoreTypes()"
@@ -59,7 +59,9 @@ onUnmounted(() => {
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
 
-button {
-  @include template.button-classic;
+.players {
+  display: grid;
+  grid-template-columns: 30rem 30rem;
+  gap: 1rem;
 }
 </style>

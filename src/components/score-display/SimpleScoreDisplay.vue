@@ -24,12 +24,17 @@ function handleButtonClick() {
 
 <template>
   <button @click="handleButtonClick" :disabled="!canIncrement">
-    {{ score.getScoreString(state as GameStateType, playerIndex) }}
+    <p>{{ score.getScoreString(state as GameStateType, playerIndex) }}</p>
   </button>
 </template>
 
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
 
-// TODO: Add your code here.
+button {
+  @include template.button-filled;
+  @include template.content-text;
+  align-items: center;
+  justify-content: center;
+}
 </style>

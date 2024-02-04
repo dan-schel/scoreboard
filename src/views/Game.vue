@@ -18,7 +18,6 @@ const game = computed(() => {
 </script>
 
 <template>
-  <RouterLink class="link" :to="{ name: 'home' }">&lt; Back home</RouterLink>
   <main v-if="game != null">
     <GameController :game="game" :uuid="uuid"></GameController>
   </main>
