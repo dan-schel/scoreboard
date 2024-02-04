@@ -1,0 +1,54 @@
+@use "@/assets/css-template/import" as template;
+
+@mixin button-solid-color {
+  @include template.button-base;
+
+  --content-color: var(--color-on-accent);
+
+  &::before {
+    transition: opacity 0.05s;
+    background-color: var(--color-accent);
+    z-index: -1;
+  }
+
+  &::after {
+    // Show above content.
+    z-index: 0;
+
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ffffff;
+    border-radius: var(--button-rounding);
+
+    opacity: 0%;
+    transition: opacity 0.05s;
+  }
+
+  &:hover,
+  &:focus-visible {
+    &::after {
+      opacity: 20%;
+    }
+  }
+
+  &:active {
+    &::after {
+      opacity: 40%;
+    }
+  }
+
+  &:disabled,
+  &[disabled] {
+    // Set back to normal color. 50% opacity is also applied on top of this.
+    --content-color: var(--color-ink-80);
+
+    &::before {
+      background-color: transparent;
+      border: var(--button-outline) solid var(--color-ink-10);
+    }
+  }
+}
