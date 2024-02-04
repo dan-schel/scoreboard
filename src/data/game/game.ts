@@ -40,13 +40,9 @@ export abstract class GameInstance<
   abstract getScoreTypes(): ScoreType[];
 }
 
-export abstract class GameState<
-  GameConfigType extends GameConfig = GameConfig,
-  GameStateType extends GameState = any,
-> {
-  abstract do(action: Action, config: GameConfigType): GameStateType;
-
-  abstract toDisplayString(config: GameConfigType): string;
+export abstract class GameState<GameStateType extends GameState = any> {
+  abstract do(action: Action): GameStateType;
+  abstract toDisplayString(): string;
 }
 
 export abstract class ScoreType {

@@ -76,7 +76,7 @@ export class LocalGameHandler<
     return this.game.getScoreTypes();
   }
   do(action: Action): void {
-    this._editState(this._state.do(action, this.game.config));
+    this._editState(this._state.do(action));
   }
 }
 

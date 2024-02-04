@@ -36,21 +36,22 @@ export class BasicGameInstance extends GameInstance<
   BasicGameState
 > {
   getInitialState(): BasicGameState {
-    return new BasicGameState(0, 0);
+    return new BasicGameState(this.config, 0, 0);
   }
   serializeState(state: BasicGameState): unknown {
     return state.toJSON();
   }
   deserializeState(input: unknown): BasicGameState {
-    return BasicGameState.json.parse(input);
+    return BasicGameState.json.parse(input)(this.config);
   }
   getScoreTypes(): ScoreType[] {
     return [new BasicScoreType("points")];
   }
 }
 
-export class BasicGameState extends GameState<BasicGameConfig, BasicGameState> {
+export class BasicGameState extends GameState<BasicGameState> {
   constructor(
+    readonly config: BasicGameConfig,
     readonly player1Score: number,
     readonly player2Score: number,
   ) {
@@ -62,7 +63,10 @@ export class BasicGameState extends GameState<BasicGameConfig, BasicGameState> {
       player1Score: z.number(),
       player2Score: z.number(),
     })
-    .transform((x) => new BasicGameState(x.player1Score, x.player2Score));
+    .transform(
+      (x) => (config: BasicGameConfig) =>
+        new BasicGameState(config, x.player1Score, x.player2Score),
+    );
 
   toJSON(): z.input<typeof BasicGameState.json> {
     return {
@@ -79,12 +83,13 @@ export class BasicGameState extends GameState<BasicGameConfig, BasicGameState> {
     player2Score?: number;
   }): BasicGameState {
     return new BasicGameState(
+      this.config,
       player1Score ?? this.player1Score,
       player2Score ?? this.player2Score,
     );
   }
 
-  do(action: Action, _config: BasicGameConfig): BasicGameState {
+  do(action: Action): BasicGameState {
     if (action.id === IncrementAction.id) {
       return IncrementAction.execute(this, action.data);
     } else {
@@ -92,9 +97,9 @@ export class BasicGameState extends GameState<BasicGameConfig, BasicGameState> {
     }
   }
 
-  toDisplayString(config: BasicGameConfig): string {
-    const p1 = `${config.players[0].color} ${this.player1Score.toFixed()}`;
-    const p2 = `${config.players[1].color} ${this.player2Score.toFixed()}`;
+  toDisplayString(): string {
+    const p1 = `${this.config.players[0].color} ${this.player1Score.toFixed()}`;
+    const p2 = `${this.config.players[1].color} ${this.player2Score.toFixed()}`;
     return `${p1} - ${p2}`;
   }
 }

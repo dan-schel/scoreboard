@@ -32,7 +32,7 @@ export class TennisGameInstance extends GameInstance<
   TennisState
 > {
   getInitialState(): TennisState {
-    return new TennisState(TennisScore.zero, TennisScore.zero);
+    return new TennisState(this.config, TennisScore.zero, TennisScore.zero);
   }
   serializeState(state: TennisState): unknown {
     throw new Error("Method not implemented.");
@@ -45,17 +45,18 @@ export class TennisGameInstance extends GameInstance<
   }
 }
 
-export class TennisState extends GameState<TennisConfig, TennisState> {
+export class TennisState extends GameState<TennisState> {
   constructor(
+    readonly config: TennisConfig,
     readonly player1Score: TennisScore,
     readonly player2Score: TennisScore,
   ) {
     super();
   }
-  do(action: Action, config: TennisConfig): TennisState {
+  do(action: Action): TennisState {
     throw new Error("Method not implemented.");
   }
-  toDisplayString(config: TennisConfig): string {
+  toDisplayString(): string {
     throw new Error("Method not implemented.");
   }
 }
