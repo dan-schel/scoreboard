@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { uuid } from "@schel-d/js-utils";
+import { uuid } from "@dan-schel/js-utils";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
