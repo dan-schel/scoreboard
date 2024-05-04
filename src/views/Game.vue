@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import GameController from "@/components/GameController.vue";
+import Viewport from "@/components/Viewport.vue";
 import { gameLibrary } from "@/data/game-library/game-library";
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
@@ -18,22 +19,24 @@ const game = computed(() => {
 </script>
 
 <template>
-  <main v-if="game != null">
-    <GameController :game="game" :uuid="uuid"></GameController>
-  </main>
-  <main v-else class="not-found">
-    <h1>Error 404 - Game not found</h1>
-    <p>This page doesn&apos;t exist, at least not anymore!</p>
-    <p>
-      The game you&apos;re looking for might have been renamed or removed. Check
-      the homepage to see which games are available.
-    </p>
-    <p>
-      <RouterLink class="link" :to="{ name: 'home' }">
-        Here&apos;s a link to the homepage.
-      </RouterLink>
-    </p>
-  </main>
+  <Viewport>
+    <main v-if="game != null">
+      <GameController :game="game" :uuid="uuid"></GameController>
+    </main>
+    <main v-else class="not-found">
+      <h1>Error 404 - Game not found</h1>
+      <p>This page doesn&apos;t exist, at least not anymore!</p>
+      <p>
+        The game you&apos;re looking for might have been renamed or removed.
+        Check the homepage to see which games are available.
+      </p>
+      <p>
+        <RouterLink class="link" :to="{ name: 'home' }">
+          Here&apos;s a link to the homepage.
+        </RouterLink>
+      </p>
+    </main>
+  </Viewport>
 </template>
 
 <style scoped lang="scss">

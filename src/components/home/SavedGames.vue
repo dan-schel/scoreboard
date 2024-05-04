@@ -11,12 +11,12 @@ const formatter = new Intl.DateTimeFormat("en", {
 
 <template>
   <div class="saves">
-    <p v-if="savedGames.length == 0">No saved games to load.</p>
+    <p v-if="savedGames.length == 0" class="empty">No saved games to load.</p>
 
     <template v-for="(save, i) in savedGames" :key="i">
       <div class="save corrupted" v-if="save.error" disabled>
-        <p class="title">{{ save.game?.name ?? "Unknown game" }}</p>
-        <p class="description">Corrupted save</p>
+        <p class="game">{{ save.game?.name ?? "Unknown game" }}</p>
+        <p class="state">Corrupted save</p>
         <p class="date">
           {{ formatter.format(save.datetime) }}
         </p>
@@ -26,9 +26,9 @@ const formatter = new Intl.DateTimeFormat("en", {
         v-else
         :to="{ path: `/${save.game.id}/${save.instance.uuid}` }"
       >
-        <p class="title">{{ save.game.name }}</p>
-        <p class="description">
-          {{ save.state.toDisplayString(save.instance.config) }}
+        <p class="game">{{ save.game.name }}</p>
+        <p class="state">
+          {{ save.state.toDisplayString() }}
         </p>
         <p class="date">
           {{ formatter.format(save.datetime) }}
@@ -42,26 +42,32 @@ const formatter = new Intl.DateTimeFormat("en", {
 @use "@/assets/css-template/import" as template;
 
 .saves {
-  gap: 0.5rem;
+  gap: 4rem;
 }
-.save {
-  @include template.button-filled-neutral;
-  padding: 1rem;
 
-  &.corrupted .description {
+.empty {
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--color-ink-60);
+}
+
+.save {
+  .game {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .state {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--color-ink-100);
+    margin-bottom: 1.5rem;
+  }
+  .date {
+    font-size: 2rem;
+  }
+
+  &.corrupted .state {
     color: var(--color-error);
   }
-}
-.title {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--color-ink-100);
-  margin-bottom: 0.5rem;
-}
-.description {
-  margin-bottom: 1rem;
-}
-.date {
-  font-size: 0.8rem;
 }
 </style>

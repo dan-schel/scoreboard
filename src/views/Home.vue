@@ -1,44 +1,56 @@
 <script setup lang="ts">
-import { gameLibrary } from "@/data/game-library/game-library";
-import { RouterLink } from "vue-router";
-import SavedGames from "@/components/SavedGames.vue";
+import Viewport from "@/components/Viewport.vue";
+import SavedGames from "@/components/home/SavedGames.vue";
+import TopGames from "@/components/home/TopGames.vue";
 </script>
 
 <template>
-  <main>
-    <h1>Scoreboard</h1>
-    <h2>Start a new game:</h2>
-    <ul>
-      <li v-for="[id, game] in gameLibrary" :key="id">
-        <RouterLink class="link" :to="{ path: `/${id}` }">{{
-          game.name
-        }}</RouterLink>
-      </li>
-    </ul>
-    <h2>Or load a saved game:</h2>
-    <SavedGames class="saves-list" />
-  </main>
+  <Viewport>
+    <main>
+      <div class="new-game">
+        <h1>SCOREBOARD</h1>
+        <TopGames class="top-games"></TopGames>
+      </div>
+      <div class="history">
+        <h2>History</h2>
+        <SavedGames class="saves-list" />
+      </div>
+    </main>
+  </Viewport>
 </template>
 
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
 
 main {
-  padding: 2rem;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4rem;
+  gap: 4rem;
+  flex-grow: 1;
 }
-h1 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--color-ink-100);
+
+.new-game {
+  h1 {
+    font-size: 6rem;
+    font-weight: bold;
+    color: var(--color-ink-100);
+    margin-bottom: 2rem;
+  }
+  .top-games {
+    flex-grow: 1;
+  }
 }
-ul {
-  margin-left: 1.5rem;
-}
-li {
-  margin-bottom: 0.5rem;
-}
-.saves-list {
-  max-width: 30rem;
+.history {
+  h2 {
+    font-size: 4rem;
+    font-weight: bold;
+    color: var(--color-ink-100);
+
+    // Line up with 6rem tall "SCOREBOARD" title.
+    margin-top: 2rem;
+
+    margin-bottom: 3rem;
+  }
 }
 </style>

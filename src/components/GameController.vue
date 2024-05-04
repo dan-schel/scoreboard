@@ -69,7 +69,7 @@ function handleStateUpdate() {
       saveMatch(handlerValue.game, handlerValue.getState());
       console.log("Saved game.");
     }
-  }, saveTime);
+  }, saveTime) as unknown as number;
 }
 
 onUnmounted(() => {
