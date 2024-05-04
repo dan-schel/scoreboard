@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { gameLibrary } from "@/data/game-library/game-library";
 import { RouterLink } from "vue-router";
+import PhTennisBallFill from "@/components/icons/PhTennisBallFill.vue";
+import PhSquaresFourFill from "../icons/PhSquaresFourFill.vue";
+import PhNumberSquareFourFill from "../icons/PhNumberSquareFourFill.vue";
+import PhDiceThreeBold from "../icons/PhDiceThreeBold.vue";
 </script>
 
 <template>
@@ -10,12 +14,20 @@ import { RouterLink } from "vue-router";
       :key="id"
       :to="{ path: `/${id}` }"
       class="game"
+      :class="{
+        'accent-blue': id == 'basic',
+        'accent-green': id == 'tennis',
+      }"
     >
+      <PhNumberSquareFourFill v-if="id == 'basic'"></PhNumberSquareFourFill>
+      <PhTennisBallFill v-else-if="id == 'tennis'"></PhTennisBallFill>
+      <PhDiceThreeBold v-else></PhDiceThreeBold>
       <p>{{ game.name }}</p>
     </RouterLink>
-    <div class="more">
+    <button class="more">
+      <PhSquaresFourFill></PhSquaresFourFill>
       <p>Other</p>
-    </div>
+    </button>
   </div>
 </template>
 
@@ -33,16 +45,20 @@ import { RouterLink } from "vue-router";
 
 .game,
 .more {
-  @include template.content-text;
+  @include template.content-text-icon;
   --button-rounding: 1rem;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   padding: 2rem;
+  gap: 1rem;
 
   p {
     font-weight: bold;
     font-size: 3rem;
     text-align: center;
+  }
+  svg {
+    font-size: 6rem;
   }
 }
 .game {

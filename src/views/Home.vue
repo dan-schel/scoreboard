@@ -24,13 +24,18 @@ import TopGames from "@/components/home/TopGames.vue";
 
 main {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 4rem;
+  grid-template-columns: 48rem 1fr;
+  grid-template-rows: 1fr;
   gap: 4rem;
   flex-grow: 1;
+  flex-shrink: 1;
+  min-height: 0;
 }
 
 .new-game {
+  padding: 4rem;
+  padding-right: 0rem;
+
   h1 {
     font-size: 6rem;
     font-weight: bold;
@@ -39,17 +44,23 @@ main {
   }
   .top-games {
     flex-grow: 1;
+
+    // 48rem (column width) - 4rem (left padding).
+    max-height: 44rem;
   }
 }
 .history {
+  padding: 4rem;
+  padding-left: 0rem;
+
+  overflow-y: scroll;
+  min-height: 0;
+
   h2 {
     font-size: 4rem;
     font-weight: bold;
     color: var(--color-ink-100);
-
-    // Line up with 6rem tall "SCOREBOARD" title.
     margin-top: 2rem;
-
     margin-bottom: 3rem;
   }
 }

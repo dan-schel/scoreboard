@@ -22,13 +22,14 @@
 }
 
 .viewport {
-  --viewport-width: 60rem;
-  --viewport-height: 30rem;
-  --scale: 0.6;
+  --viewport-width: 70rem;
+  --viewport-height: 35rem;
+  --scale: 0.7;
 
   width: var(--viewport-width);
   height: var(--viewport-height);
-  border: 1px solid white;
+  border: 1px solid var(--color-ink-20);
+  overflow: hidden;
 }
 
 .content {
