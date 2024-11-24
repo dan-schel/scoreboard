@@ -29,7 +29,9 @@ function handleMenuButton() {
   dialogPage.value = "main";
 }
 
-const scoreHeadline = computed(() => gameState.value.getScoreHeadline());
+const scoreHeadline = computed(
+  () => gameState.value.getScoreHeadline()?.toUpperCase(),
+);
 
 watch(
   () => props.handler,

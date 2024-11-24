@@ -47,7 +47,12 @@ function handleButtonClick() {
       class="score-button"
       :class="`accent-${score.getPlayerColor(playerIndex)}`"
     >
-      <p>{{ score.getPrimaryScoreString(state, playerIndex) }}</p>
+      <p class="primary">
+        {{ score.getPrimaryScoreString(state, playerIndex) }}
+      </p>
+      <p class="set-history">
+        {{ score.getSetHistoryString(state, playerIndex) }}
+      </p>
     </button>
     <div class="serve-overlay" v-if="serveDirection != null">
       <p>Serve: {{ serveDirection }}</p>
@@ -71,13 +76,23 @@ function handleButtonClick() {
   @include colors.accent-classes;
   @include template.content-text;
   --button-rounding: 1rem;
-  align-items: center;
-  justify-content: center;
   flex-grow: 1;
+  z-index: 0;
 
-  p {
+  display: grid;
+  grid-template-rows: 1fr 10rem 4rem 1fr;
+  align-items: center;
+  justify-items: center;
+
+  .primary {
     font-weight: bold;
     font-size: 10rem;
+    grid-row: 2;
+  }
+  .set-history {
+    font-weight: bold;
+    font-size: 4rem;
+    grid-row: 3;
   }
 }
 
@@ -90,6 +105,7 @@ function handleButtonClick() {
   bottom: 0;
   border: 0.5rem solid var(--color-text-strong);
   border-radius: 1rem;
+  z-index: 1;
 
   p {
     position: absolute;

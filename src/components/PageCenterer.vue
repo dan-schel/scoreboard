@@ -1,7 +1,3 @@
-<script setup lang="ts">
-// TODO: Add your code here.
-</script>
-
 <template>
   <div class="page-centerer">
     <div class="content">

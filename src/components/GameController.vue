@@ -90,9 +90,3 @@ onUnmounted(() => {
   ></ConfigureGame>
   <PlayGame v-else :handler="handler"></PlayGame>
 </template>
-
-<style scoped lang="scss">
-@use "@/assets/css-template/import" as template;
-
-// TODO: Add your code here.
-</style>

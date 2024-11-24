@@ -3,10 +3,7 @@
 
 $theme-scoreboard-definition: (
   "background": #1d1e2e,
-
-  // TODO: Same as background for now.
   "background-dialog": #1d1e2e,
-
   "text": template.theme-dark-ink(80),
   "text-weak": template.theme-dark-ink(50),
   "accent": #4f8fee,

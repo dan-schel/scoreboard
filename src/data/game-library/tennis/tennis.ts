@@ -116,7 +116,41 @@ export class TennisState extends GameState<TennisState> {
   }
 
   getScoreHeadline(): string | null {
-    return "TODO: Headline";
+    const scoresAfterPlayer1Wins = TennisScore.awardPoint(
+      this.config,
+      this.player1Score,
+      this.player2Score,
+    );
+    const scoresAfterPlayer2Wins = TennisScore.awardPoint(
+      this.config,
+      this.player2Score,
+      this.player1Score,
+    );
+
+    if (scoresAfterPlayer1Wins.winsMatch || scoresAfterPlayer2Wins.winsMatch) {
+      return "Match point";
+    }
+    if (scoresAfterPlayer1Wins.winsSet || scoresAfterPlayer2Wins.winsSet) {
+      return "Set point";
+    }
+
+    if (scoresAfterPlayer1Wins.winsGame && this.playerServing !== "1") {
+      return "Break point";
+    }
+    if (scoresAfterPlayer2Wins.winsGame && this.playerServing !== "2") {
+      return "Break point";
+    }
+
+    // TODO: Show when it's a tiebreak.
+
+    if (
+      this.player1Score.points === "40" &&
+      this.player2Score.points === "40"
+    ) {
+      return "Deuce";
+    }
+
+    return null;
   }
 
   isServing(playerIndex: number): boolean {

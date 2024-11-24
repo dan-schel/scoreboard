@@ -39,9 +39,3 @@ defineEmits<{
   >
   </TennisScoreDisplay>
 </template>
-
-<style scoped lang="scss">
-@use "@/assets/css-template/import" as template;
-
-// TODO: Add your code here.
-</style>

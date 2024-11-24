@@ -3,6 +3,7 @@ import type { TennisConfig } from "./tennis-config";
 import type { TennisState } from "./tennis";
 import { ScoreType, type Action } from "@/data/game/game";
 import { z } from "zod";
+import { TennisScore } from "./tennis-score";
 
 export class TennisScoreType extends ScoreType {
   constructor(
@@ -17,10 +18,32 @@ export class TennisScoreType extends ScoreType {
   }
 
   getPrimaryScoreString(state: TennisState, playerIndex: number): string {
+    const points = this._getScore(state, playerIndex).points;
+    if (points === "advantage") {
+      return "Ad.";
+    } else {
+      return points;
+    }
+  }
+
+  getSetHistoryString(state: TennisState, playerIndex: number): string {
+    const score = this._getScore(state, playerIndex);
+    if (
+      score.setHistory.length === 0 &&
+      state.player1Score.games === 0 &&
+      state.player2Score.games === 0
+    ) {
+      return "";
+    }
+    const sets = [...score.setHistory.map((x) => x.gamesWon), score.games];
+    return sets.map((x) => x.toFixed()).join(" ");
+  }
+
+  private _getScore(state: TennisState, playerIndex: number) {
     if (playerIndex === 0) {
-      return state.player1Score.points;
+      return state.player1Score;
     } else if (playerIndex === 1) {
-      return state.player2Score.points;
+      return state.player2Score;
     } else {
       throw new Error(`Invalid player index "${playerIndex}".`);
     }
@@ -57,13 +80,50 @@ export class IncrementAction {
     const { playerIndex } = IncrementAction.json.parse(data);
 
     if (playerIndex === 0) {
-      return state;
-      // TODO: return state.with({ player1Score: state.player1Score + 1 });
+      const scoreUpdate = TennisScore.awardPoint(
+        state.config,
+        state.player1Score,
+        state.player2Score,
+      );
+      return IncrementAction._buildNewState(
+        state,
+        scoreUpdate.winner,
+        scoreUpdate.loser,
+        scoreUpdate.causesChangeOfServe,
+      );
     } else if (playerIndex === 1) {
-      return state;
-      // TODO: return state.with({ player2Score: state.player2Score + 1 });
+      const scoreUpdate = TennisScore.awardPoint(
+        state.config,
+        state.player2Score,
+        state.player1Score,
+      );
+      return IncrementAction._buildNewState(
+        state,
+        scoreUpdate.loser,
+        scoreUpdate.winner,
+        scoreUpdate.causesChangeOfServe,
+      );
     } else {
       throw new Error(`Invalid player index "${playerIndex}".`);
     }
+  }
+
+  private static _buildNewState(
+    state: TennisState,
+    player1Score: TennisScore,
+    player2Score: TennisScore,
+    changeServe: boolean,
+  ) {
+    const playerServing = !changeServe
+      ? state.playerServing
+      : state.playerServing === "1"
+        ? "2"
+        : "1";
+
+    return state.with({
+      player1Score,
+      player2Score,
+      playerServing,
+    });
   }
 }

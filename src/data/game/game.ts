@@ -38,6 +38,11 @@ export abstract class GameInstance<
   getPlayerCount() {
     return this.config.players.length;
   }
+
+  // TODO: Should each game just have one score type instead of an array?
+  // Having only one simplifies the UI (which currently wouldn't handle multiple
+  // very well), and I can't think of an example where you'd choose to implement
+  // a separate score type over a single complex one (e.g. how Tennis does it).
   abstract getScoreTypes(): ScoreType[];
 }
 
