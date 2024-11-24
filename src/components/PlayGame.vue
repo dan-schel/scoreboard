@@ -4,6 +4,7 @@ import { onMounted, onUnmounted, ref, watch, type Ref } from "vue";
 import { type GameHandler } from "@/data/game/game-handler";
 import ScoreDisplay from "./score-display/ScoreDisplay.vue";
 import PhDotsThreeOutlineFill from "./icons/PhDotsThreeOutlineFill.vue";
+import PlayMenu from "./play-menu/PlayMenu.vue";
 
 const props = defineProps<{
   handler: GameHandler<GameStateType>;
@@ -13,10 +14,16 @@ const gameState = ref(props.handler.getState()) as Ref<GameStateType>;
 const canUndo = ref(props.handler.canUndo());
 const canRedo = ref(props.handler.canRedo());
 
+const dialogRef = ref<HTMLDialogElement | null>(null);
+
 function handleStateUpdate() {
   gameState.value = props.handler.getState();
   canUndo.value = props.handler.canUndo();
   canRedo.value = props.handler.canRedo();
+}
+
+function handleMenuButton() {
+  dialogRef.value?.showModal();
 }
 
 watch(
@@ -40,17 +47,11 @@ onUnmounted(() => {
 
 <template>
   <div class="play">
-    <!-- <button @click="handler.requestUndo()" :disabled="!canUndo">
-      <p>Undo</p>
-    </button>
-    <button @click="handler.requestRedo()" :disabled="!canRedo">
-      <p>Redo</p>
-    </button> -->
     <div class="mobile-row">
       <div class="score-headline">
         <p>BREAK POINT</p>
       </div>
-      <button class="menu-button">
+      <button class="menu-button" @click="handleMenuButton">
         <PhDotsThreeOutlineFill></PhDotsThreeOutlineFill>
       </button>
     </div>
@@ -66,6 +67,16 @@ onUnmounted(() => {
       </ScoreDisplay>
     </div>
   </div>
+  <dialog ref="dialogRef">
+    <PlayMenu
+      class="menu"
+      :can-undo="canUndo"
+      :can-redo="canRedo"
+      @undo="handler.requestUndo()"
+      @redo="handler.requestRedo()"
+      @close="dialogRef?.close()"
+    ></PlayMenu>
+  </dialog>
 </template>
 
 <style scoped lang="scss">
@@ -114,6 +125,11 @@ onUnmounted(() => {
     font-weight: bold;
     text-align: center;
   }
+}
+
+dialog {
+  @include template.dialog;
+  border-radius: 1rem;
 }
 
 // Desktop layout.
