@@ -1,0 +1,22 @@
+<script setup lang="ts">
+// TODO: Add your code here.
+</script>
+
+<template>
+  <div class="page-centerer">
+    <div class="content">
+      <slot></slot>
+    </div>
+  </div>
+</template>
+
+<style scoped lang="scss">
+@use "@/assets/css-template/import" as template;
+
+.page-centerer {
+  @include template.page-centerer;
+}
+.content {
+  width: 100%;
+}
+</style>

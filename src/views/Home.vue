@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import Viewport from "@/components/Viewport.vue";
 import SavedGames from "@/components/home/SavedGames.vue";
 import TopGames from "@/components/home/TopGames.vue";
+import PageCenterer from "@/components/PageCenterer.vue";
 </script>
 
 <template>
-  <Viewport>
+  <PageCenterer>
     <main>
       <div class="new-game">
         <h1>SCOREBOARD</h1>
@@ -16,52 +16,45 @@ import TopGames from "@/components/home/TopGames.vue";
         <SavedGames class="saves-list" />
       </div>
     </main>
-  </Viewport>
+  </PageCenterer>
 </template>
 
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
 
 main {
-  display: grid;
-  grid-template-columns: 48rem 1fr;
-  grid-template-rows: 1fr;
-  gap: 4rem;
-  flex-grow: 1;
-  flex-shrink: 1;
-  min-height: 0;
+  gap: 3rem;
+  padding: 3rem 2rem;
 }
 
 .new-game {
-  padding: 4rem;
-  padding-right: 0rem;
-
   h1 {
-    font-size: 6rem;
+    font-size: 3rem;
     font-weight: bold;
     color: var(--color-text-strong);
     margin-bottom: 2rem;
   }
-  .top-games {
-    flex-grow: 1;
-
-    // 48rem (column width) - 4rem (left padding).
-    max-height: 44rem;
-  }
 }
 .history {
-  padding: 4rem;
-  padding-left: 0rem;
-
-  overflow-y: scroll;
-  min-height: 0;
-
   h2 {
-    font-size: 4rem;
+    font-size: 2rem;
     font-weight: bold;
     color: var(--color-text-strong);
-    margin-top: 2rem;
-    margin-bottom: 3rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+  }
+}
+
+// Desktop layout.
+@media screen and (min-width: 48rem) {
+  main {
+    padding: 4rem;
+    gap: 4rem;
+
+    display: grid;
+    grid-template-columns: 20rem 1fr;
+    grid-template-rows: 1fr;
+    align-items: start;
   }
 }
 </style>

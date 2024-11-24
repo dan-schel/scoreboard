@@ -48,11 +48,11 @@ const formatter = new Intl.DateTimeFormat("en", {
 @use "@/assets/css-template/import" as template;
 
 .saves {
-  gap: 4rem;
+  gap: 2rem;
 }
 
 .empty {
-  font-size: 3rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: var(--color-text-weak);
 }
@@ -63,22 +63,22 @@ const formatter = new Intl.DateTimeFormat("en", {
   align-items: center;
 
   .game {
-    font-size: 2rem;
+    font-size: 1rem;
     margin-bottom: 0.5rem;
   }
 
   .state {
-    font-size: 3rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: var(--color-text-strong);
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
   }
   &.corrupted .state {
     color: var(--color-error);
   }
 
   .date {
-    font-size: 2rem;
+    font-size: 1rem;
   }
 
   .actions {
@@ -87,14 +87,14 @@ const formatter = new Intl.DateTimeFormat("en", {
 
     > * {
       @include template.button-filled-neutral;
-      --button-rounding: 2.5rem;
-      height: 5rem;
-      width: 5rem;
+      --button-rounding: 1.25rem;
+      height: 2.5rem;
+      width: 2.5rem;
       align-items: center;
       justify-content: center;
 
       svg {
-        font-size: 2.5rem;
+        font-size: 1.25rem;
       }
     }
   }

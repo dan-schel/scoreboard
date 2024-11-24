@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import GameController from "@/components/GameController.vue";
-import Viewport from "@/components/Viewport.vue";
+import PageCenterer from "@/components/PageCenterer.vue";
 import { gameLibrary } from "@/data/game-library/game-library";
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
@@ -19,7 +19,7 @@ const game = computed(() => {
 </script>
 
 <template>
-  <Viewport>
+  <PageCenterer>
     <main v-if="game != null">
       <GameController :game="game" :uuid="uuid"></GameController>
     </main>
@@ -36,7 +36,7 @@ const game = computed(() => {
         </RouterLink>
       </p>
     </main>
-  </Viewport>
+  </PageCenterer>
 </template>
 
 <style scoped lang="scss">

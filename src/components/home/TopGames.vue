@@ -40,7 +40,7 @@ import PhDiceThreeBold from "../icons/PhDiceThreeBold.vue";
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .game,
@@ -49,16 +49,17 @@ import PhDiceThreeBold from "../icons/PhDiceThreeBold.vue";
   --button-rounding: 1rem;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
-  gap: 1rem;
+  padding: 1rem;
+  gap: 0.5rem;
+  aspect-ratio: 1;
 
   p {
     font-weight: bold;
-    font-size: 3rem;
+    font-size: 1.5rem;
     text-align: center;
   }
   svg {
-    font-size: 6rem;
+    font-size: 3rem;
   }
 }
 .game {
