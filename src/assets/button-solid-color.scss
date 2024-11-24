@@ -30,8 +30,7 @@
       border-color 0.05s;
   }
 
-  &:hover,
-  &:focus-visible {
+  @include template.on-hover {
     &::after {
       border-color: #ffffff40;
     }
