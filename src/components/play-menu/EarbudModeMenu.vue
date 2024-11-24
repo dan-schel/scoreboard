@@ -35,7 +35,7 @@ defineEmits<{
     <p>After selecting "More options":</p>
     <div class="button-mapping">
       <PhPlayPauseBold></PhPlayPauseBold>
-      <p>Repeat scores</p>
+      <p>Repeat scores/Cancel</p>
       <PhFastForwardBold></PhFastForwardBold>
       <p>Fault</p>
       <PhRewindBold></PhRewindBold>

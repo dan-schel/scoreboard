@@ -1,4 +1,7 @@
-import type { PlayerColor } from "@/data/game-utils/player-color";
+import {
+  getPlayerColorDisplayString,
+  type PlayerColor,
+} from "@/data/game-utils/player-color";
 import {
   GameBuilder,
   GameInstance,
@@ -99,8 +102,10 @@ export class BasicGameState extends GameState<BasicGameState> {
   }
 
   toDisplayString(): string {
-    const p1 = `${this.config.players[0].color} ${this.player1Score.toFixed()}`;
-    const p2 = `${this.config.players[1].color} ${this.player2Score.toFixed()}`;
+    const p1Color = getPlayerColorDisplayString(this.config.players[0].color);
+    const p2Color = getPlayerColorDisplayString(this.config.players[1].color);
+    const p1 = `${p1Color} ${this.player1Score.toFixed()}`;
+    const p2 = `${p2Color} ${this.player2Score.toFixed()}`;
     return `${p1} - ${p2}`;
   }
 

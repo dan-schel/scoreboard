@@ -18,11 +18,13 @@ export class TennisScoreType extends ScoreType {
   }
 
   getPrimaryScoreString(state: TennisState, playerIndex: number): string {
-    const points = this._getScore(state, playerIndex).points;
-    if (points === "advantage") {
+    const score = this._getScore(state, playerIndex);
+    if (score.tiebreakPoints != null) {
+      return score.tiebreakPoints.toFixed();
+    } else if (score.points === "advantage") {
       return "Ad.";
     } else {
-      return points;
+      return score.points;
     }
   }
 
@@ -35,8 +37,10 @@ export class TennisScoreType extends ScoreType {
     ) {
       return "";
     }
-    const sets = [...score.setHistory.map((x) => x.gamesWon), score.games];
-    return sets.map((x) => x.toFixed()).join(" ");
+    return score
+      .gamesWonPerSet()
+      .map((x) => x.toFixed())
+      .join(" ");
   }
 
   private _getScore(state: TennisState, playerIndex: number) {

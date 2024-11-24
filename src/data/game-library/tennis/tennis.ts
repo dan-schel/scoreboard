@@ -9,6 +9,7 @@ import {
 import { TennisConfig, TennisConfigWriter } from "./tennis-config";
 import { TennisScore } from "./tennis-score";
 import { IncrementAction, TennisScoreType } from "./tennis-score-type";
+import { getPlayerColorDisplayString } from "@/data/game-utils/player-color";
 
 export class TennisBuilder extends GameBuilder<TennisConfig, TennisState> {
   readonly id = "tennis";
@@ -112,7 +113,19 @@ export class TennisState extends GameState<TennisState> {
   }
 
   toDisplayString(): string {
-    return "TODO: tennis scores";
+    const p1Color = getPlayerColorDisplayString(this.config.players[0].color);
+    const p2Color = getPlayerColorDisplayString(this.config.players[1].color);
+
+    const p1Sets = this.player1Score
+      .gamesWonPerSet()
+      .map((x) => x.toFixed())
+      .join(" ");
+    const p2Sets = this.player2Score
+      .gamesWonPerSet()
+      .map((x) => x.toFixed())
+      .join(" ");
+
+    return `${p1Color} ${p1Sets} - ${p2Color} ${p2Sets}`;
   }
 
   getScoreHeadline(): string | null {
@@ -141,7 +154,12 @@ export class TennisState extends GameState<TennisState> {
       return "Break point";
     }
 
-    // TODO: Show when it's a tiebreak.
+    if (
+      this.player1Score.tiebreakPoints != null &&
+      this.player2Score.tiebreakPoints != null
+    ) {
+      return "Tiebreak";
+    }
 
     if (
       this.player1Score.points === "40" &&

@@ -26,21 +26,16 @@ export class TennisSetHistory {
 }
 
 export class TennisScore {
-  static readonly zero = new TennisScore("0", 0, []);
+  static readonly zero = new TennisScore("0", null, 0, []);
 
-  // TODO: Nothing here accounts for tiebreaks! Should I track tiebreak points
-  // in a separate field `tiebreakPoints`, or add it new values to
-  // TennisGameScores? Keep in mind that tiebreaks can go on indefinitely,
-  // there's no max score. (If doing the latter, I can use a type like
-  // "T-${number}", but rn I'm leaning towards the `tiebreakPoints` idea.)
-  //
-  // I'm also not tracking faults here, but I think those should be tracked in
+  // TODO: I'm also not tracking faults here, but I think those should be tracked in
   // the TennisState itself (we don't need two separate values for each player,
   // since only one player serves at a time). Then if the fault button is
   // pressed twice, call TennisScore.awardPoint() just like we do in
   // IncrementAction.
   constructor(
     readonly points: TennisGameScore,
+    readonly tiebreakPoints: number | null,
     readonly games: number,
     readonly setHistory: TennisSetHistory[],
   ) {}
@@ -48,14 +43,18 @@ export class TennisScore {
   static readonly json = z
     .object({
       points: z.enum(TennisGameScores),
+      tiebreakPoints: z.number().nullable(),
       games: z.number(),
       setHistory: TennisSetHistory.json.array(),
     })
-    .transform((x) => new TennisScore(x.points, x.games, x.setHistory));
+    .transform(
+      (x) => new TennisScore(x.points, x.tiebreakPoints, x.games, x.setHistory),
+    );
 
   toJSON(): z.input<typeof TennisScore.json> {
     return {
       points: this.points,
+      tiebreakPoints: this.tiebreakPoints,
       games: this.games,
       setHistory: this.setHistory.map((x) => x.toJSON()),
     };
@@ -63,25 +62,36 @@ export class TennisScore {
 
   with({
     points,
+    tiebreakPoints,
     games,
     setHistory,
   }: {
     points?: TennisGameScore;
+    tiebreakPoints?: number | null;
     games?: number;
     setHistory?: TennisSetHistory[];
   }): TennisScore {
     return new TennisScore(
       points ?? this.points,
+      tiebreakPoints === undefined ? this.tiebreakPoints : tiebreakPoints,
       games ?? this.games,
       setHistory ?? this.setHistory,
     );
+  }
+
+  gamesWonPerSet(): number[] {
+    return [...this.setHistory.map((x) => x.gamesWon), this.games];
   }
 
   static determineServeSide(
     score1: TennisScore,
     score2: TennisScore,
   ): "left" | "right" {
-    // TODO: Tiebreak stuff.
+    if (score1.tiebreakPoints != null && score2.tiebreakPoints != null) {
+      // TODO: My assumption on how the serving works during a tiebreak. IDK.
+      const sum = score1.tiebreakPoints + score2.tiebreakPoints;
+      return sum % 2 === 0 ? "right" : "left";
+    }
 
     const indexSum =
       TennisGameScores.indexOf(score1.points) +
@@ -99,9 +109,6 @@ export class TennisScore {
     winsGame: boolean;
     winsSet: boolean;
     winsMatch: boolean;
-
-    // Because tiebreaks cause a change of serve even two points, even when
-    // winsGame is false.
     causesChangeOfServe: boolean;
   } {
     const rest = {
@@ -113,8 +120,7 @@ export class TennisScore {
       causesChangeOfServe: false,
     };
 
-    // eslint-disable-next-line no-constant-condition
-    if (false /* TODO: Is tiebreak. */) {
+    if (winner.tiebreakPoints != null && loser.tiebreakPoints != null) {
       return TennisScore._awardTiebreakPoint(config, winner, loser);
     } else if (winner.points !== "40" && winner.points !== "advantage") {
       return {
@@ -137,8 +143,8 @@ export class TennisScore {
       return {
         ...TennisScore._awardGame(config, winner, loser),
         winsGame: true,
-        // I'm assuming on a tiebreak/new set, the server always changes like
-        // after a normal game.
+        // TODO: I'm assuming after a tiebreak/new set, the server always
+        // changes like after a normal game.
         causesChangeOfServe: true,
       };
     }
@@ -156,9 +162,37 @@ export class TennisScore {
     winsMatch: boolean;
     causesChangeOfServe: boolean;
   } {
-    // Increment the points, track the changes of serve every two points, and
-    // call _awardGame when someone wins the tiebreak.
-    throw new Error("Not implemented.");
+    if (winner.tiebreakPoints === null || loser.tiebreakPoints === null) {
+      throw new Error("Cannot award points - this is not a tiebreak!");
+    }
+
+    // TODO: In Aus Open rules, the tiebreak goes to 10 points if it decides the
+    // match (or is it for the last set only?).
+    const goesTo = 7;
+
+    const winnerPoints = winner.tiebreakPoints + 1;
+    const loserPoints = loser.tiebreakPoints;
+
+    if (winnerPoints >= goesTo && winnerPoints - loserPoints >= 2) {
+      return {
+        ...this._awardGame(config, winner, loser),
+        winsGame: true,
+        // TODO: My assumption is after a tiebreak the server always changes,
+        // but maybe it changes to whoever served first in the game before the
+        // tiebreak? (i.e. who didn't serve first in the tiebreak)
+        causesChangeOfServe: true,
+      };
+    } else {
+      return {
+        winner: winner.with({ tiebreakPoints: winnerPoints }),
+        loser: loser,
+        winsGame: false,
+        winsSet: false,
+        winsMatch: false,
+        // Switch after the first point, then every two points.
+        causesChangeOfServe: (winnerPoints + loserPoints) % 2 === 1,
+      };
+    }
   }
 
   private static _awardGame(
@@ -173,14 +207,26 @@ export class TennisScore {
   } {
     if (winner.games < 5 || (winner.games === 5 && loser.games === 5)) {
       return {
-        winner: winner.with({ points: "0", games: winner.games + 1 }),
-        loser: loser.with({ points: "0" }),
+        winner: winner.with({
+          points: "0",
+          tiebreakPoints: null,
+          games: winner.games + 1,
+        }),
+        loser: loser.with({ points: "0", tiebreakPoints: null }),
         winsSet: false,
         winsMatch: false,
       };
     } else if (winner.games === 5 && loser.games === 6) {
-      // TODO: Go to a tiebreak!
-      throw new Error("Not implemented.");
+      return {
+        winner: winner.with({
+          points: "0",
+          tiebreakPoints: 0,
+          games: winner.games + 1,
+        }),
+        loser: loser.with({ points: "0", tiebreakPoints: 0 }),
+        winsSet: false,
+        winsMatch: false,
+      };
     } else {
       const winnerSetHistory = winner.setHistory.concat(
         new TennisSetHistory(true, winner.games + 1),
@@ -195,11 +241,13 @@ export class TennisScore {
       return {
         winner: winner.with({
           points: "0",
+          tiebreakPoints: null,
           games: 0,
           setHistory: winnerSetHistory,
         }),
         loser: loser.with({
           points: "0",
+          tiebreakPoints: null,
           games: 0,
           setHistory: loserSetHistory,
         }),
