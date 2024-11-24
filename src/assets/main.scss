@@ -1,32 +1,35 @@
 @use "css-template/import" as template;
 @use "sass:meta";
 
-@function scoreboard-paper($shade) {
-  @return #1d1e2e;
-}
+$theme-scoreboard-definition: (
+  "background": #1d1e2e,
 
-@function scoreboard-ink($shade) {
-  @return hsla(220, 100%, calc(80% + $shade * 0.2%), calc($shade * 1%));
-}
+  // TODO: Same as background for now.
+  "background-dialog": #1d1e2e,
 
-@function theme-scoreboard-definition() {
-  @return template.theme-define(
-    $paper-shade-function: meta.get-function("scoreboard-paper"),
-    $ink-shade-function: meta.get-function("scoreboard-ink"),
-    $color-accent: #4f8fee,
-    $color-on-accent: #1d1e2e,
-    $color-shadow-100: black,
-    $color-shadow-30: rgba(0, 0, 0, 80%),
-    $color-shadow-20: rgba(0, 0, 0, 60%),
-    $color-shadow-10: rgba(0, 0, 0, 20%)
-  );
-}
+  "text": template.theme-dark-ink(80),
+  "text-weak": template.theme-dark-ink(50),
+  "accent": rgb(77, 166, 255),
+  "accent-hover": hsl(210, 100%, 70%),
+  "accent-active": hsl(210, 100%, 60%),
+  "on-accent": #1d1e2e,
+  "soft": template.theme-dark-ink(12),
+  "soft-hover": template.theme-dark-ink(16),
+  "soft-active": template.theme-dark-ink(8),
+  "soft-border": template.theme-dark-ink(20),
+  "soft-border-disabled": template.theme-dark-ink(12),
+  "field-border": template.theme-dark-ink(50),
+  "shadow": rgba(0, 0, 0, 60%),
+);
 
 @include template.init(
   $themes: (
-    "scoreboard": theme-scoreboard-definition(),
+    "scoreboard": $theme-scoreboard-definition,
   ),
   $custom-colors: (
+    "text-strong": (
+      "scoreboard": template.theme-dark-ink(100),
+    ),
     "error": (
       "scoreboard": #ff7171,
     ),

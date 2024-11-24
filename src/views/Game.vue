@@ -53,7 +53,7 @@ const game = computed(() => {
   h1 {
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--color-ink-100);
+    color: var(--color-text-strong);
   }
   * {
     text-align: center;

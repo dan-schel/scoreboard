@@ -54,7 +54,7 @@ const formatter = new Intl.DateTimeFormat("en", {
 .empty {
   font-size: 3rem;
   font-weight: bold;
-  color: var(--color-ink-60);
+  color: var(--color-text-weak);
 }
 
 .save {
@@ -70,7 +70,7 @@ const formatter = new Intl.DateTimeFormat("en", {
   .state {
     font-size: 3rem;
     font-weight: bold;
-    color: var(--color-ink-100);
+    color: var(--color-text-strong);
     margin-bottom: 1.5rem;
   }
   &.corrupted .state {

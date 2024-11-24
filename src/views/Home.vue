@@ -39,7 +39,7 @@ main {
   h1 {
     font-size: 6rem;
     font-weight: bold;
-    color: var(--color-ink-100);
+    color: var(--color-text-strong);
     margin-bottom: 2rem;
   }
   .top-games {
@@ -59,7 +59,7 @@ main {
   h2 {
     font-size: 4rem;
     font-weight: bold;
-    color: var(--color-ink-100);
+    color: var(--color-text-strong);
     margin-top: 2rem;
     margin-bottom: 3rem;
   }

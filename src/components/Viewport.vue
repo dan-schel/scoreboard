@@ -28,7 +28,7 @@
 
   width: var(--viewport-width);
   height: var(--viewport-height);
-  border: 1px solid var(--color-ink-20);
+  border: 1px solid var(--color-soft-border);
   overflow: hidden;
 }
 
