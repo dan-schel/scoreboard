@@ -5,6 +5,7 @@ import { type GameHandler } from "@/data/game/game-handler";
 import ScoreDisplay from "./score-display/ScoreDisplay.vue";
 import PhDotsThreeOutlineFill from "./icons/PhDotsThreeOutlineFill.vue";
 import PlayMenu from "./play-menu/PlayMenu.vue";
+import EarbudModeMenu from "./play-menu/EarbudModeMenu.vue";
 
 const props = defineProps<{
   handler: GameHandler<GameStateType>;
@@ -15,6 +16,7 @@ const canUndo = ref(props.handler.canUndo());
 const canRedo = ref(props.handler.canRedo());
 
 const dialogRef = ref<HTMLDialogElement | null>(null);
+const dialogPage = ref<"main" | "earbud-mode">("main");
 
 function handleStateUpdate() {
   gameState.value = props.handler.getState();
@@ -24,6 +26,7 @@ function handleStateUpdate() {
 
 function handleMenuButton() {
   dialogRef.value?.showModal();
+  dialogPage.value = "main";
 }
 
 watch(
@@ -68,12 +71,19 @@ onUnmounted(() => {
     </div>
   </div>
   <dialog ref="dialogRef">
+    <EarbudModeMenu
+      v-if="dialogPage === 'earbud-mode'"
+      @back="dialogPage = 'main'"
+    >
+    </EarbudModeMenu>
     <PlayMenu
+      v-else
       class="menu"
       :can-undo="canUndo"
       :can-redo="canRedo"
       @undo="handler.requestUndo()"
       @redo="handler.requestRedo()"
+      @earbud-mode="dialogPage = 'earbud-mode'"
       @close="dialogRef?.close()"
     ></PlayMenu>
   </dialog>
@@ -130,6 +140,9 @@ onUnmounted(() => {
 dialog {
   @include template.dialog;
   border-radius: 1rem;
+  max-width: min(calc(100vw - 2rem), 30rem);
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
 }
 
 // Desktop layout.
@@ -142,7 +155,7 @@ dialog {
     grid-template-columns: 1fr 1fr;
 
     // Keeps the buttons no taller than square.
-    max-height: calc((100vw + 3rem) / 2);
+    max-height: min(calc((100vw + 3rem) / 2), 41.5rem);
   }
 
   .mobile-row {

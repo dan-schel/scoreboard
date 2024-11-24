@@ -14,6 +14,7 @@ defineProps<{
 defineEmits<{
   (e: "undo"): void;
   (e: "redo"): void;
+  (e: "earbud-mode"): void;
   (e: "close"): void;
 }>();
 </script>
@@ -37,7 +38,7 @@ defineEmits<{
       </button>
     </div>
     <div class="other">
-      <button>
+      <button @click="$emit('earbud-mode')">
         <PhHeadphonesBold></PhHeadphonesBold>
         <p>Earbud mode</p>
       </button>
@@ -62,6 +63,7 @@ defineEmits<{
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
+  gap: 1rem;
 
   > p {
     font-size: 1.5rem;
