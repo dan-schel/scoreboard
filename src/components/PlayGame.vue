@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="GameStateType extends GameState">
 import { type GameState } from "@/data/game/game";
-import { onMounted, onUnmounted, ref, watch, type Ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch, type Ref } from "vue";
 import { type GameHandler } from "@/data/game/game-handler";
 import ScoreDisplay from "./score-display/ScoreDisplay.vue";
 import PhDotsThreeOutlineFill from "./icons/PhDotsThreeOutlineFill.vue";
@@ -29,6 +29,8 @@ function handleMenuButton() {
   dialogPage.value = "main";
 }
 
+const scoreHeadline = computed(() => gameState.value.getScoreHeadline());
+
 watch(
   () => props.handler,
   (newValue, oldValue) => {
@@ -51,8 +53,8 @@ onUnmounted(() => {
 <template>
   <div class="play">
     <div class="mobile-row">
-      <div class="score-headline">
-        <p>BREAK POINT</p>
+      <div class="score-headline" v-if="scoreHeadline != null">
+        <p>{{ scoreHeadline }}</p>
       </div>
       <button class="menu-button" @click="handleMenuButton">
         <PhDotsThreeOutlineFill></PhDotsThreeOutlineFill>
@@ -193,6 +195,10 @@ dialog {
     grid-template-columns: 1fr auto;
     align-items: center;
     gap: 1rem;
+  }
+
+  .menu-button {
+    grid-column: 2;
   }
 }
 </style>

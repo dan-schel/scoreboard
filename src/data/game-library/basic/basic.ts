@@ -103,6 +103,10 @@ export class BasicGameState extends GameState<BasicGameState> {
     const p2 = `${this.config.players[1].color} ${this.player2Score.toFixed()}`;
     return `${p1} - ${p2}`;
   }
+
+  getScoreHeadline(): string | null {
+    return "TODO: Headline";
+  }
 }
 
 export class BasicScoreType extends SimpleScoreType<BasicGameState> {

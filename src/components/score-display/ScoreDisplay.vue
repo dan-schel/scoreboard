@@ -6,6 +6,9 @@ import {
   type Action,
 } from "@/data/game/game";
 import SimpleScoreDisplay from "./SimpleScoreDisplay.vue";
+import { TennisScoreType } from "@/data/game-library/tennis/tennis-score-type";
+import { TennisState } from "@/data/game-library/tennis/tennis";
+import TennisScoreDisplay from "./TennisScoreDisplay.vue";
 
 defineProps<{
   score: ScoreType;
@@ -27,6 +30,14 @@ defineEmits<{
     @submit-action="(action) => $emit('submit-action', action)"
   >
   </SimpleScoreDisplay>
+  <TennisScoreDisplay
+    v-else-if="score instanceof TennisScoreType && state instanceof TennisState"
+    :score="score"
+    :state="state"
+    :playerIndex="playerIndex"
+    @submit-action="(action) => $emit('submit-action', action)"
+  >
+  </TennisScoreDisplay>
 </template>
 
 <style scoped lang="scss">

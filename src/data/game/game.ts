@@ -44,6 +44,7 @@ export abstract class GameInstance<
 export abstract class GameState<GameStateType extends GameState = any> {
   abstract do(action: Action): GameStateType;
   abstract toDisplayString(): string;
+  abstract getScoreHeadline(): string | null;
 }
 
 export abstract class ScoreType {

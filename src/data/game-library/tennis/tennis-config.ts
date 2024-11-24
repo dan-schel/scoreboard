@@ -1,3 +1,4 @@
+import { z } from "zod";
 import {
   BasicPlayerConfig,
   BasicPlayerConfigWriter,
@@ -17,6 +18,20 @@ export class TennisConfig extends GameConfig<BasicPlayerConfig> {
     readonly setsToWin: number,
   ) {
     super(players);
+  }
+
+  static readonly json = z
+    .object({
+      players: BasicPlayerConfig.json.array(),
+      setsToWin: z.number(),
+    })
+    .transform((x) => new TennisConfig(x.players, x.setsToWin));
+
+  toJSON(): z.input<typeof TennisConfig.json> {
+    return {
+      players: this.players.map((x) => x.toJSON()),
+      setsToWin: this.setsToWin,
+    };
   }
 
   with({
