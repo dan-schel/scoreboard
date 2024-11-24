@@ -48,8 +48,8 @@ export class BasicGameInstance extends GameInstance<
   deserializeState(input: unknown): BasicGameState {
     return BasicGameState.json.parse(input)(this.config);
   }
-  getScoreTypes(): ScoreType[] {
-    return [new BasicScoreType("points", this.config)];
+  getScoreType(): ScoreType {
+    return new BasicScoreType("points", this.config);
   }
 }
 

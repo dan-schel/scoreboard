@@ -17,11 +17,17 @@ export abstract class GameHandler<GameStateType extends GameState> {
   abstract getState(): GameStateType;
   abstract canUndo(): boolean;
   abstract canRedo(): boolean;
+
+  // TODO: For online game handlers, this would need to be async.
   abstract requestUndo(): void;
+
+  // TODO: For online game handlers, this would need to be async.
   abstract requestRedo(): void;
 
   abstract getPlayerCount(): number;
-  abstract getScoreTypes(): ScoreType[];
+  abstract getScoreType(): ScoreType;
+
+  // TODO: For online game handlers, this would need to be async.
   abstract do(action: Action): void;
 }
 
@@ -72,8 +78,8 @@ export class LocalGameHandler<
   getPlayerCount(): number {
     return this.game.getPlayerCount();
   }
-  getScoreTypes(): ScoreType[] {
-    return this.game.getScoreTypes();
+  getScoreType(): ScoreType {
+    return this.game.getScoreType();
   }
   do(action: Action): void {
     this._editState(this._state.do(action));

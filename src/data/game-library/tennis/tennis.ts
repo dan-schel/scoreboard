@@ -48,12 +48,13 @@ export class TennisGameInstance extends GameInstance<
   deserializeState(input: unknown): TennisState {
     return TennisState.json.parse(input)(this.config);
   }
-  getScoreTypes(): ScoreType[] {
-    return [new TennisScoreType("points", this.config)];
+  getScoreType(): ScoreType {
+    return new TennisScoreType("points", this.config);
   }
 }
 
 export class TennisState extends GameState<TennisState> {
+  // TODO: Track faults. Implement winning/game over!
   constructor(
     readonly config: TennisConfig,
     readonly playerServing: "1" | "2",

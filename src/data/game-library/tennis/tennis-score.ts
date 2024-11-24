@@ -28,11 +28,6 @@ export class TennisSetHistory {
 export class TennisScore {
   static readonly zero = new TennisScore("0", null, 0, []);
 
-  // TODO: I'm also not tracking faults here, but I think those should be tracked in
-  // the TennisState itself (we don't need two separate values for each player,
-  // since only one player serves at a time). Then if the fault button is
-  // pressed twice, call TennisScore.awardPoint() just like we do in
-  // IncrementAction.
   constructor(
     readonly points: TennisGameScore,
     readonly tiebreakPoints: number | null,

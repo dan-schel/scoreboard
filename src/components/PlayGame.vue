@@ -29,6 +29,8 @@ function handleMenuButton() {
   dialogPage.value = "main";
 }
 
+const scoreType = computed(() => props.handler.getScoreType());
+
 const scoreHeadline = computed(
   () => gameState.value.getScoreHeadline()?.toUpperCase(),
 );
@@ -65,8 +67,6 @@ onUnmounted(() => {
       </div>
       <div class="score" v-for="i in handler.getPlayerCount()" :key="i">
         <ScoreDisplay
-          v-for="scoreType in handler.getScoreTypes()"
-          :key="scoreType.id"
           :score="scoreType"
           :state="gameState"
           :playerIndex="i - 1"
