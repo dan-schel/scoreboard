@@ -53,27 +53,30 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="play">
-    <div class="mobile-row">
-      <div class="score-headline" v-if="scoreHeadline != null">
-        <p>{{ scoreHeadline }}</p>
+  <div class="container">
+    <div class="play">
+      <div class="mobile-row">
+        <div class="score-headline" v-if="scoreHeadline != null">
+          <p>{{ scoreHeadline }}</p>
+        </div>
+        <button class="menu-button" @click="handleMenuButton">
+          <PhDotsThreeOutlineFill></PhDotsThreeOutlineFill>
+        </button>
       </div>
-      <button class="menu-button" @click="handleMenuButton">
-        <PhDotsThreeOutlineFill></PhDotsThreeOutlineFill>
-      </button>
-    </div>
-    <div class="score" v-for="i in handler.getPlayerCount()" :key="i">
-      <ScoreDisplay
-        v-for="scoreType in handler.getScoreTypes()"
-        :key="scoreType.id"
-        :score="scoreType"
-        :state="gameState"
-        :playerIndex="i - 1"
-        @submit-action="(action) => handler.do(action)"
-      >
-      </ScoreDisplay>
+      <div class="score" v-for="i in handler.getPlayerCount()" :key="i">
+        <ScoreDisplay
+          v-for="scoreType in handler.getScoreTypes()"
+          :key="scoreType.id"
+          :score="scoreType"
+          :state="gameState"
+          :playerIndex="i - 1"
+          @submit-action="(action) => handler.do(action)"
+        >
+        </ScoreDisplay>
+      </div>
     </div>
   </div>
+
   <dialog ref="dialogRef">
     <EarbudModeMenu
       v-if="dialogPage === 'earbud-mode'"
@@ -96,6 +99,11 @@ onUnmounted(() => {
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
 @use "@/assets/button-solid-color" as bsc;
+
+.container {
+  flex-grow: 1;
+  justify-content: center;
+}
 
 .play {
   display: grid;
