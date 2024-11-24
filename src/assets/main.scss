@@ -9,9 +9,9 @@ $theme-scoreboard-definition: (
 
   "text": template.theme-dark-ink(80),
   "text-weak": template.theme-dark-ink(50),
-  "accent": rgb(77, 166, 255),
-  "accent-hover": hsl(210, 100%, 70%),
-  "accent-active": hsl(210, 100%, 60%),
+  "accent": #4f8fee,
+  "accent-hover": #669df0,
+  "accent-active": #377feb,
   "on-accent": #1d1e2e,
   "soft": template.theme-dark-ink(12),
   "soft-hover": template.theme-dark-ink(16),

@@ -83,7 +83,6 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <h1>{{ game.name }}</h1>
   <ConfigureGame
     v-if="handler == null"
     :game="game"

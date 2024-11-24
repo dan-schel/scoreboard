@@ -15,8 +15,10 @@
 
 .page-centerer {
   @include template.page-centerer;
+  flex-grow: 1;
 }
 .content {
   width: 100%;
+  flex-grow: 1;
 }
 </style>

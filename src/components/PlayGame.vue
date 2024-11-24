@@ -38,11 +38,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <p>Play game</p>
-  <button @click="handler.requestUndo()" :disabled="!canUndo">Undo</button>
-  <button @click="handler.requestRedo()" :disabled="!canRedo">Redo</button>
-  <div class="players">
-    <div v-for="i in handler.getPlayerCount()" :key="i">
+  <div class="play">
+    <!-- <button @click="handler.requestUndo()" :disabled="!canUndo">
+      <p>Undo</p>
+    </button>
+    <button @click="handler.requestRedo()" :disabled="!canRedo">
+      <p>Redo</p>
+    </button> -->
+    <div class="score" v-for="i in handler.getPlayerCount()" :key="i">
       <ScoreDisplay
         v-for="scoreType in handler.getScoreTypes()"
         :key="scoreType.id"
@@ -59,9 +62,26 @@ onUnmounted(() => {
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
 
-.players {
+.play {
   display: grid;
-  grid-template-columns: 30rem 30rem;
   gap: 1rem;
+  padding: 2rem;
+  flex-grow: 1;
+
+  // TODO: Assumes 2 players.
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr;
+}
+
+// Desktop layout.
+@media screen and (min-width: 48rem) {
+  .play {
+    // TODO: Assumes 2 players.
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 1fr;
+
+    // Keeps the buttons no taller than square.
+    max-height: calc((100vw + 3rem) / 2);
+  }
 }
 </style>

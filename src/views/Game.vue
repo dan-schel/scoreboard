@@ -42,6 +42,9 @@ const game = computed(() => {
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
 
+main {
+  flex-grow: 1;
+}
 .not-found {
   padding: 2rem;
   height: 100vh;

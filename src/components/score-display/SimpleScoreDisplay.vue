@@ -26,7 +26,7 @@ function handleButtonClick() {
   <button
     @click="handleButtonClick"
     :disabled="!canIncrement"
-    class="ripple-button"
+    class="score-button"
     :class="`accent-${score.getPlayerColor(playerIndex)}`"
   >
     <p>{{ score.getScoreString(state as GameStateType, playerIndex) }}</p>
@@ -38,15 +38,15 @@ function handleButtonClick() {
 @use "@/assets/player-colors" as colors;
 @use "@/assets/button-solid-color" as bsc;
 
-.ripple-button {
+.score-button {
   @include bsc.button-solid-color;
   @include colors.accent-classes;
   @include template.content-text;
   --button-rounding: 1rem;
   align-items: center;
   justify-content: center;
+  flex-grow: 1;
 
-  height: 20rem;
   p {
     font-weight: bold;
     font-size: 10rem;
