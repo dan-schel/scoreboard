@@ -1,11 +1,13 @@
 <script setup lang="ts" generic="GameStateType extends GameState">
-import { type GameState } from "@/data/game/game";
+import { type Action, type GameState } from "@/data/game/game";
 import { computed, onMounted, onUnmounted, ref, watch, type Ref } from "vue";
 import { type GameHandler } from "@/data/game/game-handler";
 import ScoreDisplay from "./score-display/ScoreDisplay.vue";
 import PhDotsThreeOutlineFill from "./icons/PhDotsThreeOutlineFill.vue";
 import PlayMenu from "./play-menu/PlayMenu.vue";
 import EarbudModeMenu from "./play-menu/EarbudModeMenu.vue";
+import GameOverMenu from "./play-menu/GameOverMenu.vue";
+import { getPlayerColorDisplayString } from "@/data/game-utils/player-color";
 
 const props = defineProps<{
   handler: GameHandler<GameStateType>;
@@ -16,24 +18,53 @@ const canUndo = ref(props.handler.canUndo());
 const canRedo = ref(props.handler.canRedo());
 
 const dialogRef = ref<HTMLDialogElement | null>(null);
-const dialogPage = ref<"main" | "earbud-mode">("main");
+const dialogPage = ref<"main" | "earbud-mode" | "game-over" | null>(null);
+
+const scoreType = computed(() => props.handler.getScoreType());
+
+const gameOver = computed(() => {
+  return gameState.value.isGameOver();
+});
+
+const scoreHeadline = computed(() => {
+  if (dialogPage.value != null) {
+    return null;
+  } else if (gameOver.value !== false) {
+    if (typeof gameOver.value === "object") {
+      return `${getPlayerColorDisplayString(
+        gameOver.value.winner,
+      )} wins!`.toUpperCase();
+    } else {
+      return "IT'S A DRAW!";
+    }
+  } else {
+    return gameState.value.getScoreHeadline()?.toUpperCase();
+  }
+});
 
 function handleStateUpdate() {
   gameState.value = props.handler.getState();
   canUndo.value = props.handler.canUndo();
   canRedo.value = props.handler.canRedo();
+
+  const gameOver = gameState.value.isGameOver();
+  if (gameOver !== false) {
+    dialogPage.value = "game-over";
+    dialogRef.value?.showModal();
+  }
 }
 
 function handleMenuButton() {
-  dialogRef.value?.showModal();
   dialogPage.value = "main";
+  dialogRef.value?.showModal();
 }
 
-const scoreType = computed(() => props.handler.getScoreType());
-
-const scoreHeadline = computed(
-  () => gameState.value.getScoreHeadline()?.toUpperCase(),
-);
+function handleSubmitAction(action: Action) {
+  if (gameOver.value !== false) {
+    return;
+  }
+  props.handler.do(action);
+}
 
 watch(
   () => props.handler,
@@ -48,6 +79,9 @@ watch(
 
 onMounted(() => {
   props.handler.addChangeListener(handleStateUpdate);
+  dialogRef.value?.addEventListener("close", () => {
+    dialogPage.value = null;
+  });
 });
 onUnmounted(() => {
   props.handler.removeChangeListener(handleStateUpdate);
@@ -70,7 +104,7 @@ onUnmounted(() => {
           :score="scoreType"
           :state="gameState"
           :playerIndex="i - 1"
-          @submit-action="(action) => handler.do(action)"
+          @submit-action="handleSubmitAction"
         >
         </ScoreDisplay>
       </div>
@@ -83,6 +117,11 @@ onUnmounted(() => {
       @back="dialogPage = 'main'"
     >
     </EarbudModeMenu>
+    <GameOverMenu
+      v-else-if="dialogPage === 'game-over'"
+      :winner-color="typeof gameOver === 'object' ? gameOver.winner : null"
+      @close="dialogRef?.close()"
+    ></GameOverMenu>
     <PlayMenu
       v-else
       class="menu"

@@ -2,11 +2,14 @@ import { z } from "zod";
 import { GameState, type Action } from "../../game/game";
 import { TennisConfig } from "./tennis-config";
 import { TennisScore } from "./tennis-score";
-import { getPlayerColorDisplayString } from "@/data/game-utils/player-color";
+import {
+  getPlayerColorDisplayString,
+  type PlayerColor,
+} from "@/data/game-utils/player-color";
 import { FaultAction, IncrementAction } from "./tennis-actions";
 
 export class TennisState extends GameState<TennisState> {
-  // TODO: Track faults, implement winning/game over, implement customization.
+  // TODO: Implement configuration.
   constructor(
     readonly config: TennisConfig,
     readonly playerServing: "1" | "2",
@@ -131,6 +134,16 @@ export class TennisState extends GameState<TennisState> {
     }
 
     return null;
+  }
+
+  isGameOver(): boolean | { winner: PlayerColor } {
+    if (this.player1Score.hasWon(this.config.setsToWin)) {
+      return { winner: this.config.players[0].color };
+    }
+    if (this.player2Score.hasWon(this.config.setsToWin)) {
+      return { winner: this.config.players[1].color };
+    }
+    return false;
   }
 
   isServing(playerIndex: number): boolean {

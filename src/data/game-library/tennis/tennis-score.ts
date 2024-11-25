@@ -78,6 +78,10 @@ export class TennisScore {
     return [...this.setHistory.map((x) => x.gamesWon), this.games];
   }
 
+  hasWon(setsToWin: number) {
+    return this.setHistory.filter((x) => x.winner).length >= setsToWin;
+  }
+
   static determineServeSide(
     score1: TennisScore,
     score2: TennisScore,
@@ -230,24 +234,24 @@ export class TennisScore {
         new TennisSetHistory(false, loser.games),
       );
 
-      const winsMatch =
-        winnerSetHistory.filter((x) => x.winner).length >= config.setsToWin;
+      const newWinnerScore = winner.with({
+        points: "0",
+        tiebreakPoints: null,
+        games: 0,
+        setHistory: winnerSetHistory,
+      });
+      const newLoserScore = loser.with({
+        points: "0",
+        tiebreakPoints: null,
+        games: 0,
+        setHistory: loserSetHistory,
+      });
 
       return {
-        winner: winner.with({
-          points: "0",
-          tiebreakPoints: null,
-          games: 0,
-          setHistory: winnerSetHistory,
-        }),
-        loser: loser.with({
-          points: "0",
-          tiebreakPoints: null,
-          games: 0,
-          setHistory: loserSetHistory,
-        }),
+        winner: newWinnerScore,
+        loser: newLoserScore,
         winsSet: true,
-        winsMatch,
+        winsMatch: newWinnerScore.hasWon(config.setsToWin),
       };
     }
   }

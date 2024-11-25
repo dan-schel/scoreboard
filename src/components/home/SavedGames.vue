@@ -29,7 +29,7 @@ const formatter = new Intl.DateTimeFormat("en", {
         </div>
         <div class="actions">
           <RouterLink
-            v-if="!save.error"
+            v-if="!save.error && save.state.isGameOver() === false"
             :to="{ path: `/${save.game.id}/${save.instance.uuid}` }"
             class="open"
           >

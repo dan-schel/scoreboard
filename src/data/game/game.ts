@@ -46,6 +46,7 @@ export abstract class GameState<GameStateType extends GameState = any> {
   abstract do(action: Action): GameStateType;
   abstract toDisplayString(): string;
   abstract getScoreHeadline(): string | null;
+  abstract isGameOver(): boolean | { winner: PlayerColor };
 }
 
 export abstract class ScoreType {

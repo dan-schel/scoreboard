@@ -112,6 +112,11 @@ export class BasicGameState extends GameState<BasicGameState> {
   getScoreHeadline(): string | null {
     return "TODO: Headline";
   }
+
+  isGameOver(): boolean | { winner: PlayerColor } {
+    // TODO: Implement game over logic.
+    return false;
+  }
 }
 
 export class BasicScoreType extends SimpleScoreType<BasicGameState> {
