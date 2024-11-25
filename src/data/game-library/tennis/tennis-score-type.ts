@@ -1,6 +1,6 @@
 import type { PlayerColor } from "@/data/game-utils/player-color";
 import type { TennisConfig } from "./tennis-config";
-import type { TennisState } from "./tennis";
+import type { TennisState } from "./tennis-state";
 import { ScoreType, type Action } from "@/data/game/game";
 import { FaultAction, IncrementAction } from "./tennis-actions";
 

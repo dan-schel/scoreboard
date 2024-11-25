@@ -1,4 +1,4 @@
-import type { TennisState } from "./tennis";
+import type { TennisState } from "./tennis-state";
 import { type Action } from "@/data/game/game";
 import { z } from "zod";
 

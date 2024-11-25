@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TennisState } from "@/data/game-library/tennis/tennis";
+import type { TennisState } from "@/data/game-library/tennis/tennis-state";
 import { TennisScore } from "@/data/game-library/tennis/tennis-score";
 import type { TennisScoreType } from "@/data/game-library/tennis/tennis-score-type";
 import type { Action } from "@/data/game/game";
