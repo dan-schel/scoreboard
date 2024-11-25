@@ -8,8 +8,9 @@ import {
 } from "../../game/game";
 import { TennisConfig, TennisConfigWriter } from "./tennis-config";
 import { TennisScore } from "./tennis-score";
-import { IncrementAction, TennisScoreType } from "./tennis-score-type";
+import { TennisScoreType } from "./tennis-score-type";
 import { getPlayerColorDisplayString } from "@/data/game-utils/player-color";
+import { FaultAction, IncrementAction } from "./tennis-actions";
 
 export class TennisBuilder extends GameBuilder<TennisConfig, TennisState> {
   readonly id = "tennis";
@@ -40,6 +41,7 @@ export class TennisGameInstance extends GameInstance<
       "1",
       TennisScore.zero,
       TennisScore.zero,
+      false,
     );
   }
   serializeState(state: TennisState): unknown {
@@ -54,12 +56,13 @@ export class TennisGameInstance extends GameInstance<
 }
 
 export class TennisState extends GameState<TennisState> {
-  // TODO: Track faults. Implement winning/game over!
+  // TODO: Track faults, implement winning/game over, implement customization.
   constructor(
     readonly config: TennisConfig,
     readonly playerServing: "1" | "2",
     readonly player1Score: TennisScore,
     readonly player2Score: TennisScore,
+    readonly fault: boolean,
   ) {
     super();
   }
@@ -69,6 +72,7 @@ export class TennisState extends GameState<TennisState> {
       playerServing: z.enum(["1", "2"]),
       player1Score: TennisScore.json,
       player2Score: TennisScore.json,
+      fault: z.boolean(),
     })
     .transform(
       (x) => (config: TennisConfig) =>
@@ -77,6 +81,7 @@ export class TennisState extends GameState<TennisState> {
           x.playerServing,
           x.player1Score,
           x.player2Score,
+          x.fault,
         ),
     );
 
@@ -85,6 +90,7 @@ export class TennisState extends GameState<TennisState> {
       playerServing: this.playerServing,
       player1Score: this.player1Score.toJSON(),
       player2Score: this.player2Score.toJSON(),
+      fault: this.fault,
     };
   }
 
@@ -92,22 +98,27 @@ export class TennisState extends GameState<TennisState> {
     playerServing,
     player1Score,
     player2Score,
+    fault,
   }: {
     playerServing?: "1" | "2";
     player1Score?: TennisScore;
     player2Score?: TennisScore;
+    fault?: boolean;
   }): TennisState {
     return new TennisState(
       this.config,
       playerServing ?? this.playerServing,
       player1Score ?? this.player1Score,
       player2Score ?? this.player2Score,
+      fault ?? this.fault,
     );
   }
 
   do(action: Action): TennisState {
     if (action.id === IncrementAction.id) {
       return IncrementAction.execute(this, action.data);
+    } else if (action.id === FaultAction.id) {
+      return FaultAction.execute(this, action.data);
     } else {
       throw new Error(`Unknown action "${action}".`);
     }
@@ -177,6 +188,63 @@ export class TennisState extends GameState<TennisState> {
       return this.playerServing === "1";
     } else if (playerIndex === 1) {
       return this.playerServing === "2";
+    } else {
+      throw new Error(`Invalid player index "${playerIndex}".`);
+    }
+  }
+
+  get playerServingIndex(): 0 | 1 {
+    return this.playerServing === "1" ? 0 : 1;
+  }
+
+  get playerNotServing(): "1" | "2" {
+    return this.playerServing === "1" ? "2" : "1";
+  }
+
+  get playerNotServingIndex(): 0 | 1 {
+    return this.playerServing === "1" ? 1 : 0;
+  }
+
+  withPointAwarded(playerIndex: number) {
+    const newState = (
+      player1Score: TennisScore,
+      player2Score: TennisScore,
+      changeServe: boolean,
+    ) => {
+      const playerServing = !changeServe
+        ? this.playerServing
+        : this.playerNotServing;
+
+      return this.with({
+        player1Score,
+        player2Score,
+        playerServing,
+        fault: false,
+      });
+    };
+
+    if (playerIndex === 0) {
+      const scoreUpdate = TennisScore.awardPoint(
+        this.config,
+        this.player1Score,
+        this.player2Score,
+      );
+      return newState(
+        scoreUpdate.winner,
+        scoreUpdate.loser,
+        scoreUpdate.causesChangeOfServe,
+      );
+    } else if (playerIndex === 1) {
+      const scoreUpdate = TennisScore.awardPoint(
+        this.config,
+        this.player2Score,
+        this.player1Score,
+      );
+      return newState(
+        scoreUpdate.loser,
+        scoreUpdate.winner,
+        scoreUpdate.causesChangeOfServe,
+      );
     } else {
       throw new Error(`Invalid player index "${playerIndex}".`);
     }

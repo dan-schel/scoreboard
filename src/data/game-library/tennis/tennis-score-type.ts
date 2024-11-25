@@ -2,8 +2,7 @@ import type { PlayerColor } from "@/data/game-utils/player-color";
 import type { TennisConfig } from "./tennis-config";
 import type { TennisState } from "./tennis";
 import { ScoreType, type Action } from "@/data/game/game";
-import { z } from "zod";
-import { TennisScore } from "./tennis-score";
+import { FaultAction, IncrementAction } from "./tennis-actions";
 
 export class TennisScoreType extends ScoreType {
   constructor(
@@ -53,81 +52,25 @@ export class TennisScoreType extends ScoreType {
     }
   }
 
-  canIncrementScore(_state: TennisState, _playerIndex: number): boolean {
+  isFault(state: TennisState): boolean {
+    return state.fault;
+  }
+
+  canIncrementScore(_state: TennisState): boolean {
+    // TODO: Check for game over?
     return true;
   }
 
-  getIncrementAction(_state: TennisState, playerIndex: number): Action {
+  getIncrementAction(playerIndex: number): Action {
     return IncrementAction.create(playerIndex);
   }
-}
 
-export class IncrementAction {
-  static readonly id = "increment";
-
-  static readonly json = z.object({
-    playerIndex: z.number(),
-  });
-
-  static create(
-    playerIndex: number,
-  ): Action<z.input<typeof IncrementAction.json>> {
-    return {
-      id: IncrementAction.id,
-      data: {
-        playerIndex: playerIndex,
-      },
-    };
+  canFault(state: TennisState, playerIndex: number): boolean {
+    // TODO: Check for game over?
+    return state.isServing(playerIndex);
   }
 
-  static execute(state: TennisState, data: unknown): TennisState {
-    const { playerIndex } = IncrementAction.json.parse(data);
-
-    if (playerIndex === 0) {
-      const scoreUpdate = TennisScore.awardPoint(
-        state.config,
-        state.player1Score,
-        state.player2Score,
-      );
-      return IncrementAction._buildNewState(
-        state,
-        scoreUpdate.winner,
-        scoreUpdate.loser,
-        scoreUpdate.causesChangeOfServe,
-      );
-    } else if (playerIndex === 1) {
-      const scoreUpdate = TennisScore.awardPoint(
-        state.config,
-        state.player2Score,
-        state.player1Score,
-      );
-      return IncrementAction._buildNewState(
-        state,
-        scoreUpdate.loser,
-        scoreUpdate.winner,
-        scoreUpdate.causesChangeOfServe,
-      );
-    } else {
-      throw new Error(`Invalid player index "${playerIndex}".`);
-    }
-  }
-
-  private static _buildNewState(
-    state: TennisState,
-    player1Score: TennisScore,
-    player2Score: TennisScore,
-    changeServe: boolean,
-  ) {
-    const playerServing = !changeServe
-      ? state.playerServing
-      : state.playerServing === "1"
-        ? "2"
-        : "1";
-
-    return state.with({
-      player1Score,
-      player2Score,
-      playerServing,
-    });
+  getFaultAction(): Action {
+    return FaultAction.create();
   }
 }
