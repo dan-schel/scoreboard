@@ -17,6 +17,7 @@ const matchJsonSchema = z.object({
 const matchesJsonSchema = matchJsonSchema.array();
 
 export type SuccessfullyLoadedGame<GameStateType extends GameState> = {
+  uuid: string;
   game: GameBuilder<GameConfig, GameState>;
   instance: GameInstance<GameConfig, GameStateType>;
   state: GameStateType;
@@ -24,6 +25,7 @@ export type SuccessfullyLoadedGame<GameStateType extends GameState> = {
   datetime: Date;
 };
 export type CorruptedSaveGame = {
+  uuid: string;
   game: GameBuilder<GameConfig, GameState> | null;
   error: true;
   datetime: Date;
@@ -55,6 +57,7 @@ export function fetchAllSavedMatches(): LoadResults<GameState>[] {
     const game = gameLibrary.get(match.game);
     if (game == null) {
       return {
+        uuid: match.uuid,
         game: null,
         error: true,
         datetime: match.datetime,
@@ -118,6 +121,7 @@ function parseGame<GameStateType extends GameState>(
     const config = game.deserializeConfig(match.config);
     const loadedGame = game.build(config, match.uuid);
     return {
+      uuid: match.uuid,
       game: game,
       instance: loadedGame,
       state: loadedGame.deserializeState(match.state),
@@ -126,6 +130,7 @@ function parseGame<GameStateType extends GameState>(
     };
   } catch (e) {
     return {
+      uuid: match.uuid,
       game: game,
       error: true,
       datetime: match.datetime,
@@ -138,4 +143,8 @@ function saveMatches(matches: z.infer<typeof matchesJsonSchema>) {
   matches.sort((a, b) => b.datetime.getTime() - a.datetime.getTime());
   matches.splice(maxMatchesToSave);
   localStorage.setItem(matchesLSKey, JSON.stringify(matches));
+}
+
+export function deleteMatch(uuid: string) {
+  saveMatches(tryLoadMatches().filter((match) => match.uuid !== uuid));
 }
