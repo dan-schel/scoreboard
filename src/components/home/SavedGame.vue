@@ -22,8 +22,6 @@ const formatter = new Intl.DateTimeFormat("en", {
 });
 
 function handleDelete() {
-  // TODO: Don't delete when the three dots button is clicked, that should open
-  // a menu with a delete button inside.
   deleteMatch(props.save.uuid);
   emit("deleted");
 }
