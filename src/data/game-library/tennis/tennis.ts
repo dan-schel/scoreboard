@@ -42,6 +42,9 @@ export class TennisGameInstance extends GameInstance<
   deserializeState(input: unknown): TennisState {
     return TennisState.json.parse(input)(this.config);
   }
+  getPlayerCount(): number {
+    return 2;
+  }
   getScoreType(): ScoreType {
     return new TennisScoreType("points", this.config);
   }

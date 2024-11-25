@@ -35,10 +35,7 @@ export abstract class GameInstance<
   abstract serializeState(state: GameStateType): unknown;
   abstract deserializeState(input: unknown): GameStateType;
 
-  getPlayerCount() {
-    return this.config.players.length;
-  }
-
+  abstract getPlayerCount(): number;
   abstract getScoreType(): ScoreType;
 }
 
