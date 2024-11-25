@@ -29,8 +29,8 @@ function coerced(save: any) {
     <p v-if="savedGames.length == 0" class="empty">No saved games to load.</p>
 
     <SavedGame
-      v-for="(save, i) in savedGames"
-      :key="i"
+      v-for="save in savedGames"
+      :key="save.uuid"
       :save="coerced(save)"
       @deleted="handleSaveDeleted"
     >

@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="GameConfigType extends GameConfig">
 import type { GameBuilder } from "@/data/game/game";
 import type { GameConfig } from "@/data/game/game-config";
+import { ref } from "vue";
 
 const props = defineProps<{
   game: GameBuilder<GameConfigType>;
@@ -8,6 +9,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "submit", config: GameConfigType): void;
 }>();
+
+const playerCount = ref(props.game.configWriter.playerCount.min);
 
 function handleFormSubmit(e: Event) {
   e.preventDefault();
@@ -20,6 +23,19 @@ function handleFormSubmit(e: Event) {
     <h1>Configure game</h1>
     <p class="game-name">{{ game.name }}</p>
     <form autocomplete="off" @submit="handleFormSubmit">
+      <template v-for="i of playerCount" :key="i">
+        <p>Player {{ i }}</p>
+        <template
+          v-for="prop of props.game.configWriter.playerConfigWriter.props"
+          :key="prop.key"
+        >
+          <p>{{ prop.key }} {{ prop.type }}</p>
+        </template>
+      </template>
+      <button>Add player</button>
+      <template v-for="prop of props.game.configWriter.props" :key="prop.key">
+        <p>{{ prop.key }} {{ prop.type }}</p>
+      </template>
       <button type="submit" class="play-button"><p>Play!</p></button>
     </form>
   </div>
