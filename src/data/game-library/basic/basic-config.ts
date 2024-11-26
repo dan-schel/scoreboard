@@ -1,4 +1,4 @@
-import { PlayerColors, type PlayerColor } from "@/data/game-utils/player-color";
+import { AccentColors, type AccentColor } from "@/data/game-utils/accent-color";
 import { GameConfig, GameConfigWriter } from "@/data/game/config/config";
 import { PropEnum } from "@/data/game/config/prop-enum";
 import { PropInteger } from "@/data/game/config/prop-integer";
@@ -11,8 +11,8 @@ import { z } from "zod";
 
 export class BasicGameConfig extends GameConfig {
   constructor(
-    readonly player1Color: PlayerColor,
-    readonly player2Color: PlayerColor,
+    readonly player1Color: AccentColor,
+    readonly player2Color: AccentColor,
     readonly winningScore: number,
     readonly requiredMargin: number,
   ) {
@@ -21,8 +21,8 @@ export class BasicGameConfig extends GameConfig {
 
   static readonly json = z
     .object({
-      player1Color: z.enum(PlayerColors),
-      player2Color: z.enum(PlayerColors),
+      player1Color: z.enum(AccentColors),
+      player2Color: z.enum(AccentColors),
       winningScore: z.number(),
       requiredMargin: z.number(),
     })
@@ -66,12 +66,12 @@ export class BasicGameConfigWriter extends GameConfigWriter<BasicGameConfig> {
         new PropObjectField(
           BasicGameConfigWriter._player1Color,
           "Player 1 Color",
-          PropEnum.playerColors("green"),
+          PropEnum.accentColors("green"),
         ),
         new PropObjectField(
           BasicGameConfigWriter._player2Color,
           "Player 2 Color",
-          PropEnum.playerColors("blue"),
+          PropEnum.accentColors("blue"),
         ),
         new PropObjectField(
           BasicGameConfigWriter._winningScore,
@@ -90,10 +90,10 @@ export class BasicGameConfigWriter extends GameConfigWriter<BasicGameConfig> {
   doAdditionalValidation(value: PropObjectValue): PropObjectValue {
     const player1Color = value
       .requireEnum(BasicGameConfigWriter._player1Color)
-      .requirePlayerColor();
+      .requireAccentColor();
     const player2Color = value
       .requireEnum(BasicGameConfigWriter._player2Color)
-      .requirePlayerColor();
+      .requireAccentColor();
 
     if (player1Color === player2Color) {
       return new PropObjectValue(
@@ -108,10 +108,10 @@ export class BasicGameConfigWriter extends GameConfigWriter<BasicGameConfig> {
   build(value: PropObjectValue): BasicGameConfig {
     const player1Color = value
       .requireEnum(BasicGameConfigWriter._player1Color)
-      .requirePlayerColor();
+      .requireAccentColor();
     const player2Color = value
       .requireEnum(BasicGameConfigWriter._player2Color)
-      .requirePlayerColor();
+      .requireAccentColor();
     const winningScore = value
       .requireInteger(BasicGameConfigWriter._winningScore)
       .require();

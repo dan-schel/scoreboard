@@ -1,4 +1,4 @@
-import type { PlayerColor } from "@/data/game-utils/player-color";
+import type { AccentColor } from "@/data/game-utils/accent-color";
 import type { TennisConfig } from "./tennis-config";
 import type { TennisState } from "./tennis-state";
 import { ScoreType, type Action } from "@/data/game/game";
@@ -12,7 +12,7 @@ export class TennisScoreType extends ScoreType {
     super(id);
   }
 
-  getPlayerColor(playerIndex: number): PlayerColor {
+  getPlayerColor(playerIndex: number): AccentColor {
     if (playerIndex === 0) {
       return this.config.player1Color;
     } else if (playerIndex === 1) {

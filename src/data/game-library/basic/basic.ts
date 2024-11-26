@@ -1,7 +1,7 @@
 import {
-  getPlayerColorDisplayString,
-  type PlayerColor,
-} from "@/data/game-utils/player-color";
+  getAccentColorDisplayString,
+  type AccentColor,
+} from "@/data/game-utils/accent-color";
 import {
   GameBuilder,
   GameInstance,
@@ -19,6 +19,7 @@ export class BasicGameBuilder extends GameBuilder<
 > {
   readonly id = "basic";
   readonly name = "Basic";
+  readonly color = "blue";
   readonly configWriter = new BasicGameConfigWriter();
 
   build(
@@ -102,8 +103,8 @@ export class BasicGameState extends GameState<BasicGameState> {
   }
 
   toDisplayString(): string {
-    const p1Color = getPlayerColorDisplayString(this.config.player1Color);
-    const p2Color = getPlayerColorDisplayString(this.config.player2Color);
+    const p1Color = getAccentColorDisplayString(this.config.player1Color);
+    const p2Color = getAccentColorDisplayString(this.config.player2Color);
     const p1 = `${p1Color} ${this.player1Score.toFixed()}`;
     const p2 = `${p2Color} ${this.player2Score.toFixed()}`;
     return `${p1} - ${p2}`;
@@ -114,7 +115,7 @@ export class BasicGameState extends GameState<BasicGameState> {
     return null;
   }
 
-  isGameOver(): boolean | { winner: PlayerColor } {
+  isGameOver(): boolean | { winner: AccentColor } {
     // TODO: Implement game over logic.
     return false;
   }
@@ -128,7 +129,7 @@ export class BasicScoreType extends SimpleScoreType<BasicGameState> {
     super(id);
   }
 
-  getPlayerColor(playerIndex: number): PlayerColor {
+  getPlayerColor(playerIndex: number): AccentColor {
     if (playerIndex === 0) {
       return this.config.player1Color;
     } else if (playerIndex === 1) {

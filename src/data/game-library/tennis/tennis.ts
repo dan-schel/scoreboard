@@ -7,6 +7,7 @@ import { TennisState } from "./tennis-state";
 export class TennisBuilder extends GameBuilder<TennisConfig, TennisState> {
   readonly id = "tennis";
   readonly name = "Tennis";
+  readonly color = "green";
   readonly configWriter = new TennisConfigWriter();
 
   build(

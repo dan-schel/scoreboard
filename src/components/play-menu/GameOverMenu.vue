@@ -3,13 +3,13 @@ import { RouterLink } from "vue-router";
 import PhHouseBold from "../icons/PhHouseBold.vue";
 import PhXBold from "../icons/PhXBold.vue";
 import {
-  getPlayerColorDisplayString,
-  type PlayerColor,
-} from "@/data/game-utils/player-color";
+  getAccentColorDisplayString,
+  type AccentColor,
+} from "@/data/game-utils/accent-color";
 import PhArrowsClockwiseBold from "../icons/PhArrowsClockwiseBold.vue";
 
 defineProps<{
-  winnerColor: PlayerColor | null;
+  winnerColor: AccentColor | null;
 }>();
 
 defineEmits<{
@@ -23,7 +23,7 @@ defineEmits<{
     <div class="header">
       <p v-if="winnerColor != null">
         <span class="winner-color">{{
-          getPlayerColorDisplayString(winnerColor)
+          getAccentColorDisplayString(winnerColor)
         }}</span>
         wins!
       </p>
@@ -47,7 +47,7 @@ defineEmits<{
 
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
-@use "@/assets/player-colors" as colors;
+@use "@/assets/accent-colors" as colors;
 
 .menu {
   @include colors.accent-classes;

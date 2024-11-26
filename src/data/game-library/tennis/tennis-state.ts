@@ -3,9 +3,9 @@ import { GameState, type Action } from "../../game/game";
 import { TennisConfig } from "./tennis-config";
 import { TennisScore } from "./tennis-score";
 import {
-  getPlayerColorDisplayString,
-  type PlayerColor,
-} from "@/data/game-utils/player-color";
+  getAccentColorDisplayString,
+  type AccentColor,
+} from "@/data/game-utils/accent-color";
 import { FaultAction, IncrementAction } from "./tennis-actions";
 
 export class TennisState extends GameState<TennisState> {
@@ -78,8 +78,8 @@ export class TennisState extends GameState<TennisState> {
   }
 
   toDisplayString(): string {
-    const p1Color = getPlayerColorDisplayString(this.config.player1Color);
-    const p2Color = getPlayerColorDisplayString(this.config.player2Color);
+    const p1Color = getAccentColorDisplayString(this.config.player1Color);
+    const p2Color = getAccentColorDisplayString(this.config.player2Color);
 
     const p1Sets = this.player1Score
       .gamesWonPerSet()
@@ -136,7 +136,7 @@ export class TennisState extends GameState<TennisState> {
     return null;
   }
 
-  isGameOver(): boolean | { winner: PlayerColor } {
+  isGameOver(): boolean | { winner: AccentColor } {
     if (this.player1Score.hasWon(this.config.setsToWin)) {
       return { winner: this.config.player1Color };
     }

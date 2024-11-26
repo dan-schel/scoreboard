@@ -13,11 +13,7 @@ import PhDiceThreeBold from "../icons/PhDiceThreeBold.vue";
       v-for="[id, game] in gameLibrary"
       :key="id"
       :to="{ path: `/${id}` }"
-      class="game"
-      :class="{
-        'accent-blue': id == 'basic',
-        'accent-green': id == 'tennis',
-      }"
+      :class="`game accent-${game.color}`"
     >
       <PhNumberSquareFourFill v-if="id == 'basic'"></PhNumberSquareFourFill>
       <PhTennisBallFill v-else-if="id == 'tennis'"></PhTennisBallFill>
@@ -33,7 +29,7 @@ import PhDiceThreeBold from "../icons/PhDiceThreeBold.vue";
 
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
-@use "@/assets/player-colors" as colors;
+@use "@/assets/accent-colors" as colors;
 @use "@/assets/button-solid-color" as bsc;
 
 .top-games {

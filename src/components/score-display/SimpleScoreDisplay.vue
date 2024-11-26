@@ -35,7 +35,7 @@ function handleButtonClick() {
 
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
-@use "@/assets/player-colors" as colors;
+@use "@/assets/accent-colors" as colors;
 @use "@/assets/button-solid-color" as bsc;
 
 .score-button {

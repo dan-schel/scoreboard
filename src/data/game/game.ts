@@ -1,4 +1,4 @@
-import type { PlayerColor } from "../game-utils/player-color";
+import type { AccentColor } from "../game-utils/accent-color";
 import type { GameConfig, GameConfigWriter } from "./config/config";
 
 export abstract class GameBuilder<
@@ -7,6 +7,7 @@ export abstract class GameBuilder<
 > {
   abstract readonly id: string;
   abstract readonly name: string;
+  abstract readonly color: AccentColor;
   abstract readonly configWriter: GameConfigWriter<GameConfigType>;
 
   constructor() {}
@@ -46,7 +47,7 @@ export abstract class GameState<GameStateType extends GameState = any> {
   abstract do(action: Action): GameStateType;
   abstract toDisplayString(): string;
   abstract getScoreHeadline(): string | null;
-  abstract isGameOver(): boolean | { winner: PlayerColor };
+  abstract isGameOver(): boolean | { winner: AccentColor };
 }
 
 export abstract class ScoreType {
@@ -65,7 +66,7 @@ export abstract class SimpleScoreType<
     super(id);
   }
 
-  abstract getPlayerColor(playerIndex: number): PlayerColor;
+  abstract getPlayerColor(playerIndex: number): AccentColor;
 
   abstract getScoreString(state: GameStateType, playerIndex: number): string;
 

@@ -1,8 +1,8 @@
 import {
-  playerColorDisplayStrings,
-  PlayerColors,
-  type PlayerColor,
-} from "@/data/game-utils/player-color";
+  accentColorDisplayStrings,
+  AccentColors,
+  type AccentColor,
+} from "@/data/game-utils/accent-color";
 import { Prop, PropValue } from "./prop";
 
 export class PropEnumOption {
@@ -45,10 +45,10 @@ export class PropEnum extends Prop<PropEnumValue> {
     );
   }
 
-  static playerColors(initialValue: PlayerColor) {
-    return PropEnum.fromArray<PlayerColor>(
-      PlayerColors,
-      playerColorDisplayStrings,
+  static accentColors(initialValue: AccentColor) {
+    return PropEnum.fromArray<AccentColor>(
+      AccentColors,
+      accentColorDisplayStrings,
       initialValue,
     );
   }
@@ -77,7 +77,7 @@ export class PropEnumValue extends PropValue {
     return this.value as T;
   }
 
-  requirePlayerColor(): PlayerColor {
-    return this.requireOneOf<PlayerColor>(PlayerColors);
+  requireAccentColor(): AccentColor {
+    return this.requireOneOf<AccentColor>(AccentColors);
   }
 }

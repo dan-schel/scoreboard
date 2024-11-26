@@ -7,7 +7,7 @@ import PhDotsThreeOutlineFill from "./icons/PhDotsThreeOutlineFill.vue";
 import PlayMenu from "./play-menu/PlayMenu.vue";
 import EarbudModeMenu from "./play-menu/EarbudModeMenu.vue";
 import GameOverMenu from "./play-menu/GameOverMenu.vue";
-import { getPlayerColorDisplayString } from "@/data/game-utils/player-color";
+import { getAccentColorDisplayString } from "@/data/game-utils/accent-color";
 
 const props = defineProps<{
   handler: GameHandler<GameStateType>;
@@ -31,7 +31,7 @@ const scoreHeadline = computed(() => {
     return null;
   } else if (gameOver.value !== false) {
     if (typeof gameOver.value === "object") {
-      return `${getPlayerColorDisplayString(
+      return `${getAccentColorDisplayString(
         gameOver.value.winner,
       )} wins!`.toUpperCase();
     } else {

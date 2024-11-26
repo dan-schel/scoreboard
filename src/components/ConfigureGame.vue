@@ -34,7 +34,7 @@ function handleFormSubmit(e: Event) {
 <template>
   <div class="configure">
     <h1>Configure game</h1>
-    <p class="game-name">{{ game.name }}</p>
+    <p :class="`game-name accent-${game.color}`">{{ game.name }}</p>
     <form autocomplete="off" @submit="handleFormSubmit">
       <PropObjectEditor
         :prop="game.configWriter.configProp"
@@ -48,6 +48,7 @@ function handleFormSubmit(e: Event) {
 
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
+@use "@/assets/accent-colors" as colors;
 
 .configure {
   padding: 3rem 2rem;
@@ -61,6 +62,7 @@ h1 {
 }
 
 .game-name {
+  @include colors.accent-classes;
   font-size: 1.5rem;
   color: var(--color-accent);
   margin-bottom: 2rem;
