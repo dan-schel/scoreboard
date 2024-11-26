@@ -12,6 +12,7 @@ import PropEnumEditor from "./PropEnumEditor.vue";
 defineProps<{
   prop: Prop<PropValue>;
   value: PropValue;
+  nestLevel: number;
 }>();
 
 defineEmits<{
@@ -25,12 +26,14 @@ defineEmits<{
     :prop="prop"
     :value="value"
     @change="(newValue) => $emit('change', newValue)"
+    :nest-level="nestLevel"
   ></PropObjectEditor>
   <PropArrayEditor
     v-else-if="prop instanceof PropArray && value instanceof PropArrayValue"
     :prop="prop"
     :value="value"
     @change="(newValue) => $emit('change', newValue)"
+    :nest-level="nestLevel"
   ></PropArrayEditor>
   <PropIntegerEditor
     v-else-if="prop instanceof PropInteger && value instanceof PropIntegerValue"

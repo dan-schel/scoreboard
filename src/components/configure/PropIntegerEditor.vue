@@ -11,8 +11,8 @@ defineEmits<{
 }>();
 
 // TODO: If we want to, we could validate the prop on blur.
-// Just call the change event with `prop.validate(value).validated` as the new
-// value, and then the error message should be displayed.
+// Just call the change event with `prop.validate(value)` as the new value, and
+// then the error message should be displayed.
 </script>
 
 <template>
@@ -21,11 +21,20 @@ defineEmits<{
     :value="value.textValue"
     @change="(e) => $emit('change', value.withValue((e.target as any).value))"
   />
-  <p>{{ value.error }}</p>
+  <p class="error" v-if="value.error != null">{{ value.error }}</p>
 </template>
 
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
 
-// TODO: Add your code here.
+input[type="text"] {
+  @include template.input-filled-neutral;
+  padding: 0.5rem 0.75rem;
+  max-width: 25rem;
+}
+
+.error {
+  color: var(--color-error);
+  font-weight: bold;
+}
 </style>

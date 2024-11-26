@@ -5,6 +5,7 @@ import PropEditor from "./PropEditor.vue";
 defineProps<{
   prop: PropArray;
   value: PropArrayValue;
+  nestLevel: number;
 }>();
 
 defineEmits<{
@@ -19,13 +20,22 @@ defineEmits<{
       :prop="prop.propByIndex(i)"
       :value="item"
       @change="(newValue) => $emit('change', value.withElement(i, newValue))"
+      :nest-level="nestLevel + 1"
     ></PropEditor>
   </template>
-  <p>{{ value.error }}</p>
+  <!-- 
+    TODO: A button to add new values. (Also each value needs a delete button!)
+  -->
+  <p class="error" v-if="value.error != null">{{ value.error }}</p>
 </template>
 
 <style scoped lang="scss">
 @use "@/assets/css-template/import" as template;
 
-// TODO: Add your code here.
+// TODO: I haven't done any styling here, since it's not used yet.
+
+.error {
+  color: var(--color-error);
+  font-weight: bold;
+}
 </style>

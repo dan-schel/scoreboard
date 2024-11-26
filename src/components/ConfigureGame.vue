@@ -40,6 +40,7 @@ function handleFormSubmit(e: Event) {
         :prop="game.configWriter.configProp"
         :value="config"
         @change="handleConfigChange"
+        :nest-level="0"
       />
       <button type="submit" class="play-button"><p>Play!</p></button>
     </form>
@@ -66,6 +67,10 @@ h1 {
   font-size: 1.5rem;
   color: var(--color-accent);
   margin-bottom: 2rem;
+}
+
+form {
+  gap: 2rem;
 }
 
 .play-button {
