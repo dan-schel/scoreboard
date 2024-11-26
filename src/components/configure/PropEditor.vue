@@ -9,11 +9,11 @@ import { PropInteger, PropIntegerValue } from "@/data/game/config/prop-integer";
 
 defineProps<{
   prop: Prop<any>;
-  value: PropValue<any>;
+  value: PropValue;
 }>();
 
 defineEmits<{
-  (e: "change", newValue: PropValue<any>): void;
+  (e: "change", newValue: PropValue): void;
 }>();
 </script>
 

@@ -17,7 +17,6 @@ export class PropObject extends Prop<PropObjectValue> {
 
   getInitialValue(): PropObjectValue {
     return new PropObjectValue(
-      this,
       Object.fromEntries(
         this.fields.map((f) => [f.key, f.prop.getInitialValue()]),
       ),
@@ -29,7 +28,7 @@ export class PropObject extends Prop<PropObjectValue> {
     let allFieldsValid = true;
     let error = null;
 
-    const validatedFields: Record<string, PropValue<any>> = {};
+    const validatedFields: Record<string, PropValue> = {};
 
     for (const field of this.fields) {
       const fieldValue = value.fields[field.key];
@@ -46,24 +45,22 @@ export class PropObject extends Prop<PropObjectValue> {
     }
 
     return {
-      validated: new PropObjectValue(this, validatedFields, error),
+      validated: new PropObjectValue(validatedFields, error),
       isValid: allFieldsValid && error == null,
     };
   }
 }
 
-export class PropObjectValue extends PropValue<PropObject> {
+export class PropObjectValue extends PropValue {
   constructor(
-    prop: PropObject,
-    readonly fields: Record<string, PropValue<any>>,
+    readonly fields: Record<string, PropValue>,
     readonly error: string | null,
   ) {
-    super(prop);
+    super();
   }
 
-  withField(key: string, value: PropValue<any>) {
+  withField(key: string, value: PropValue) {
     return new PropObjectValue(
-      this.prop,
       {
         ...this.fields,
         [key]: value,
@@ -72,7 +69,7 @@ export class PropObjectValue extends PropValue<PropObject> {
     );
   }
 
-  require(key: string): PropValue<any> {
+  require(key: string): PropValue {
     const value = this.fields[key];
     if (value == null) {
       throw new Error(`Prop "${key}" not found.`);

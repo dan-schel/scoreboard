@@ -17,21 +17,21 @@ export class PropArray extends Prop<PropArrayValue> {
   }
 
   getInitialValue(): PropArrayValue {
-    const items: PropValue<any>[] = [];
+    const items: PropValue[] = [];
 
     for (let i = 0; i < this.initialLength; i++) {
       const prop = this.propByIndex(i);
       items.push(prop.getInitialValue());
     }
 
-    return new PropArrayValue(this, items, null);
+    return new PropArrayValue(items, null);
   }
 
   validate(value: PropArrayValue): Validated<PropArrayValue> {
     const rangeError = this._rangeError(value.items.length);
 
     let allElementsValid = true;
-    const validatedItems: PropValue<any>[] = [];
+    const validatedItems: PropValue[] = [];
 
     const maxIndexToCheck = Math.min(
       value.items.length,
@@ -49,7 +49,7 @@ export class PropArray extends Prop<PropArrayValue> {
     }
 
     return {
-      validated: new PropArrayValue(this, validatedItems, rangeError),
+      validated: new PropArrayValue(validatedItems, rangeError),
       isValid: allElementsValid && rangeError == null,
     };
   }
@@ -77,22 +77,21 @@ export class PropArray extends Prop<PropArrayValue> {
   }
 }
 
-export class PropArrayValue extends PropValue<PropArray> {
+export class PropArrayValue extends PropValue {
   constructor(
-    prop: PropArray,
-    readonly items: PropValue<any>[],
+    readonly items: PropValue[],
     readonly error: string | null,
   ) {
-    super(prop);
+    super();
   }
 
-  withElement(index: number, value: PropValue<any>) {
+  withElement(index: number, value: PropValue) {
     const items = [...this.items];
     items[index] = value;
-    return new PropArrayValue(this.prop, items, null);
+    return new PropArrayValue(items, null);
   }
 
-  require(index: number): PropValue<any> {
+  require(index: number): PropValue {
     if (index < 0 || index >= this.items.length) {
       throw new Error(
         `Index "${index}" was not within the bounds of the array.`,

@@ -1,9 +1,9 @@
-export type Validated<ValueType extends PropValue<any>> = {
+export type Validated<ValueType extends PropValue> = {
   validated: ValueType;
   isValid: boolean;
 };
 
-export abstract class Prop<ValueType extends PropValue<any>> {
+export abstract class Prop<ValueType extends PropValue> {
   constructor() {}
 
   abstract getInitialValue(): ValueType;
@@ -11,8 +11,14 @@ export abstract class Prop<ValueType extends PropValue<any>> {
   abstract validate(value: ValueType): Validated<ValueType>;
 }
 
-export abstract class PropValue<PropType extends Prop<any>> {
-  // TODO: I think prop here is unused, and can be removed, along with the
-  // generic, and probably this entire base class?
-  constructor(readonly prop: PropType) {}
+export abstract class PropValue {
+  // TODO: Originally I was going to remove this base class, since it's empty
+  // right now. But I actually might keep it around, because I think I want to
+  // refactor the error/validation/isValid stuff to potentially have errors
+  // stored in the base class, or at least an isValid() abstract function that
+  // regular types return true if their error field is set, and objects/arrays
+  // also set to true if any child has an error. That way the error string is
+  // the source of truth and we don't need to also implement separate isValid()
+  // logic in validate().
+  constructor() {}
 }

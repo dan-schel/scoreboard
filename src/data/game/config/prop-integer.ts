@@ -11,21 +11,21 @@ export class PropInteger extends Prop<PropIntegerValue> {
   }
 
   getInitialValue(): PropIntegerValue {
-    return new PropIntegerValue(this, this.initialValue.toFixed(), null);
+    return new PropIntegerValue(this.initialValue.toFixed(), null);
   }
 
   validate(value: PropIntegerValue): Validated<PropIntegerValue> {
     if (value.value == null) {
       const error = "Must be an integer.";
       return {
-        validated: new PropIntegerValue(this, value.textValue, error),
+        validated: new PropIntegerValue(value.textValue, error),
         isValid: false,
       };
     }
 
     const error = this._rangeError(value.value);
     return {
-      validated: new PropIntegerValue(this, value.textValue, error),
+      validated: new PropIntegerValue(value.textValue, error),
       isValid: error == null,
     };
   }
@@ -53,20 +53,19 @@ export class PropInteger extends Prop<PropIntegerValue> {
   }
 }
 
-export class PropIntegerValue extends PropValue<PropInteger> {
+export class PropIntegerValue extends PropValue {
   readonly value: number | null;
 
   constructor(
-    prop: PropInteger,
     readonly textValue: string,
     readonly error: string | null,
   ) {
-    super(prop);
+    super();
     this.value = parseIntNull(this.textValue);
   }
 
   withValue(newTextValue: string) {
-    return new PropIntegerValue(this.prop, newTextValue, null);
+    return new PropIntegerValue(newTextValue, null);
   }
 
   require(): number {
