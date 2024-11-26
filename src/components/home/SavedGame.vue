@@ -11,6 +11,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  (e: "rematch"): void;
   (e: "deleted"): void;
 }>();
 
@@ -44,6 +45,9 @@ function handleDelete() {
     </div>
     <div class="actions">
       <template v-if="moreActionsExpanded">
+        <button class="text-button" @click="$emit('rematch')">
+          <p>Rematch</p>
+        </button>
         <button class="text-button" @click="handleDelete">
           <p>Delete</p>
         </button>
