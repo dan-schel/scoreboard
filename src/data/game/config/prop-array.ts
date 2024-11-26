@@ -1,4 +1,5 @@
 import { Prop, PropValue } from "./prop";
+import { PropEnumValue } from "./prop-enum";
 import { PropIntegerValue } from "./prop-integer";
 import { PropObjectValue } from "./prop-object";
 
@@ -118,5 +119,13 @@ export class PropArrayValue extends PropValue {
       return prop;
     }
     throw new Error(`Prop at index "${index}" is not an integer.`);
+  }
+
+  requireEnum(index: number): PropEnumValue {
+    const prop = this.require(index);
+    if (prop instanceof PropEnumValue) {
+      return prop;
+    }
+    throw new Error(`Prop at index "${index}" is not an enum.`);
   }
 }

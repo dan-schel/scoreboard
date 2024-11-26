@@ -1,10 +1,11 @@
 import { PlayerColors, type PlayerColor } from "@/data/game-utils/player-color";
 import { GameConfig, GameConfigWriter } from "@/data/game/config/config";
+import { PropEnum } from "@/data/game/config/prop-enum";
 import { PropInteger } from "@/data/game/config/prop-integer";
 import {
   PropObject,
   PropObjectField,
-  type PropObjectValue,
+  PropObjectValue,
 } from "@/data/game/config/prop-object";
 import { z } from "zod";
 
@@ -70,18 +71,16 @@ export class TennisConfigWriter extends GameConfigWriter<TennisConfig> {
   constructor() {
     super(
       new PropObject([
-        // TODO: Not implemented yet.
         new PropObjectField(
           TennisConfigWriter._player1Color,
           "Player 1 Color",
-          new PropInteger(0, null, null),
+          PropEnum.playerColors("green"),
         ),
         new PropObjectField(
           TennisConfigWriter._player2Color,
           "Player 2 Color",
-          new PropInteger(0, null, null),
+          PropEnum.playerColors("blue"),
         ),
-
         new PropObjectField(
           TennisConfigWriter._setsToWin,
           "Sets to win",
@@ -92,21 +91,34 @@ export class TennisConfigWriter extends GameConfigWriter<TennisConfig> {
   }
 
   doAdditionalValidation(value: PropObjectValue): PropObjectValue {
-    // Nothing further to validate.
+    const player1Color = value
+      .requireEnum(TennisConfigWriter._player1Color)
+      .requirePlayerColor();
+    const player2Color = value
+      .requireEnum(TennisConfigWriter._player2Color)
+      .requirePlayerColor();
+
+    if (player1Color === player2Color) {
+      return new PropObjectValue(
+        value.fields,
+        "Player colors must be different.",
+      );
+    }
+
     return value;
   }
 
   build(value: PropObjectValue): TennisConfig {
+    const player1Color = value
+      .requireEnum(TennisConfigWriter._player1Color)
+      .requirePlayerColor();
+    const player2Color = value
+      .requireEnum(TennisConfigWriter._player2Color)
+      .requirePlayerColor();
     const setsToWin = value
       .requireInteger(TennisConfigWriter._setsToWin)
       .require();
 
-    return new TennisConfig(
-      // TODO: Not implemented yet.
-      "green",
-      "blue",
-
-      setsToWin,
-    );
+    return new TennisConfig(player1Color, player2Color, setsToWin);
   }
 }

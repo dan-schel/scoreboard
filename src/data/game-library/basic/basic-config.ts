@@ -1,10 +1,11 @@
 import { PlayerColors, type PlayerColor } from "@/data/game-utils/player-color";
 import { GameConfig, GameConfigWriter } from "@/data/game/config/config";
+import { PropEnum } from "@/data/game/config/prop-enum";
 import { PropInteger } from "@/data/game/config/prop-integer";
 import {
   PropObject,
   PropObjectField,
-  type PropObjectValue,
+  PropObjectValue,
 } from "@/data/game/config/prop-object";
 import { z } from "zod";
 
@@ -83,18 +84,16 @@ export class BasicGameConfigWriter extends GameConfigWriter<BasicGameConfig> {
   constructor() {
     super(
       new PropObject([
-        // TODO: Not implemented yet.
         new PropObjectField(
           BasicGameConfigWriter._player1Color,
           "Player 1 Color",
-          new PropInteger(0, null, null),
+          PropEnum.playerColors("green"),
         ),
         new PropObjectField(
           BasicGameConfigWriter._player2Color,
           "Player 2 Color",
-          new PropInteger(0, null, null),
+          PropEnum.playerColors("blue"),
         ),
-
         new PropObjectField(
           BasicGameConfigWriter._winningScore,
           "Winning Score",
@@ -110,11 +109,30 @@ export class BasicGameConfigWriter extends GameConfigWriter<BasicGameConfig> {
   }
 
   doAdditionalValidation(value: PropObjectValue): PropObjectValue {
-    // Nothing further to validate.
+    const player1Color = value
+      .requireEnum(BasicGameConfigWriter._player1Color)
+      .requirePlayerColor();
+    const player2Color = value
+      .requireEnum(BasicGameConfigWriter._player2Color)
+      .requirePlayerColor();
+
+    if (player1Color === player2Color) {
+      return new PropObjectValue(
+        value.fields,
+        "Player colors must be different.",
+      );
+    }
+
     return value;
   }
 
   build(value: PropObjectValue): BasicGameConfig {
+    const player1Color = value
+      .requireEnum(BasicGameConfigWriter._player1Color)
+      .requirePlayerColor();
+    const player2Color = value
+      .requireEnum(BasicGameConfigWriter._player2Color)
+      .requirePlayerColor();
     const winningScore = value
       .requireInteger(BasicGameConfigWriter._winningScore)
       .require();
@@ -123,10 +141,8 @@ export class BasicGameConfigWriter extends GameConfigWriter<BasicGameConfig> {
       .require();
 
     return new BasicGameConfig(
-      // TODO: Not implemented yet.
-      "green",
-      "blue",
-
+      player1Color,
+      player2Color,
       winningScore,
       requiredMargin,
     );

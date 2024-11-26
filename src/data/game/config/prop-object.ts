@@ -1,5 +1,6 @@
 import { Prop, PropValue } from "./prop";
 import { PropArrayValue } from "./prop-array";
+import { PropEnumValue } from "./prop-enum";
 import { PropIntegerValue } from "./prop-integer";
 
 export class PropObjectField {
@@ -100,5 +101,13 @@ export class PropObjectValue extends PropValue {
       return prop;
     }
     throw new Error(`Prop "${key}" is not an integer.`);
+  }
+
+  requireEnum(key: string): PropEnumValue {
+    const prop = this.require(key);
+    if (prop instanceof PropEnumValue) {
+      return prop;
+    }
+    throw new Error(`Prop "${key}" is not an enum.`);
   }
 }

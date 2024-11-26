@@ -6,6 +6,8 @@ import PropObjectEditor from "./PropObjectEditor.vue";
 import { PropObject, PropObjectValue } from "@/data/game/config/prop-object";
 import { PropArray, PropArrayValue } from "@/data/game/config/prop-array";
 import { PropInteger, PropIntegerValue } from "@/data/game/config/prop-integer";
+import { PropEnum, PropEnumValue } from "@/data/game/config/prop-enum";
+import PropEnumEditor from "./PropEnumEditor.vue";
 
 defineProps<{
   prop: Prop<PropValue>;
@@ -36,6 +38,12 @@ defineEmits<{
     :value="value"
     @change="(newValue) => $emit('change', newValue)"
   ></PropIntegerEditor>
+  <PropEnumEditor
+    v-else-if="prop instanceof PropEnum && value instanceof PropEnumValue"
+    :prop="prop"
+    :value="value"
+    @change="(newValue) => $emit('change', newValue)"
+  ></PropEnumEditor>
   <p v-else>Error: Unhandled prop type.</p>
 </template>
 
