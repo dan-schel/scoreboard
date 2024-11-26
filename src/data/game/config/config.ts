@@ -1,4 +1,3 @@
-import type { Validated } from "./prop";
 import type { PropObject, PropObjectValue } from "./prop-object";
 
 export abstract class GameConfig {
@@ -13,21 +12,19 @@ export abstract class GameConfig {
 export abstract class GameConfigWriter<GameConfigType extends GameConfig> {
   constructor(readonly configProp: PropObject) {}
 
-  validate(value: PropObjectValue): Validated<PropObjectValue> {
-    const validated = this.configProp.validate(value);
-    if (!validated.isValid) {
-      return validated;
-    }
-    return this.doAdditionalValidation(validated.validated);
-  }
-
   defaultValue(): PropObjectValue {
     return this.configProp.getInitialValue();
   }
 
-  abstract doAdditionalValidation(
-    values: PropObjectValue,
-  ): Validated<PropObjectValue>;
+  validate(value: PropObjectValue): PropObjectValue {
+    const validated = this.configProp.validate(value);
+    if (!validated.isValid()) {
+      return validated;
+    }
+    return this.doAdditionalValidation(validated);
+  }
 
-  abstract build(values: PropObjectValue): GameConfigType;
+  abstract doAdditionalValidation(value: PropObjectValue): PropObjectValue;
+
+  abstract build(value: PropObjectValue): GameConfigType;
 }

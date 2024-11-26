@@ -1,17 +1,17 @@
-import { Prop, PropValue, type Validated } from "./prop";
+import { Prop, PropValue } from "./prop";
 import { PropIntegerValue } from "./prop-integer";
 import { PropObjectValue } from "./prop-object";
 
 export class PropArray extends Prop<PropArrayValue> {
   constructor(
     readonly initialLength: number,
-    readonly minLen: number | null,
-    readonly maxLen: number | null,
+    readonly minLength: number | null,
+    readonly maxLength: number | null,
 
     // TODO: This will get called a lot. Maybe it would be better to have a
-    // single itemType: Prop<any> field, and have a overrideInitialValue method
-    // for the "different defaults per element" use case?
-    readonly propByIndex: (index: number) => Prop<any>,
+    // single itemType: Prop<PropValue> field, and have a overrideInitialValue
+    // method for the "different defaults per element" use case?
+    readonly propByIndex: (index: number) => Prop<PropValue>,
   ) {
     super();
   }
@@ -27,37 +27,29 @@ export class PropArray extends Prop<PropArrayValue> {
     return new PropArrayValue(items, null);
   }
 
-  validate(value: PropArrayValue): Validated<PropArrayValue> {
+  validate(value: PropArrayValue): PropArrayValue {
     const rangeError = this._rangeError(value.items.length);
 
-    let allElementsValid = true;
     const validatedItems: PropValue[] = [];
 
+    // Never try to check beyond maxLen, because propByIndex() might not expect
+    // to run for that index.
     const maxIndexToCheck = Math.min(
       value.items.length,
-      this.maxLen ?? Number.POSITIVE_INFINITY,
+      this.maxLength ?? Number.POSITIVE_INFINITY,
     );
-    for (let i = 0; i < maxIndexToCheck; i++) {
-      const prop = this.propByIndex(i);
-      const elementValue = value.items[i];
 
-      const validatedElement = prop.validate(elementValue);
-      validatedItems.push(validatedElement.validated);
-      if (!validatedElement.isValid) {
-        allElementsValid = false;
-      }
+    for (let i = 0; i < maxIndexToCheck; i++) {
+      validatedItems.push(this.propByIndex(i).validate(value.items[i]));
     }
 
-    return {
-      validated: new PropArrayValue(validatedItems, rangeError),
-      isValid: allElementsValid && rangeError == null,
-    };
+    return new PropArrayValue(validatedItems, rangeError);
   }
 
   private _rangeError(count: number): string | null {
     if (
-      count < (this.minLen ?? Number.NEGATIVE_INFINITY) ||
-      count > (this.maxLen ?? Number.POSITIVE_INFINITY)
+      count < (this.minLength ?? Number.NEGATIVE_INFINITY) ||
+      count > (this.maxLength ?? Number.POSITIVE_INFINITY)
     ) {
       return `Must be ${this._stateRange()}.`;
     }
@@ -65,12 +57,12 @@ export class PropArray extends Prop<PropArrayValue> {
   }
 
   private _stateRange(): string {
-    if (this.minLen != null && this.maxLen != null) {
-      return `between ${this.minLen} and ${this.maxLen} item(s)`;
-    } else if (this.minLen != null && this.maxLen == null) {
-      return `at least ${this.minLen} item(s)`;
-    } else if (this.minLen == null && this.maxLen != null) {
-      return `at most ${this.maxLen} item(s)`;
+    if (this.minLength != null && this.maxLength != null) {
+      return `between ${this.minLength} and ${this.maxLength} item(s)`;
+    } else if (this.minLength != null && this.maxLength == null) {
+      return `at least ${this.minLength} item(s)`;
+    } else if (this.minLength == null && this.maxLength != null) {
+      return `at most ${this.maxLength} item(s)`;
     } else {
       throw new Error("No range to state.");
     }
@@ -83,6 +75,10 @@ export class PropArrayValue extends PropValue {
     readonly error: string | null,
   ) {
     super();
+  }
+
+  isValid(): boolean {
+    return this.error == null && this.items.every((f) => f.isValid());
   }
 
   withElement(index: number, value: PropValue) {

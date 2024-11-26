@@ -21,12 +21,12 @@ function handleConfigChange(newConfig: PropObjectValue) {
 function handleFormSubmit(e: Event) {
   e.preventDefault();
 
-  const results = props.game.configWriter.validate(config.value);
+  const validated = props.game.configWriter.validate(config.value);
 
-  if (results.isValid) {
-    emit("submit", props.game.configWriter.build(results.validated));
+  if (validated.isValid()) {
+    emit("submit", props.game.configWriter.build(validated));
   } else {
-    config.value = results.validated;
+    config.value = validated;
   }
 }
 </script>

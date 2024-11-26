@@ -1,6 +1,5 @@
 import { PlayerColors, type PlayerColor } from "@/data/game-utils/player-color";
 import { GameConfig, GameConfigWriter } from "@/data/game/config/config";
-import type { Validated } from "@/data/game/config/prop";
 import { PropInteger } from "@/data/game/config/prop-integer";
 import {
   PropObject,
@@ -110,16 +109,16 @@ export class BasicGameConfigWriter extends GameConfigWriter<BasicGameConfig> {
     );
   }
 
-  doAdditionalValidation(values: PropObjectValue): Validated<PropObjectValue> {
+  doAdditionalValidation(value: PropObjectValue): PropObjectValue {
     // Nothing further to validate.
-    return { isValid: true, validated: values };
+    return value;
   }
 
-  build(values: PropObjectValue): BasicGameConfig {
-    const winningScore = values
+  build(value: PropObjectValue): BasicGameConfig {
+    const winningScore = value
       .requireInteger(BasicGameConfigWriter._winningScore)
       .require();
-    const requiredMargin = values
+    const requiredMargin = value
       .requireInteger(BasicGameConfigWriter._requiredMargin)
       .require();
 

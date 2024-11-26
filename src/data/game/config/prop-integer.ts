@@ -1,5 +1,5 @@
 import { parseIntNull } from "@dan-schel/js-utils";
-import { Prop, PropValue, type Validated } from "./prop";
+import { Prop, PropValue } from "./prop";
 
 export class PropInteger extends Prop<PropIntegerValue> {
   constructor(
@@ -14,20 +14,13 @@ export class PropInteger extends Prop<PropIntegerValue> {
     return new PropIntegerValue(this.initialValue.toFixed(), null);
   }
 
-  validate(value: PropIntegerValue): Validated<PropIntegerValue> {
+  validate(value: PropIntegerValue): PropIntegerValue {
     if (value.value == null) {
-      const error = "Must be an integer.";
-      return {
-        validated: new PropIntegerValue(value.textValue, error),
-        isValid: false,
-      };
+      return new PropIntegerValue(value.textValue, "Must be an integer.");
     }
 
     const error = this._rangeError(value.value);
-    return {
-      validated: new PropIntegerValue(value.textValue, error),
-      isValid: error == null,
-    };
+    return new PropIntegerValue(value.textValue, error);
   }
 
   private _rangeError(value: number): string | null {
@@ -62,6 +55,10 @@ export class PropIntegerValue extends PropValue {
   ) {
     super();
     this.value = parseIntNull(this.textValue);
+  }
+
+  isValid(): boolean {
+    return this.error == null;
   }
 
   withValue(newTextValue: string) {

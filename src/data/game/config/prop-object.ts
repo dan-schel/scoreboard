@@ -1,4 +1,4 @@
-import { Prop, PropValue, type Validated } from "./prop";
+import { Prop, PropValue } from "./prop";
 import { PropArrayValue } from "./prop-array";
 import { PropIntegerValue } from "./prop-integer";
 
@@ -6,7 +6,7 @@ export class PropObjectField {
   constructor(
     readonly key: string,
     readonly displayString: string,
-    readonly prop: Prop<any>,
+    readonly prop: Prop<PropValue>,
   ) {}
 }
 
@@ -24,30 +24,25 @@ export class PropObject extends Prop<PropObjectValue> {
     );
   }
 
-  validate(value: PropObjectValue): Validated<PropObjectValue> {
-    let allFieldsValid = true;
+  validate(value: PropObjectValue): PropObjectValue {
     let error = null;
 
     const validatedFields: Record<string, PropValue> = {};
 
     for (const field of this.fields) {
       const fieldValue = value.fields[field.key];
+
+      // Checking null here is fine, since we expect all values to be wrapped in
+      // a PropValue object of some type, even intentionally "null" values.
       if (fieldValue == null) {
         error = `Missing "${field.key}" field.`;
         continue;
       }
 
-      const validatedField = field.prop.validate(fieldValue);
-      validatedFields[field.key] = validatedField.validated;
-      if (!validatedField.isValid) {
-        allFieldsValid = false;
-      }
+      validatedFields[field.key] = field.prop.validate(fieldValue);
     }
 
-    return {
-      validated: new PropObjectValue(validatedFields, error),
-      isValid: allFieldsValid && error == null,
-    };
+    return new PropObjectValue(validatedFields, error);
   }
 }
 
@@ -57,6 +52,12 @@ export class PropObjectValue extends PropValue {
     readonly error: string | null,
   ) {
     super();
+  }
+
+  isValid(): boolean {
+    return (
+      this.error == null && Object.values(this.fields).every((f) => f.isValid())
+    );
   }
 
   withField(key: string, value: PropValue) {

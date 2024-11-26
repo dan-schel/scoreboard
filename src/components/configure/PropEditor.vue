@@ -8,7 +8,7 @@ import { PropArray, PropArrayValue } from "@/data/game/config/prop-array";
 import { PropInteger, PropIntegerValue } from "@/data/game/config/prop-integer";
 
 defineProps<{
-  prop: Prop<any>;
+  prop: Prop<PropValue>;
   value: PropValue;
 }>();
 

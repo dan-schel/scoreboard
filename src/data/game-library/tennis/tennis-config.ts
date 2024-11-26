@@ -1,6 +1,5 @@
 import { PlayerColors, type PlayerColor } from "@/data/game-utils/player-color";
 import { GameConfig, GameConfigWriter } from "@/data/game/config/config";
-import type { Validated } from "@/data/game/config/prop";
 import { PropInteger } from "@/data/game/config/prop-integer";
 import {
   PropObject,
@@ -92,13 +91,13 @@ export class TennisConfigWriter extends GameConfigWriter<TennisConfig> {
     );
   }
 
-  doAdditionalValidation(values: PropObjectValue): Validated<PropObjectValue> {
+  doAdditionalValidation(value: PropObjectValue): PropObjectValue {
     // Nothing further to validate.
-    return { isValid: true, validated: values };
+    return value;
   }
 
-  build(values: PropObjectValue): TennisConfig {
-    const setsToWin = values
+  build(value: PropObjectValue): TennisConfig {
+    const setsToWin = value
       .requireInteger(TennisConfigWriter._setsToWin)
       .require();
 
