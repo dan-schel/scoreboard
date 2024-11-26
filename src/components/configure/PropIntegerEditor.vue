@@ -9,6 +9,10 @@ defineProps<{
 defineEmits<{
   (e: "change", newValue: PropIntegerValue): void;
 }>();
+
+// TODO: If we want to, we could validate the prop on blur.
+// Just call the change event with `prop.validate(value).validated` as the new
+// value, and then the error message should be displayed.
 </script>
 
 <template>

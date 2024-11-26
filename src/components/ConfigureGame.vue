@@ -23,8 +23,6 @@ function handleFormSubmit(e: Event) {
 
   const results = props.game.configWriter.validate(config.value);
 
-  console.log(results);
-
   if (results.isValid) {
     emit("submit", props.game.configWriter.build(results.validated));
   } else {
