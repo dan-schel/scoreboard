@@ -1,10 +1,13 @@
 import type { ConfigProp } from "./config-prop";
-import { PlayerConfigWriter, type PlayerConfig } from "./player-config";
+import { PlayerConfigWriter } from "./player-config";
 
-export abstract class GameConfig<
-  PlayerConfigType extends PlayerConfig = PlayerConfig,
-> {
-  constructor(readonly players: PlayerConfigType[]) {}
+export abstract class GameConfig {
+  constructor() {}
+
+  // TODO: For showing the chosen rules in the UI.
+  abstract toDisplayString(): string;
+
+  abstract getPlayerCount(): number;
 }
 
 export class PlayerCount {
@@ -21,11 +24,6 @@ export class PlayerCount {
     return new PlayerCount(min, max);
   }
 }
-
-export type PlayerConfigTypeOf<GameConfigType extends GameConfig> =
-  GameConfigType extends GameConfig<infer PlayerConfigType>
-    ? PlayerConfigType
-    : never;
 
 export abstract class GameConfigWriter<GameConfigType extends GameConfig> {
   abstract readonly props: ConfigProp[];

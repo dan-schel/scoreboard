@@ -15,9 +15,11 @@ export class TennisBuilder extends GameBuilder<TennisConfig, TennisState> {
   ): GameInstance<TennisConfig, TennisState> {
     return new TennisGameInstance(this, config, uuid);
   }
+
   serializeConfig(config: TennisConfig): unknown {
     return config.toJSON();
   }
+
   deserializeConfig(input: unknown): TennisConfig {
     return TennisConfig.json.parse(input);
   }
@@ -36,15 +38,15 @@ export class TennisGameInstance extends GameInstance<
       false,
     );
   }
+
   serializeState(state: TennisState): unknown {
     return state.toJSON();
   }
+
   deserializeState(input: unknown): TennisState {
     return TennisState.json.parse(input)(this.config);
   }
-  getPlayerCount(): number {
-    return 2;
-  }
+
   getScoreType(): ScoreType {
     return new TennisScoreType("points", this.config);
   }
