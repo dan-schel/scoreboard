@@ -1,5 +1,5 @@
 import {
-  getPlayerColorDisplayString,
+  playerColorDisplayStrings,
   PlayerColors,
   type PlayerColor,
 } from "@/data/game-utils/player-color";
@@ -34,11 +34,21 @@ export class PropEnum extends Prop<PropEnumValue> {
     return new PropEnumValue(value.value, null);
   }
 
-  static playerColors(initialValue: PlayerColor) {
+  static fromArray<T extends string>(
+    options: T[] | readonly T[],
+    labels: Record<T, string>,
+    initialValue: T,
+  ) {
     return new PropEnum(
-      PlayerColors.map(
-        (x) => new PropEnumOption(x, getPlayerColorDisplayString(x)),
-      ),
+      options.map((x: T) => new PropEnumOption(x, labels[x])),
+      initialValue,
+    );
+  }
+
+  static playerColors(initialValue: PlayerColor) {
+    return PropEnum.fromArray<PlayerColor>(
+      PlayerColors,
+      playerColorDisplayStrings,
       initialValue,
     );
   }
@@ -68,6 +78,6 @@ export class PropEnumValue extends PropValue {
   }
 
   requirePlayerColor(): PlayerColor {
-    return this.requireOneOf<(typeof PlayerColors)[number]>(PlayerColors);
+    return this.requireOneOf<PlayerColor>(PlayerColors);
   }
 }

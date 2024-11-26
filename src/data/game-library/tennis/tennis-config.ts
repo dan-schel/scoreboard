@@ -9,13 +9,19 @@ import {
 } from "@/data/game/config/prop-object";
 import { z } from "zod";
 
-export class TennisConfig extends GameConfig {
-  static readonly default = new TennisConfig("green", "blue", 2);
+export const TiebreakRules = [
+  "always-to-7",
+  "always-to-10",
+  "last-set-10-otherwise-7",
+] as const;
+export type TiebreakRule = (typeof TiebreakRules)[number];
 
+export class TennisConfig extends GameConfig {
   constructor(
     readonly player1Color: PlayerColor,
     readonly player2Color: PlayerColor,
     readonly setsToWin: number,
+    readonly tiebreakRule: TiebreakRule,
   ) {
     super();
   }
@@ -25,9 +31,16 @@ export class TennisConfig extends GameConfig {
       player1Color: z.enum(PlayerColors),
       player2Color: z.enum(PlayerColors),
       setsToWin: z.number(),
+      tiebreakRule: z.enum(TiebreakRules),
     })
     .transform(
-      (x) => new TennisConfig(x.player1Color, x.player2Color, x.setsToWin),
+      (x) =>
+        new TennisConfig(
+          x.player1Color,
+          x.player2Color,
+          x.setsToWin,
+          x.tiebreakRule,
+        ),
     );
 
   toJSON(): z.input<typeof TennisConfig.json> {
@@ -35,6 +48,7 @@ export class TennisConfig extends GameConfig {
       player1Color: this.player1Color,
       player2Color: this.player2Color,
       setsToWin: this.setsToWin,
+      tiebreakRule: this.tiebreakRule,
     };
   }
 
@@ -45,28 +59,13 @@ export class TennisConfig extends GameConfig {
   getPlayerCount(): number {
     return 2;
   }
-
-  with({
-    player1Color,
-    player2Color,
-    setsToWin,
-  }: {
-    player1Color?: PlayerColor;
-    player2Color?: PlayerColor;
-    setsToWin?: number;
-  }): TennisConfig {
-    return new TennisConfig(
-      player1Color ?? this.player1Color,
-      player2Color ?? this.player2Color,
-      setsToWin ?? this.setsToWin,
-    );
-  }
 }
 
 export class TennisConfigWriter extends GameConfigWriter<TennisConfig> {
   private static _player1Color = "player-1-color";
   private static _player2Color = "player-2-color";
   private static _setsToWin = "sets-to-win";
+  private static _tiebreakRule = "tiebreak-rule";
 
   constructor() {
     super(
@@ -85,6 +84,19 @@ export class TennisConfigWriter extends GameConfigWriter<TennisConfig> {
           TennisConfigWriter._setsToWin,
           "Sets to win",
           new PropInteger(2, 1, null),
+        ),
+        new PropObjectField(
+          TennisConfigWriter._tiebreakRule,
+          "Number of points in a tiebreak",
+          PropEnum.fromArray<TiebreakRule>(
+            TiebreakRules,
+            {
+              "always-to-10": "Always 10",
+              "always-to-7": "Always 7",
+              "last-set-10-otherwise-7": "10 for the last set, otherwise 7",
+            },
+            "last-set-10-otherwise-7",
+          ),
         ),
       ]),
     );
@@ -118,7 +130,15 @@ export class TennisConfigWriter extends GameConfigWriter<TennisConfig> {
     const setsToWin = value
       .requireInteger(TennisConfigWriter._setsToWin)
       .require();
+    const tiebreakRule = value
+      .requireEnum(TennisConfigWriter._tiebreakRule)
+      .requireOneOf<TiebreakRule>(TiebreakRules);
 
-    return new TennisConfig(player1Color, player2Color, setsToWin);
+    return new TennisConfig(
+      player1Color,
+      player2Color,
+      setsToWin,
+      tiebreakRule,
+    );
   }
 }

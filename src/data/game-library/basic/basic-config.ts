@@ -10,8 +10,6 @@ import {
 import { z } from "zod";
 
 export class BasicGameConfig extends GameConfig {
-  static readonly default = new BasicGameConfig("green", "blue", 10, 2);
-
   constructor(
     readonly player1Color: PlayerColor,
     readonly player2Color: PlayerColor,
@@ -53,25 +51,6 @@ export class BasicGameConfig extends GameConfig {
 
   getPlayerCount(): number {
     return 2;
-  }
-
-  with({
-    player1Color,
-    player2Color,
-    winningScore,
-    requiredMargin,
-  }: {
-    player1Color?: PlayerColor;
-    player2Color?: PlayerColor;
-    winningScore?: number;
-    requiredMargin?: number;
-  }): BasicGameConfig {
-    return new BasicGameConfig(
-      player1Color ?? this.player1Color,
-      player2Color ?? this.player2Color,
-      winningScore ?? this.winningScore,
-      requiredMargin ?? this.requiredMargin,
-    );
   }
 }
 
