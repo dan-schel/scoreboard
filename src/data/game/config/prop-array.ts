@@ -86,6 +86,12 @@ export class PropArrayValue extends PropValue<PropArray> {
     super(prop);
   }
 
+  withElement(index: number, value: PropValue<any>) {
+    const items = [...this.items];
+    items[index] = value;
+    return new PropArrayValue(this.prop, items, null);
+  }
+
   require(index: number): PropValue<any> {
     if (index < 0 || index >= this.items.length) {
       throw new Error(

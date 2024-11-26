@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { GameBuilder, GameInstance, GameState } from "./game";
-import type { GameConfig } from "./game-config";
 import { gameLibrary } from "../game-library/game-library";
+import type { GameConfig } from "./config/config";
 
 const matchesLSKey = "scoreboard-matches";
 const maxMatchesToSave = 10;

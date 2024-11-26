@@ -13,7 +13,13 @@ export class TennisScoreType extends ScoreType {
   }
 
   getPlayerColor(playerIndex: number): PlayerColor {
-    return this.config.players[playerIndex].color;
+    if (playerIndex === 0) {
+      return this.config.player1Color;
+    } else if (playerIndex === 1) {
+      return this.config.player2Color;
+    } else {
+      throw new Error(`Invalid player index "${playerIndex}".`);
+    }
   }
 
   getPrimaryScoreString(state: TennisState, playerIndex: number): string {

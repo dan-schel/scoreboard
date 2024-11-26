@@ -1,6 +1,6 @@
 import { UndoStack } from "../game-utils/undo-stack";
+import type { GameConfig } from "./config/config";
 import type { Action, GameInstance, GameState, ScoreType } from "./game";
-import type { GameConfig } from "./game-config";
 
 export abstract class GameHandler<GameStateType extends GameState> {
   private _changeListeners: (() => void)[] = [];

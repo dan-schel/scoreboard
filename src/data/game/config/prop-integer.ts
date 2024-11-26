@@ -1,4 +1,4 @@
-import { parseIntNull } from "@dan-schel/js-utils/dist/types";
+import { parseIntNull } from "@dan-schel/js-utils";
 import { Prop, PropValue, type Validated } from "./prop";
 
 export class PropInteger extends Prop<PropIntegerValue> {
@@ -26,7 +26,7 @@ export class PropInteger extends Prop<PropIntegerValue> {
     const error = this._rangeError(value.value);
     return {
       validated: new PropIntegerValue(this, value.textValue, error),
-      isValid: error != null,
+      isValid: error == null,
     };
   }
 
@@ -67,5 +67,12 @@ export class PropIntegerValue extends PropValue<PropInteger> {
 
   withValue(newTextValue: string) {
     return new PropIntegerValue(this.prop, newTextValue, null);
+  }
+
+  require(): number {
+    if (this.value == null) {
+      throw new Error("Integer was not valid.");
+    }
+    return this.value;
   }
 }

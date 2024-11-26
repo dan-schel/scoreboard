@@ -4,12 +4,12 @@
   generic="GameConfigType extends GameConfig, GameStateType extends GameState"
 >
 import type { GameBuilder, GameState } from "@/data/game/game";
-import { GameConfig } from "@/data/game/game-config";
 import ConfigureGame from "./ConfigureGame.vue";
 import { ref, watch, type Ref, onUnmounted } from "vue";
 import PlayGame from "./PlayGame.vue";
 import { LocalGameHandler, type GameHandler } from "@/data/game/game-handler";
 import { findSavedMatch, saveMatch } from "@/data/game/persistence";
+import type { GameConfig } from "@/data/game/config/config";
 
 // Save the game after 200ms of inactivity.
 const saveTime = 200;

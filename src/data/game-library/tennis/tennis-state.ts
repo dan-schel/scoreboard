@@ -78,8 +78,8 @@ export class TennisState extends GameState<TennisState> {
   }
 
   toDisplayString(): string {
-    const p1Color = getPlayerColorDisplayString(this.config.players[0].color);
-    const p2Color = getPlayerColorDisplayString(this.config.players[1].color);
+    const p1Color = getPlayerColorDisplayString(this.config.player1Color);
+    const p2Color = getPlayerColorDisplayString(this.config.player2Color);
 
     const p1Sets = this.player1Score
       .gamesWonPerSet()
@@ -138,10 +138,10 @@ export class TennisState extends GameState<TennisState> {
 
   isGameOver(): boolean | { winner: PlayerColor } {
     if (this.player1Score.hasWon(this.config.setsToWin)) {
-      return { winner: this.config.players[0].color };
+      return { winner: this.config.player1Color };
     }
     if (this.player2Score.hasWon(this.config.setsToWin)) {
-      return { winner: this.config.players[1].color };
+      return { winner: this.config.player2Color };
     }
     return false;
   }

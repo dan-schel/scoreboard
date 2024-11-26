@@ -1,5 +1,5 @@
 import type { PlayerColor } from "../game-utils/player-color";
-import type { GameConfig, GameConfigWriter } from "./game-config";
+import type { GameConfig, GameConfigWriter } from "./config/config";
 
 export abstract class GameBuilder<
   GameConfigType extends GameConfig = GameConfig,

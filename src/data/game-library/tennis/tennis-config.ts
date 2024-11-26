@@ -1,90 +1,113 @@
+import { PlayerColors, type PlayerColor } from "@/data/game-utils/player-color";
+import { GameConfig, GameConfigWriter } from "@/data/game/config/config";
+import type { Validated } from "@/data/game/config/prop";
+import { PropInteger } from "@/data/game/config/prop-integer";
+import {
+  PropObject,
+  PropObjectField,
+  type PropObjectValue,
+} from "@/data/game/config/prop-object";
 import { z } from "zod";
-import {
-  BasicPlayerConfig,
-  BasicPlayerConfigWriter,
-} from "../../game-utils/basic-player-config";
-import { IntegerConfigProp } from "../../game/config-prop";
-import {
-  GameConfigWriter,
-  PlayerCount,
-  GameConfig,
-} from "../../game/game-config";
 
-export class TennisConfig extends GameConfig<BasicPlayerConfig> {
-  static readonly default = new TennisConfig(BasicPlayerConfig.twoPlayers, 2);
+export class TennisConfig extends GameConfig {
+  static readonly default = new TennisConfig("green", "blue", 2);
 
   constructor(
-    players: BasicPlayerConfig[],
+    readonly player1Color: PlayerColor,
+    readonly player2Color: PlayerColor,
     readonly setsToWin: number,
   ) {
-    super(players);
+    super();
   }
 
   static readonly json = z
     .object({
-      players: BasicPlayerConfig.json.array(),
+      player1Color: z.enum(PlayerColors),
+      player2Color: z.enum(PlayerColors),
       setsToWin: z.number(),
     })
-    .transform((x) => new TennisConfig(x.players, x.setsToWin));
+    .transform(
+      (x) => new TennisConfig(x.player1Color, x.player2Color, x.setsToWin),
+    );
 
   toJSON(): z.input<typeof TennisConfig.json> {
     return {
-      players: this.players.map((x) => x.toJSON()),
+      player1Color: this.player1Color,
+      player2Color: this.player2Color,
       setsToWin: this.setsToWin,
     };
   }
 
+  toDisplayString(): string {
+    throw new Error("Method not implemented.");
+  }
+
+  getPlayerCount(): number {
+    return 2;
+  }
+
   with({
-    players,
+    player1Color,
+    player2Color,
     setsToWin,
   }: {
-    players?: BasicPlayerConfig[];
+    player1Color?: PlayerColor;
+    player2Color?: PlayerColor;
     setsToWin?: number;
   }): TennisConfig {
     return new TennisConfig(
-      players ?? this.players,
+      player1Color ?? this.player1Color,
+      player2Color ?? this.player2Color,
       setsToWin ?? this.setsToWin,
     );
   }
 }
 
 export class TennisConfigWriter extends GameConfigWriter<TennisConfig> {
-  static readonly setsToWin = new IntegerConfigProp("sets-to-win", {
-    min: 1,
-  });
+  private static _player1Color = "player-1-color";
+  private static _player2Color = "player-2-color";
+  private static _setsToWin = "sets-to-win";
 
-  readonly props = [TennisConfigWriter.setsToWin];
-  readonly defaultConfig = TennisConfig.default;
-  readonly playerCount = PlayerCount.exactly(2);
-  readonly playerConfigWriter = new BasicPlayerConfigWriter();
+  constructor() {
+    super(
+      new PropObject([
+        // TODO: Not implemented yet.
+        new PropObjectField(
+          TennisConfigWriter._player1Color,
+          "Player 1 Color",
+          new PropInteger(0, null, null),
+        ),
+        new PropObjectField(
+          TennisConfigWriter._player2Color,
+          "Player 2 Color",
+          new PropInteger(0, null, null),
+        ),
 
-  get(config: TennisConfig, prop: string): unknown {
-    switch (prop) {
-      case TennisConfigWriter.setsToWin.key:
-        return config.setsToWin;
-      default:
-        throw new Error(`Unknown prop "${prop}".`);
-    }
+        new PropObjectField(
+          TennisConfigWriter._setsToWin,
+          "Sets to win",
+          new PropInteger(2, 1, null),
+        ),
+      ]),
+    );
   }
 
-  set(config: TennisConfig, prop: string, value: unknown): TennisConfig {
-    switch (prop) {
-      case TennisConfigWriter.setsToWin.key:
-        return config.with({
-          setsToWin: TennisConfigWriter.setsToWin.parse(value),
-        });
-      default:
-        throw new Error(`Unknown prop "${prop}".`);
-    }
+  doAdditionalValidation(values: PropObjectValue): Validated<PropObjectValue> {
+    // Nothing further to validate.
+    return { isValid: true, validated: values };
   }
 
-  protected _setPlayer(
-    config: TennisConfig,
-    playerIndex: number,
-    player: BasicPlayerConfig,
-  ): TennisConfig {
-    const players = [...config.players];
-    players[playerIndex] = player;
-    return config.with({ players });
+  build(values: PropObjectValue): TennisConfig {
+    const setsToWin = values
+      .requireInteger(TennisConfigWriter._setsToWin)
+      .require();
+
+    return new TennisConfig(
+      // TODO: Not implemented yet.
+      "green",
+      "blue",
+
+      setsToWin,
+    );
   }
 }

@@ -102,8 +102,8 @@ export class BasicGameState extends GameState<BasicGameState> {
   }
 
   toDisplayString(): string {
-    const p1Color = getPlayerColorDisplayString(this.config.players[0].color);
-    const p2Color = getPlayerColorDisplayString(this.config.players[1].color);
+    const p1Color = getPlayerColorDisplayString(this.config.player1Color);
+    const p2Color = getPlayerColorDisplayString(this.config.player2Color);
     const p1 = `${p1Color} ${this.player1Score.toFixed()}`;
     const p2 = `${p2Color} ${this.player2Score.toFixed()}`;
     return `${p1} - ${p2}`;
@@ -129,7 +129,13 @@ export class BasicScoreType extends SimpleScoreType<BasicGameState> {
   }
 
   getPlayerColor(playerIndex: number): PlayerColor {
-    return this.config.players[playerIndex].color;
+    if (playerIndex === 0) {
+      return this.config.player1Color;
+    } else if (playerIndex === 1) {
+      return this.config.player2Color;
+    } else {
+      throw new Error(`Invalid player index "${playerIndex}".`);
+    }
   }
   getScoreString(state: BasicGameState, playerIndex: number): string {
     if (playerIndex === 0) {

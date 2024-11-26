@@ -1,59 +1,74 @@
+import { PlayerColors, type PlayerColor } from "@/data/game-utils/player-color";
+import { GameConfig, GameConfigWriter } from "@/data/game/config/config";
+import type { Validated } from "@/data/game/config/prop";
+import { PropInteger } from "@/data/game/config/prop-integer";
 import {
-  BasicPlayerConfig,
-  BasicPlayerConfigWriter,
-} from "@/data/game-utils/basic-player-config";
-import { IntegerConfigProp } from "@/data/game/config-prop";
-import {
-  GameConfig,
-  GameConfigWriter,
-  PlayerCount,
-} from "@/data/game/game-config";
+  PropObject,
+  PropObjectField,
+  type PropObjectValue,
+} from "@/data/game/config/prop-object";
 import { z } from "zod";
 
-export class BasicGameConfig extends GameConfig<BasicPlayerConfig> {
-  static readonly default = new BasicGameConfig(
-    BasicPlayerConfig.twoPlayers,
-    10,
-    2,
-  );
+export class BasicGameConfig extends GameConfig {
+  static readonly default = new BasicGameConfig("green", "blue", 10, 2);
 
   constructor(
-    players: BasicPlayerConfig[],
+    readonly player1Color: PlayerColor,
+    readonly player2Color: PlayerColor,
     readonly winningScore: number,
     readonly requiredMargin: number,
   ) {
-    super(players);
+    super();
   }
 
   static readonly json = z
     .object({
-      players: BasicPlayerConfig.json.array(),
+      player1Color: z.enum(PlayerColors),
+      player2Color: z.enum(PlayerColors),
       winningScore: z.number(),
       requiredMargin: z.number(),
     })
     .transform(
-      (x) => new BasicGameConfig(x.players, x.winningScore, x.requiredMargin),
+      (x) =>
+        new BasicGameConfig(
+          x.player1Color,
+          x.player2Color,
+          x.winningScore,
+          x.requiredMargin,
+        ),
     );
 
   toJSON(): z.input<typeof BasicGameConfig.json> {
     return {
-      players: this.players.map((x) => x.toJSON()),
+      player1Color: this.player1Color,
+      player2Color: this.player2Color,
       winningScore: this.winningScore,
       requiredMargin: this.requiredMargin,
     };
   }
 
+  toDisplayString(): string {
+    throw new Error("Method not implemented.");
+  }
+
+  getPlayerCount(): number {
+    return 2;
+  }
+
   with({
-    players,
+    player1Color,
+    player2Color,
     winningScore,
     requiredMargin,
   }: {
-    players?: BasicPlayerConfig[];
+    player1Color?: PlayerColor;
+    player2Color?: PlayerColor;
     winningScore?: number;
     requiredMargin?: number;
   }): BasicGameConfig {
     return new BasicGameConfig(
-      players ?? this.players,
+      player1Color ?? this.player1Color,
+      player2Color ?? this.player2Color,
       winningScore ?? this.winningScore,
       requiredMargin ?? this.requiredMargin,
     );
@@ -61,54 +76,60 @@ export class BasicGameConfig extends GameConfig<BasicPlayerConfig> {
 }
 
 export class BasicGameConfigWriter extends GameConfigWriter<BasicGameConfig> {
-  static readonly winningScore = new IntegerConfigProp("winning-score", {
-    min: 1,
-  });
-  static readonly requiredMargin = new IntegerConfigProp("required-margin", {
-    min: 1,
-  });
+  private static _player1Color = "player-1-color";
+  private static _player2Color = "player-2-color";
+  private static _winningScore = "winning-score";
+  private static _requiredMargin = "required-margin";
 
-  readonly props = [
-    BasicGameConfigWriter.winningScore,
-    BasicGameConfigWriter.requiredMargin,
-  ];
-  readonly defaultConfig = BasicGameConfig.default;
-  readonly playerCount = PlayerCount.exactly(2);
-  readonly playerConfigWriter = new BasicPlayerConfigWriter();
+  constructor() {
+    super(
+      new PropObject([
+        // TODO: Not implemented yet.
+        new PropObjectField(
+          BasicGameConfigWriter._player1Color,
+          "Player 1 Color",
+          new PropInteger(0, null, null),
+        ),
+        new PropObjectField(
+          BasicGameConfigWriter._player2Color,
+          "Player 2 Color",
+          new PropInteger(0, null, null),
+        ),
 
-  get(config: BasicGameConfig, prop: string): unknown {
-    switch (prop) {
-      case BasicGameConfigWriter.winningScore.key:
-        return config.winningScore;
-      case BasicGameConfigWriter.requiredMargin.key:
-        return config.requiredMargin;
-      default:
-        throw new Error(`Unknown prop "${prop}".`);
-    }
+        new PropObjectField(
+          BasicGameConfigWriter._winningScore,
+          "Winning Score",
+          new PropInteger(10, 1, null),
+        ),
+        new PropObjectField(
+          BasicGameConfigWriter._requiredMargin,
+          "Required Margin",
+          new PropInteger(2, 1, null),
+        ),
+      ]),
+    );
   }
 
-  set(config: BasicGameConfig, prop: string, value: unknown): BasicGameConfig {
-    switch (prop) {
-      case BasicGameConfigWriter.winningScore.key:
-        return config.with({
-          winningScore: BasicGameConfigWriter.winningScore.parse(value),
-        });
-      case BasicGameConfigWriter.requiredMargin.key:
-        return config.with({
-          requiredMargin: BasicGameConfigWriter.requiredMargin.parse(value),
-        });
-      default:
-        throw new Error(`Unknown prop "${prop}".`);
-    }
+  doAdditionalValidation(values: PropObjectValue): Validated<PropObjectValue> {
+    // Nothing further to validate.
+    return { isValid: true, validated: values };
   }
 
-  protected _setPlayer(
-    config: BasicGameConfig,
-    playerIndex: number,
-    player: BasicPlayerConfig,
-  ): BasicGameConfig {
-    const players = [...config.players];
-    players[playerIndex] = player;
-    return config.with({ players });
+  build(values: PropObjectValue): BasicGameConfig {
+    const winningScore = values
+      .requireInteger(BasicGameConfigWriter._winningScore)
+      .require();
+    const requiredMargin = values
+      .requireInteger(BasicGameConfigWriter._requiredMargin)
+      .require();
+
+    return new BasicGameConfig(
+      // TODO: Not implemented yet.
+      "green",
+      "blue",
+
+      winningScore,
+      requiredMargin,
+    );
   }
 }
