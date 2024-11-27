@@ -1,3 +1,3 @@
 # Scoreboard
 
-Multi-purpose scoreboard.
+Multipurpose scoreboard for track points, serving, and faults.

@@ -23,7 +23,8 @@ export default defineConfig({
       manifest: {
         name: "Scoreboard",
         short_name: "Scoreboard",
-        description: "Track scores/serving/faults",
+        description:
+          "Multipurpose scoreboard for track points, serving, and faults.",
         background_color: "#1d1e2e",
         icons: [
           {
