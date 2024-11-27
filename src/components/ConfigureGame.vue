@@ -43,10 +43,11 @@ function handleFormSubmit(e: Event) {
     </RouterLink>
     <div class="divider"></div>
     <div class="configure">
-      <h1>Configure game</h1>
+      <h1>Setup game</h1>
       <p class="game-name">{{ game.name }}</p>
       <form autocomplete="off" @submit="handleFormSubmit">
         <PropObjectEditor
+          class="props"
           :prop="game.configWriter.configProp"
           :value="config"
           @change="handleConfigChange"
@@ -70,6 +71,11 @@ function handleFormSubmit(e: Event) {
   @include colors.accent-classes;
   padding: 3rem 2rem;
   gap: 2rem;
+  flex-grow: 1;
+}
+
+.configure {
+  flex-grow: 1;
 }
 
 h1 {
@@ -87,6 +93,11 @@ h1 {
 
 form {
   gap: 2rem;
+  flex-grow: 1;
+}
+
+.props {
+  flex-grow: 1;
 }
 
 .play-button {
