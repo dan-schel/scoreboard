@@ -16,12 +16,16 @@ export const TiebreakRules = [
 ] as const;
 export type TiebreakRule = (typeof TiebreakRules)[number];
 
+export const FirstServers = ["random", "player-1", "player-2"] as const;
+export type FirstServer = (typeof FirstServers)[number];
+
 export class TennisConfig extends GameConfig {
   constructor(
     readonly player1Color: AccentColor,
     readonly player2Color: AccentColor,
     readonly setsToWin: number,
     readonly tiebreakRule: TiebreakRule,
+    readonly firstServer: FirstServer,
   ) {
     super();
   }
@@ -32,6 +36,7 @@ export class TennisConfig extends GameConfig {
       player2Color: z.enum(AccentColors),
       setsToWin: z.number(),
       tiebreakRule: z.enum(TiebreakRules),
+      firstServer: z.enum(FirstServers),
     })
     .transform(
       (x) =>
@@ -40,6 +45,7 @@ export class TennisConfig extends GameConfig {
           x.player2Color,
           x.setsToWin,
           x.tiebreakRule,
+          x.firstServer,
         ),
     );
 
@@ -49,6 +55,7 @@ export class TennisConfig extends GameConfig {
       player2Color: this.player2Color,
       setsToWin: this.setsToWin,
       tiebreakRule: this.tiebreakRule,
+      firstServer: this.firstServer,
     };
   }
 
@@ -66,6 +73,7 @@ export class TennisConfigWriter extends GameConfigWriter<TennisConfig> {
   private static _player2Color = "player-2-color";
   private static _setsToWin = "sets-to-win";
   private static _tiebreakRule = "tiebreak-rule";
+  private static _firstServer = "first-server";
 
   constructor() {
     super(
@@ -96,6 +104,19 @@ export class TennisConfigWriter extends GameConfigWriter<TennisConfig> {
               "last-set-10-otherwise-7": "10 for the last set, otherwise 7",
             },
             "last-set-10-otherwise-7",
+          ),
+        ),
+        new PropObjectField(
+          TennisConfigWriter._firstServer,
+          "Player to serve first",
+          PropEnum.fromArray<FirstServer>(
+            FirstServers,
+            {
+              random: "Random",
+              "player-1": "Player 1",
+              "player-2": "Player 2",
+            },
+            "random",
           ),
         ),
       ]),
@@ -133,12 +154,16 @@ export class TennisConfigWriter extends GameConfigWriter<TennisConfig> {
     const tiebreakRule = value
       .requireEnum(TennisConfigWriter._tiebreakRule)
       .requireOneOf<TiebreakRule>(TiebreakRules);
+    const firstServer = value
+      .requireEnum(TennisConfigWriter._firstServer)
+      .requireOneOf<FirstServer>(FirstServers);
 
     return new TennisConfig(
       player1Color,
       player2Color,
       setsToWin,
       tiebreakRule,
+      firstServer,
     );
   }
 }

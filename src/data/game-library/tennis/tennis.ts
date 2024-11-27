@@ -31,9 +31,15 @@ export class TennisGameInstance extends GameInstance<
   TennisState
 > {
   getInitialState(): TennisState {
+    const firstServer: "1" | "2" = {
+      random: Math.random() < 0.5 ? ("1" as const) : ("2" as const),
+      "player-1": "1" as const,
+      "player-2": "2" as const,
+    }[this.config.firstServer];
+
     return new TennisState(
       this.config,
-      "1",
+      firstServer,
       TennisScore.zero,
       TennisScore.zero,
       false,
