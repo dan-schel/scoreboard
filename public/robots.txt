@@ -1,0 +1,5 @@
+# Allows the root page to end crawled, but nothing else.
+$ ("$" means end of path, apparently: https://stackoverflow.com/questions/7226432/robots-txt-allow-root-only-disallow-everything-else)
+user-agent: *
+Allow: /$
+Disallow: /
