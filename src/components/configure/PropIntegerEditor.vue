@@ -30,7 +30,8 @@ defineEmits<{
 input[type="text"] {
   @include template.input-filled-neutral;
   padding: 0.5rem 0.75rem;
-  max-width: 25rem;
+  max-width: 8rem;
+  font-size: 1.5rem;
 }
 
 .error {
