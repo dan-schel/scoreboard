@@ -8,11 +8,16 @@ import { useRoute } from "vue-router";
 const route = useRoute();
 const gameID = ref(route.params.game as string);
 const uuid = ref(route.params.uuid as string);
+const rematchOf = ref(route.query.rematch as string);
 
-watch([() => route.params.game, () => route.params.uuid], () => {
-  gameID.value = route.params.game as string;
-  uuid.value = route.params.uuid as string;
-});
+watch(
+  [() => route.params.game, () => route.params.uuid, () => route.query.rematch],
+  () => {
+    gameID.value = route.params.game as string;
+    uuid.value = route.params.uuid as string;
+    rematchOf.value = route.query.rematch as string;
+  },
+);
 const game = computed(() => {
   return gameLibrary.get(gameID.value) ?? null;
 });
@@ -21,7 +26,12 @@ const game = computed(() => {
 <template>
   <PageCenterer>
     <main v-if="game != null">
-      <GameController :game="game" :uuid="uuid"></GameController>
+      <GameController
+        :game="game"
+        :uuid="uuid"
+        :rematch-of="rematchOf"
+        :key="uuid"
+      ></GameController>
     </main>
     <main v-else class="not-found">
       <h1>Error 404 - Game not found</h1>

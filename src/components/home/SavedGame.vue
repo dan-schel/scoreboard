@@ -5,13 +5,13 @@ import PhPlayFill from "../icons/PhPlayFill.vue";
 import PhDotsThreeOutlineFill from "../icons/PhDotsThreeOutlineFill.vue";
 import { ref } from "vue";
 import PhXBold from "../icons/PhXBold.vue";
+import { RouterLink } from "vue-router";
 
 const props = defineProps<{
   save: LoadResults<GameState>;
 }>();
 
 const emit = defineEmits<{
-  (e: "rematch"): void;
   (e: "deleted"): void;
 }>();
 
@@ -45,9 +45,17 @@ function handleDelete() {
     </div>
     <div class="actions">
       <template v-if="moreActionsExpanded">
-        <button class="text-button" @click="$emit('rematch')">
+        <RouterLink
+          v-if="!save.error"
+          class="text-button"
+          :to="{
+            name: 'new-game',
+            params: { game: save.game.id },
+            query: { rematch: save.instance.uuid },
+          }"
+        >
           <p>Rematch</p>
-        </button>
+        </RouterLink>
         <button class="text-button" @click="handleDelete">
           <p>Delete</p>
         </button>
@@ -58,7 +66,10 @@ function handleDelete() {
       <template v-else>
         <RouterLink
           v-if="!save.error && save.state.isGameOver() === false"
-          :to="{ path: `/${save.game.id}/${save.instance.uuid}` }"
+          :to="{
+            name: 'game',
+            params: { game: save.game.id, uuid: save.instance.uuid },
+          }"
           class="open circle-button"
         >
           <PhPlayFill></PhPlayFill

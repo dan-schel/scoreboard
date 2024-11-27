@@ -11,6 +11,8 @@ import { getAccentColorDisplayString } from "@/data/game-utils/accent-color";
 
 const props = defineProps<{
   handler: GameHandler<GameStateType>;
+  gameId: string;
+  instanceUuid: string;
 }>();
 
 const gameState = ref(props.handler.getState()) as Ref<GameStateType>;
@@ -74,6 +76,7 @@ watch(
     }
     newValue.addChangeListener(handleStateUpdate);
     handleStateUpdate();
+    dialogPage.value = null;
   },
 );
 
@@ -120,6 +123,8 @@ onUnmounted(() => {
     <GameOverMenu
       v-else-if="dialogPage === 'game-over'"
       :winner-color="typeof gameOver === 'object' ? gameOver.winner : null"
+      :game-id="gameId"
+      :instance-uuid="instanceUuid"
       @close="dialogRef?.close()"
     ></GameOverMenu>
     <PlayMenu

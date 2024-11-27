@@ -16,8 +16,13 @@ const router = createRouter({
     },
     {
       path: "/:game",
+      name: "new-game",
       redirect: (to) => {
-        return { path: `/${to.params.game}/${uuid()}` };
+        return {
+          name: "game",
+          params: { game: to.params.game, uuid: uuid() },
+          query: to.query,
+        };
       },
     },
     {

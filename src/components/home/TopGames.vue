@@ -12,7 +12,7 @@ import PhDiceThreeBold from "../icons/PhDiceThreeBold.vue";
     <RouterLink
       v-for="[id, game] in gameLibrary"
       :key="id"
-      :to="{ path: `/${id}` }"
+      :to="{ name: 'new-game', params: { game: id } }"
       :class="`game accent-${game.color}`"
     >
       <PhNumberSquareFourFill v-if="id == 'basic'"></PhNumberSquareFourFill>

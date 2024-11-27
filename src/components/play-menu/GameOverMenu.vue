@@ -10,11 +10,12 @@ import PhArrowsClockwiseBold from "../icons/PhArrowsClockwiseBold.vue";
 
 defineProps<{
   winnerColor: AccentColor | null;
+  gameId: string;
+  instanceUuid: string;
 }>();
 
 defineEmits<{
   (e: "close"): void;
-  (e: "rematch"): void;
 }>();
 </script>
 
@@ -33,10 +34,16 @@ defineEmits<{
       </button>
     </div>
     <div class="actions">
-      <button @click="$emit('rematch')">
+      <RouterLink
+        :to="{
+          name: 'new-game',
+          params: { game: gameId },
+          query: { rematch: instanceUuid },
+        }"
+      >
         <PhArrowsClockwiseBold></PhArrowsClockwiseBold>
         <p>Rematch</p>
-      </button>
+      </RouterLink>
       <RouterLink :to="{ name: 'home' }">
         <PhHouseBold></PhHouseBold>
         <p>Exit to menu</p>
