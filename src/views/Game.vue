@@ -2,6 +2,7 @@
 import GameController from "@/components/GameController.vue";
 import PageCenterer from "@/components/PageCenterer.vue";
 import { gameLibrary } from "@/data/game-library/game-library";
+import { routes } from "@/router";
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -41,7 +42,7 @@ const game = computed(() => {
         Check the homepage to see which games are available.
       </p>
       <p>
-        <RouterLink class="link" :to="{ name: 'home' }">
+        <RouterLink class="link" :to="routes.home()">
           Here&apos;s a link to the homepage.
         </RouterLink>
       </p>

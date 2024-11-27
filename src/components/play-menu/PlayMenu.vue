@@ -5,6 +5,7 @@ import PhArrowArcRightBold from "../icons/PhArrowArcRightBold.vue";
 import PhHeadphonesBold from "../icons/PhHeadphonesBold.vue";
 import PhHouseBold from "../icons/PhHouseBold.vue";
 import PhXBold from "../icons/PhXBold.vue";
+import { routes } from "@/router";
 
 defineProps<{
   canUndo: boolean;
@@ -42,7 +43,7 @@ defineEmits<{
         <PhHeadphonesBold></PhHeadphonesBold>
         <p>Earbud mode</p>
       </button>
-      <RouterLink :to="{ name: 'home' }">
+      <RouterLink :to="routes.home()">
         <PhHouseBold></PhHouseBold>
         <p>Leave game</p>
       </RouterLink>

@@ -6,6 +6,7 @@ import PhDotsThreeOutlineFill from "../icons/PhDotsThreeOutlineFill.vue";
 import { ref } from "vue";
 import PhXBold from "../icons/PhXBold.vue";
 import { RouterLink } from "vue-router";
+import { routes } from "@/router";
 
 const props = defineProps<{
   save: LoadResults<GameState>;
@@ -48,11 +49,7 @@ function handleDelete() {
         <RouterLink
           v-if="!save.error"
           class="text-button"
-          :to="{
-            name: 'new-game',
-            params: { game: save.game.id },
-            query: { rematch: save.instance.uuid },
-          }"
+          :to="routes.rematch(save.game.id, save.instance.uuid)"
         >
           <p>Rematch</p>
         </RouterLink>
@@ -66,10 +63,7 @@ function handleDelete() {
       <template v-else>
         <RouterLink
           v-if="!save.error && save.state.isGameOver() === false"
-          :to="{
-            name: 'game',
-            params: { game: save.game.id, uuid: save.instance.uuid },
-          }"
+          :to="routes.openGame(save.game.id, save.instance.uuid)"
           class="open circle-button"
         >
           <PhPlayFill></PhPlayFill

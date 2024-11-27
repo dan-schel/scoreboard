@@ -7,6 +7,7 @@ import {
   type AccentColor,
 } from "@/data/game-utils/accent-color";
 import PhArrowsClockwiseBold from "../icons/PhArrowsClockwiseBold.vue";
+import { routes } from "@/router";
 
 defineProps<{
   winnerColor: AccentColor | null;
@@ -34,17 +35,11 @@ defineEmits<{
       </button>
     </div>
     <div class="actions">
-      <RouterLink
-        :to="{
-          name: 'new-game',
-          params: { game: gameId },
-          query: { rematch: instanceUuid },
-        }"
-      >
+      <RouterLink :to="routes.rematch(gameId, instanceUuid)">
         <PhArrowsClockwiseBold></PhArrowsClockwiseBold>
         <p>Rematch</p>
       </RouterLink>
-      <RouterLink :to="{ name: 'home' }">
+      <RouterLink :to="routes.home()">
         <PhHouseBold></PhHouseBold>
         <p>Exit to menu</p>
       </RouterLink>

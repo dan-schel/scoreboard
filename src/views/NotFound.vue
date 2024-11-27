@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { routes } from "@/router";
 import { RouterLink } from "vue-router";
 </script>
 
@@ -7,7 +8,7 @@ import { RouterLink } from "vue-router";
     <h1>Error 404 - Page not found</h1>
     <p>This page doesn&apos;t exist, at least not anymore!</p>
     <p>
-      <RouterLink class="link" :to="{ name: 'home' }">
+      <RouterLink class="link" :to="routes.home()">
         Here&apos;s a link to the homepage.
       </RouterLink>
     </p>

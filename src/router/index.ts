@@ -33,4 +33,21 @@ const router = createRouter({
   ],
 });
 
+export const routes = {
+  home: () => ({ name: "home" }),
+  openGame: (gameID: string, instanceUUID: string) => ({
+    name: "game",
+    params: { game: gameID, uuid: instanceUUID },
+  }),
+  newGame: (gameID: string) => ({
+    name: "new-game",
+    params: { game: gameID },
+  }),
+  rematch: (gameID: string, instanceUUID: string) => ({
+    name: "new-game",
+    params: { game: gameID },
+    query: { rematch: instanceUUID },
+  }),
+};
+
 export default router;

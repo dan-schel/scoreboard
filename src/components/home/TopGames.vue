@@ -5,6 +5,7 @@ import PhTennisBallFill from "@/components/icons/PhTennisBallFill.vue";
 import PhSquaresFourFill from "../icons/PhSquaresFourFill.vue";
 import PhNumberSquareFourFill from "../icons/PhNumberSquareFourFill.vue";
 import PhDiceThreeBold from "../icons/PhDiceThreeBold.vue";
+import { routes } from "@/router";
 </script>
 
 <template>
@@ -12,7 +13,7 @@ import PhDiceThreeBold from "../icons/PhDiceThreeBold.vue";
     <RouterLink
       v-for="[id, game] in gameLibrary"
       :key="id"
-      :to="{ name: 'new-game', params: { game: id } }"
+      :to="routes.newGame(id)"
       :class="`game accent-${game.color}`"
     >
       <PhNumberSquareFourFill v-if="id == 'basic'"></PhNumberSquareFourFill>
