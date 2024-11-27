@@ -74,8 +74,14 @@ export class TennisScore {
     );
   }
 
-  gamesWonPerSet(): number[] {
-    return [...this.setHistory.map((x) => x.gamesWon), this.games];
+  gamesWonPerSet(includeCurrentSet: boolean): number[] {
+    const historic = this.setHistory.map((x) => x.gamesWon);
+
+    if (includeCurrentSet) {
+      return [...historic, this.games];
+    } else {
+      return historic;
+    }
   }
 
   hasWon(setsToWin: number) {
@@ -165,14 +171,20 @@ export class TennisScore {
       throw new Error("Cannot award points - this is not a tiebreak!");
     }
 
-    // TODO: In Aus Open rules, the tiebreak goes to 10 points if it decides the
-    // match (or is it for the last set only?).
-    const goesTo = 7;
+    const winningScore = TennisScore._getTiebreakWinningScore(
+      config,
+      winner,
+      loser,
+    );
+    const requiredMargin = 2;
 
     const winnerPoints = winner.tiebreakPoints + 1;
     const loserPoints = loser.tiebreakPoints;
 
-    if (winnerPoints >= goesTo && winnerPoints - loserPoints >= 2) {
+    if (
+      winnerPoints >= winningScore &&
+      winnerPoints - loserPoints >= requiredMargin
+    ) {
       return {
         ...this._awardGame(config, winner, loser),
         winsGame: true,
@@ -253,6 +265,24 @@ export class TennisScore {
         winsSet: true,
         winsMatch: newWinnerScore.hasWon(config.setsToWin),
       };
+    }
+  }
+
+  private static _getTiebreakWinningScore(
+    config: TennisConfig,
+    score1: TennisScore,
+    // You don't really need to know both player's scores to know which set
+    // we're in. Shrug.
+    _score2: TennisScore,
+  ) {
+    if (config.tiebreakRule === "always-to-7") {
+      return 7;
+    } else if (config.tiebreakRule === "always-to-10") {
+      return 10;
+    } else {
+      const setNumber = score1.setHistory.length + 1;
+      const isLastSet = setNumber === config.setsToWin * 2 - 1;
+      return isLastSet ? 10 : 7;
     }
   }
 }

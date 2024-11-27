@@ -60,7 +60,7 @@ export class BasicGameState extends GameState<BasicGameState> {
     const p2Color = getAccentColorDisplayString(this.config.player2Color);
     const p1 = `${p1Color} ${this.player1Score.toFixed()}`;
     const p2 = `${p2Color} ${this.player2Score.toFixed()}`;
-    return `${p1} - ${p2}`;
+    return `${p1} — ${p2}`;
   }
 
   getScoreHeadline(): string | null {

@@ -82,15 +82,15 @@ export class TennisState extends GameState<TennisState> {
     const p2Color = getAccentColorDisplayString(this.config.player2Color);
 
     const p1Sets = this.player1Score
-      .gamesWonPerSet()
+      .gamesWonPerSet(this.isGameOver() === false)
       .map((x) => x.toFixed())
       .join(" ");
     const p2Sets = this.player2Score
-      .gamesWonPerSet()
+      .gamesWonPerSet(this.isGameOver() === false)
       .map((x) => x.toFixed())
       .join(" ");
 
-    return `${p1Color} ${p1Sets} - ${p2Color} ${p2Sets}`;
+    return `${p1Color} ${p1Sets} — ${p2Color} ${p2Sets}`;
   }
 
   getScoreHeadline(): string | null {

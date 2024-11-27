@@ -43,7 +43,7 @@ export class TennisScoreType extends ScoreType {
       return "";
     }
     return score
-      .gamesWonPerSet()
+      .gamesWonPerSet(state.isGameOver() === false)
       .map((x) => x.toFixed())
       .join(" ");
   }
