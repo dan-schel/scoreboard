@@ -10,6 +10,11 @@ const router = createRouter({
       component: () => import("../views/Home.vue"),
     },
     {
+      path: "/all",
+      name: "all-games",
+      component: () => import("../views/AllGames.vue"),
+    },
+    {
       path: "/:game/:uuid",
       name: "game",
       component: () => import("../views/Game.vue"),
@@ -35,6 +40,7 @@ const router = createRouter({
 
 export const routes = {
   home: () => ({ name: "home" }),
+  allGames: () => ({ name: "all-games" }),
   openGame: (gameID: string, instanceUUID: string) => ({
     name: "game",
     params: { game: gameID, uuid: instanceUUID },

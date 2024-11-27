@@ -6,7 +6,6 @@
   --content-color: var(--color-on-accent);
 
   &::before {
-    transition: opacity 0.05s;
     background-color: var(--color-accent);
     z-index: -1;
   }
@@ -24,10 +23,6 @@
     background-color: #ffffff00;
     border: 0.2rem solid #ffffff00;
     border-radius: var(--button-rounding);
-
-    transition:
-      background-color 0.05s,
-      border-color 0.05s;
   }
 
   @include template.on-hover {

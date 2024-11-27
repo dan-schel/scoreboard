@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { gameLibrary } from "@/data/game-library/game-library";
 import { RouterLink } from "vue-router";
-import PhTennisBallFill from "@/components/icons/PhTennisBallFill.vue";
 import PhSquaresFourFill from "../icons/PhSquaresFourFill.vue";
-import PhNumberSquareFourFill from "../icons/PhNumberSquareFourFill.vue";
-import PhDiceThreeBold from "../icons/PhDiceThreeBold.vue";
 import { routes } from "@/router";
+import GameIcon from "./GameIcon.vue";
 </script>
 
 <template>
@@ -16,15 +14,13 @@ import { routes } from "@/router";
       :to="routes.newGame(id)"
       :class="`game accent-${game.color}`"
     >
-      <PhNumberSquareFourFill v-if="id == 'basic'"></PhNumberSquareFourFill>
-      <PhTennisBallFill v-else-if="id == 'tennis'"></PhTennisBallFill>
-      <PhDiceThreeBold v-else></PhDiceThreeBold>
+      <GameIcon :id="id"></GameIcon>
       <p>{{ game.name }}</p>
     </RouterLink>
-    <button class="more">
+    <RouterLink class="more" :to="routes.allGames()">
       <PhSquaresFourFill></PhSquaresFourFill>
       <p>Other</p>
-    </button>
+    </RouterLink>
   </div>
 </template>
 
