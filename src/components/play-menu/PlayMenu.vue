@@ -2,14 +2,18 @@
 import { RouterLink } from "vue-router";
 import PhArrowArcLeftBold from "../icons/PhArrowArcLeftBold.vue";
 import PhArrowArcRightBold from "../icons/PhArrowArcRightBold.vue";
-import PhHeadphonesBold from "../icons/PhHeadphonesBold.vue";
+// import PhHeadphonesBold from "../icons/PhHeadphonesBold.vue";
 import PhHouseBold from "../icons/PhHouseBold.vue";
 import PhXBold from "../icons/PhXBold.vue";
 import { routes } from "@/router";
+import PhArrowsClockwiseBold from "../icons/PhArrowsClockwiseBold.vue";
 
 defineProps<{
   canUndo: boolean;
   canRedo: boolean;
+  isGameOver: boolean;
+  gameId: string;
+  instanceUuid: string;
 }>();
 
 defineEmits<{
@@ -39,10 +43,15 @@ defineEmits<{
       </button>
     </div>
     <div class="other">
-      <button @click="$emit('earbud-mode')">
+      <!-- TODO: Coming soon! -->
+      <!-- <button @click="$emit('earbud-mode')">
         <PhHeadphonesBold></PhHeadphonesBold>
         <p>Earbud mode</p>
-      </button>
+      </button> -->
+      <RouterLink v-if="isGameOver" :to="routes.rematch(gameId, instanceUuid)">
+        <PhArrowsClockwiseBold></PhArrowsClockwiseBold>
+        <p>Rematch</p>
+      </RouterLink>
       <RouterLink :to="routes.home()">
         <PhHouseBold></PhHouseBold>
         <p>Leave game</p>

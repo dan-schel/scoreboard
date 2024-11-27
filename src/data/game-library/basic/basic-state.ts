@@ -64,12 +64,32 @@ export class BasicGameState extends GameState<BasicGameState> {
   }
 
   getScoreHeadline(): string | null {
-    // TODO: Implement headline - if game over logic exists.
+    if (
+      this.with({ player1Score: this.player1Score + 1 }).isGameOver() !==
+        false ||
+      this.with({ player2Score: this.player2Score + 1 }).isGameOver() !== false
+    ) {
+      return "Game point";
+    }
+
     return null;
   }
 
   isGameOver(): boolean | { winner: AccentColor } {
-    // TODO: Implement game over logic.
+    if (
+      this.player1Score >= this.config.winningScore &&
+      this.player1Score >= this.player2Score + this.config.requiredMargin
+    ) {
+      return { winner: this.config.player1Color };
+    }
+
+    if (
+      this.player2Score >= this.config.winningScore &&
+      this.player2Score >= this.player1Score + this.config.requiredMargin
+    ) {
+      return { winner: this.config.player2Color };
+    }
+
     return false;
   }
 }
