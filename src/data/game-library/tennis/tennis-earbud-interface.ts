@@ -20,13 +20,13 @@ export class TennisEarbudInterface extends EarbudInterface<TennisState> {
   }
 
   getStateUpdateAnnouncement(
-    oldState: TennisState,
-    newState: TennisState,
+    _newState: TennisState,
+    _oldState: TennisState,
   ): Announcement | null {
     return null;
   }
 
-  getScoreSummaryAnnouncement(newState: TennisState): Announcement {
+  getScoreSummaryAnnouncement(_newState: TennisState): Announcement {
     return [];
   }
 }

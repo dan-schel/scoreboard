@@ -25,6 +25,7 @@ const dialogPage = ref<"main" | "earbud-mode" | "game-over" | null>(null);
 const isEarbudModeEnabled = ref(false);
 
 const scoreType = computed(() => props.handler.getScoreType());
+const earbudInterface = computed(() => props.handler.getEarbudInterface());
 
 const gameOver = computed(() => {
   return gameState.value.isGameOver();
@@ -80,6 +81,12 @@ function handleDisableEarbudMode() {
   dialogRef.value?.close();
 }
 
+function handleUndo() {
+  if (props.handler.canUndo()) {
+    props.handler.requestUndo();
+  }
+}
+
 watch(
   () => props.handler,
   (newValue, oldValue) => {
@@ -98,6 +105,7 @@ onMounted(() => {
     dialogPage.value = null;
   });
 });
+
 onUnmounted(() => {
   props.handler.removeChangeListener(handleStateUpdate);
 });
@@ -127,8 +135,11 @@ onUnmounted(() => {
   </div>
 
   <EarbudModeController
-    v-if="isEarbudModeEnabled"
+    v-if="isEarbudModeEnabled && earbudInterface != null"
+    :interface="earbudInterface"
+    :state="gameState"
     @submit-action="handleSubmitAction"
+    @undo="handleUndo"
   />
 
   <dialog ref="dialogRef">
@@ -155,7 +166,7 @@ onUnmounted(() => {
       :is-game-over="gameOver !== false"
       :game-id="gameId"
       :instance-uuid="instanceUuid"
-      @undo="handler.requestUndo()"
+      @undo="handleUndo"
       @redo="handler.requestRedo()"
       @earbud-mode="dialogPage = 'earbud-mode'"
       @close="dialogRef?.close()"

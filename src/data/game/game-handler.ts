@@ -1,5 +1,6 @@
 import { UndoStack } from "../game-utils/undo-stack";
 import type { GameConfig } from "./config/config";
+import type { EarbudInterface } from "./earbud-interface";
 import type { Action, GameInstance, GameState, ScoreType } from "./game";
 
 export abstract class GameHandler<GameStateType extends GameState> {
@@ -26,6 +27,7 @@ export abstract class GameHandler<GameStateType extends GameState> {
 
   abstract getPlayerCount(): number;
   abstract getScoreType(): ScoreType;
+  abstract getEarbudInterface(): EarbudInterface<GameStateType> | null;
 
   // TODO: For online game handlers, this would need to be async.
   abstract do(action: Action): void;
@@ -80,6 +82,9 @@ export class LocalGameHandler<
   }
   getScoreType(): ScoreType {
     return this.game.getScoreType();
+  }
+  getEarbudInterface(): EarbudInterface<GameStateType> | null {
+    return this.game.getEarbudInterface();
   }
   do(action: Action): void {
     this._editState(this._state.do(action));

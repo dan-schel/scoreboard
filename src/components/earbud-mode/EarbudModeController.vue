@@ -1,21 +1,77 @@
-<script setup lang="ts">
-import type { Action } from "@/data/game/game";
-import { onMounted, onUnmounted, ref } from "vue";
+<script setup lang="ts" generic="GameStateType extends GameState">
+import type {
+  Announcement,
+  EarbudInterface,
+} from "@/data/game/earbud-interface";
+import type { Action, GameState } from "@/data/game/game";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 
-defineEmits<{
+const props = defineProps<{
+  interface: EarbudInterface<GameStateType>;
+  state: GameStateType;
+}>();
+
+const emit = defineEmits<{
   (e: "submit-action", action: Action): void;
+  (e: "undo"): void;
 }>();
 
 const audioRef = ref<HTMLAudioElement | null>(null);
+const moreOptionsChosen = ref(false);
+
+watch(() => props.state, handleStateUpdate);
+
+function handleStateUpdate(newValue: GameStateType, oldValue: GameStateType) {
+  const announcement = props.interface.getStateUpdateAnnouncement(
+    newValue,
+    oldValue,
+  );
+
+  if (announcement != null) {
+    playAnnoucement(announcement);
+  }
+}
 
 function handlePlayPause() {
-  console.log("play/pause");
+  if (moreOptionsChosen.value) {
+    playAnnoucement(props.interface.getScoreSummaryAnnouncement(props.state));
+    moreOptionsChosen.value = false;
+  } else {
+    // TODO: Cancel the 'more options' state after a timeout?
+    moreOptionsChosen.value = true;
+  }
 }
+
 function handleNextTrack() {
-  console.log("next");
+  if (moreOptionsChosen.value) {
+    submitActionUnlessNull(props.interface.getFaultAction(props.state));
+    moreOptionsChosen.value = false;
+  } else {
+    submitActionUnlessNull(
+      props.interface.getIncrementPlayer1Action(props.state),
+    );
+  }
 }
+
 function handlePreviousTrack() {
-  console.log("previous");
+  if (moreOptionsChosen.value) {
+    emit("undo");
+    moreOptionsChosen.value = false;
+  } else {
+    submitActionUnlessNull(
+      props.interface.getIncrementPlayer2Action(props.state),
+    );
+  }
+}
+
+function submitActionUnlessNull(action: Action | null) {
+  if (action != null) {
+    emit("submit-action", action);
+  }
+}
+
+function playAnnoucement(annoucement: Announcement) {
+  console.log("[Annoucement]", annoucement);
 }
 
 onMounted(() => {
@@ -40,6 +96,7 @@ onMounted(() => {
   navigator.mediaSession.setActionHandler("nexttrack", handleNextTrack);
   navigator.mediaSession.setActionHandler("previoustrack", handlePreviousTrack);
 });
+
 onUnmounted(() => {
   audioRef.value?.pause();
   navigator.mediaSession.metadata = new MediaMetadata({
