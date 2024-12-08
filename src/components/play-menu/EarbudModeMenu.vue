@@ -5,9 +5,16 @@ import PhFastForwardBold from "../icons/PhFastForwardBold.vue";
 import PhPlayPauseBold from "../icons/PhPlayPauseBold.vue";
 import PhRewindBold from "../icons/PhRewindBold.vue";
 
+defineProps<{
+  isEnabled: boolean;
+}>();
+
+const supported = "mediaSession" in navigator;
+
 defineEmits<{
   (e: "back"): void;
   (e: "enable"): void;
+  (e: "disable"): void;
 }>();
 </script>
 
@@ -41,9 +48,22 @@ defineEmits<{
       <PhRewindBold></PhRewindBold>
       <p>Undo</p>
     </div>
-    <button class="enable-button">
+    <template v-if="!supported">
+      <hr />
+      <p class="error">Not supported - try another browser or device.</p>
+    </template>
+    <button
+      class="enable-button"
+      @click="$emit('enable')"
+      v-if="!isEnabled"
+      :disabled="!supported"
+    >
       <PhCheckBold></PhCheckBold>
       <p>Enable earbud mode</p>
+    </button>
+    <button class="disable-button" @click="$emit('disable')" v-else>
+      <PhCheckBold></PhCheckBold>
+      <p>Disable earbud mode</p>
     </button>
   </div>
 </template>
@@ -100,7 +120,8 @@ hr {
   border-top: 1px solid var(--color-soft-border);
 }
 
-.enable-button {
+.enable-button,
+.disable-button {
   @include template.button-classic;
   display: grid;
   grid-template-columns: auto 1fr;
@@ -111,5 +132,10 @@ hr {
   svg {
     font-size: 1.5rem;
   }
+}
+
+.error {
+  color: var(--color-error);
+  font-weight: bold;
 }
 </style>

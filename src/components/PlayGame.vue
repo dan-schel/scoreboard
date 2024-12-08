@@ -8,6 +8,7 @@ import PlayMenu from "./play-menu/PlayMenu.vue";
 import EarbudModeMenu from "./play-menu/EarbudModeMenu.vue";
 import GameOverMenu from "./play-menu/GameOverMenu.vue";
 import { getAccentColorDisplayString } from "@/data/game-utils/accent-color";
+import EarbudModeController from "./earbud-mode/EarbudModeController.vue";
 
 const props = defineProps<{
   handler: GameHandler<GameStateType>;
@@ -21,6 +22,7 @@ const canRedo = ref(props.handler.canRedo());
 
 const dialogRef = ref<HTMLDialogElement | null>(null);
 const dialogPage = ref<"main" | "earbud-mode" | "game-over" | null>(null);
+const isEarbudModeEnabled = ref(false);
 
 const scoreType = computed(() => props.handler.getScoreType());
 
@@ -66,6 +68,16 @@ function handleSubmitAction(action: Action) {
     return;
   }
   props.handler.do(action);
+}
+
+function handleEnableEarbudMode() {
+  isEarbudModeEnabled.value = true;
+  dialogRef.value?.close();
+}
+
+function handleDisableEarbudMode() {
+  isEarbudModeEnabled.value = false;
+  dialogRef.value?.close();
 }
 
 watch(
@@ -114,10 +126,15 @@ onUnmounted(() => {
     </div>
   </div>
 
+  <EarbudModeController v-if="isEarbudModeEnabled" />
+
   <dialog ref="dialogRef">
     <EarbudModeMenu
       v-if="dialogPage === 'earbud-mode'"
+      :is-enabled="isEarbudModeEnabled"
       @back="dialogPage = 'main'"
+      @enable="handleEnableEarbudMode"
+      @disable="handleDisableEarbudMode"
     >
     </EarbudModeMenu>
     <GameOverMenu
