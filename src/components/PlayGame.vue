@@ -145,6 +145,7 @@ onUnmounted(() => {
   <dialog ref="dialogRef">
     <EarbudModeMenu
       v-if="dialogPage === 'earbud-mode'"
+      :interface="earbudInterface"
       :is-enabled="isEarbudModeEnabled"
       @back="dialogPage = 'main'"
       @enable="handleEnableEarbudMode"

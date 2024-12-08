@@ -1,11 +1,15 @@
 <script setup lang="ts">
+import type { EarbudInterface } from "@/data/game/earbud-interface";
 import PhCaretLeftBold from "../icons/PhCaretLeftBold.vue";
 import PhCheckBold from "../icons/PhCheckBold.vue";
 import PhFastForwardBold from "../icons/PhFastForwardBold.vue";
 import PhPlayPauseBold from "../icons/PhPlayPauseBold.vue";
 import PhRewindBold from "../icons/PhRewindBold.vue";
+import type { GameState } from "@/data/game/game";
+import PhXBold from "../icons/PhXBold.vue";
 
 defineProps<{
+  interface: EarbudInterface<GameState> | null;
   isEnabled: boolean;
 }>();
 
@@ -48,21 +52,26 @@ defineEmits<{
       <PhRewindBold></PhRewindBold>
       <p>Undo</p>
     </div>
-    <template v-if="!supported">
+    <template v-if="!supported || interface == null">
       <hr />
-      <p class="error">Not supported - try another browser or device.</p>
+      <p class="error" v-if="interface == null">
+        Not available for this game right now.
+      </p>
+      <p class="error" v-else-if="!supported">
+        Not supported - try another browser or device.
+      </p>
     </template>
     <button
       class="enable-button"
       @click="$emit('enable')"
       v-if="!isEnabled"
-      :disabled="!supported"
+      :disabled="!supported || interface == null"
     >
       <PhCheckBold></PhCheckBold>
       <p>Enable earbud mode</p>
     </button>
     <button class="disable-button" @click="$emit('disable')" v-else>
-      <PhCheckBold></PhCheckBold>
+      <PhXBold></PhXBold>
       <p>Disable earbud mode</p>
     </button>
   </div>
