@@ -1,14 +1,10 @@
 <script setup lang="ts" generic="GameStateType extends GameState">
-import {
-  SimpleScoreType,
-  type GameState,
-  type ScoreType,
-  type Action,
-} from "@/data/game/game";
+import { type GameState, type ScoreType, type Action } from "@/data/game/game";
 import SimpleScoreDisplay from "./SimpleScoreDisplay.vue";
 import { TennisScoreType } from "@/data/game-library/tennis/tennis-score-type";
 import { TennisState } from "@/data/game-library/tennis/tennis-state";
 import TennisScoreDisplay from "./TennisScoreDisplay.vue";
+import { SimpleScoreType } from "@/data/game-utils/simple-score-type";
 
 defineProps<{
   score: ScoreType;

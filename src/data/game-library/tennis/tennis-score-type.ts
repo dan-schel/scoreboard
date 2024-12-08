@@ -63,7 +63,6 @@ export class TennisScoreType extends ScoreType {
   }
 
   canIncrementScore(_state: TennisState): boolean {
-    // TODO: Check for game over?
     return true;
   }
 
@@ -72,7 +71,6 @@ export class TennisScoreType extends ScoreType {
   }
 
   canFault(state: TennisState, playerIndex: number): boolean {
-    // TODO: Check for game over?
     return state.isServing(playerIndex);
   }
 

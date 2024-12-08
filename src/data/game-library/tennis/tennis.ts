@@ -1,8 +1,10 @@
+import type { EarbudInterface } from "@/data/game/earbud-interface";
 import { GameBuilder, GameInstance, ScoreType } from "../../game/game";
 import { TennisConfig, TennisConfigWriter } from "./tennis-config";
 import { TennisScore } from "./tennis-score";
 import { TennisScoreType } from "./tennis-score-type";
 import { TennisState } from "./tennis-state";
+import { TennisEarbudInterface } from "./tennis-earbud-interface";
 
 export class TennisBuilder extends GameBuilder<TennisConfig, TennisState> {
   readonly id = "tennis";
@@ -56,5 +58,9 @@ export class TennisGameInstance extends GameInstance<
 
   getScoreType(): ScoreType {
     return new TennisScoreType("points", this.config);
+  }
+
+  getEarbudInterface(): EarbudInterface<TennisState> | null {
+    return new TennisEarbudInterface();
   }
 }

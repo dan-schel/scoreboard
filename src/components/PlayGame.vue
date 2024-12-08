@@ -126,7 +126,10 @@ onUnmounted(() => {
     </div>
   </div>
 
-  <EarbudModeController v-if="isEarbudModeEnabled" />
+  <EarbudModeController
+    v-if="isEarbudModeEnabled"
+    @submit-action="handleSubmitAction"
+  />
 
   <dialog ref="dialogRef">
     <EarbudModeMenu

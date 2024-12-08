@@ -1,5 +1,6 @@
 import type { AccentColor } from "../game-utils/accent-color";
 import type { GameConfig, GameConfigWriter } from "./config/config";
+import type { EarbudInterface } from "./earbud-interface";
 
 export abstract class GameBuilder<
   GameConfigType extends GameConfig = GameConfig,
@@ -41,6 +42,8 @@ export abstract class GameInstance<
   }
 
   abstract getScoreType(): ScoreType;
+
+  abstract getEarbudInterface(): EarbudInterface<GameStateType> | null;
 }
 
 export abstract class GameState<GameStateType extends GameState = any> {
@@ -58,25 +61,3 @@ export type Action<T = unknown> = {
   id: string;
   data: T;
 };
-
-export abstract class SimpleScoreType<
-  GameStateType extends GameState,
-> extends ScoreType {
-  constructor(id: string) {
-    super(id);
-  }
-
-  abstract getPlayerColor(playerIndex: number): AccentColor;
-
-  abstract getScoreString(state: GameStateType, playerIndex: number): string;
-
-  abstract canIncrementScore(
-    state: GameStateType,
-    playerIndex: number,
-  ): boolean;
-
-  abstract getIncrementAction(
-    state: GameStateType,
-    playerIndex: number,
-  ): Action;
-}

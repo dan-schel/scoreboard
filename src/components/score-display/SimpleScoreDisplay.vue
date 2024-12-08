@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="GameStateType extends GameState">
-import type { Action, GameState, SimpleScoreType } from "@/data/game/game";
+import type { SimpleScoreType } from "@/data/game-utils/simple-score-type";
+import type { Action, GameState } from "@/data/game/game";
 import { computed } from "vue";
 
 const props = defineProps<{

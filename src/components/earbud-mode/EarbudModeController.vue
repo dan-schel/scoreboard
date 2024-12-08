@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { Action } from "@/data/game/game";
 import { onMounted, onUnmounted, ref } from "vue";
 
-// NOTE: Can assume mediaSession is supported in this component, as the enable
-// button is disabled if it's not, so this component would not be rendered.
+defineEmits<{
+  (e: "submit-action", action: Action): void;
+}>();
 
 const audioRef = ref<HTMLAudioElement | null>(null);
 
@@ -18,6 +20,9 @@ function handlePreviousTrack() {
 
 onMounted(() => {
   audioRef.value?.play();
+
+  // NOTE: Can assume mediaSession is supported in this component, as the enable
+  // button is disabled if it's not, so this component would not be rendered.
   navigator.mediaSession.metadata = new MediaMetadata({
     title: "Earbud mode controls",
     artist: "scoreboard.danschellekens.com",

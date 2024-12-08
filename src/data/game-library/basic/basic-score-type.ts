@@ -1,8 +1,9 @@
 import { type AccentColor } from "@/data/game-utils/accent-color";
-import { SimpleScoreType, type Action } from "../../game/game";
+import { type Action } from "../../game/game";
 import { BasicGameConfig } from "./basic-config";
 import type { BasicGameState } from "./basic-state";
 import { IncrementAction } from "./basic-actions";
+import { SimpleScoreType } from "@/data/game-utils/simple-score-type";
 
 export class BasicScoreType extends SimpleScoreType<BasicGameState> {
   constructor(
