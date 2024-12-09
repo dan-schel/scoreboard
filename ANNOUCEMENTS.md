@@ -3,6 +3,7 @@
 ```txt
 
 nil [and] nil
+love [and] love
 0 [and] 0
 1 [and] 1
 2 [and] 2
@@ -51,9 +52,9 @@ orange takes the set
 orange leads 0 games to 0
 orange leads 1 game to 1
 
-match point
-set point
-break point
+40 30 match point
+40 30 set point
+40 30 break point
 
 tiebreak
 
