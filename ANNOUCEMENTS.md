@@ -49,8 +49,8 @@ orange takes the first set
                  fifth
 orange takes the set
 
-orange leads 0 games to 0
-orange leads 1 game to 1
+orange leads 0 games to ...
+orange leads 1 game to ...
 [something for when it's tied?] tied at 0 games all / tied at 1 game all
 
 40 30 match point
