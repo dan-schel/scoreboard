@@ -1,10 +1,12 @@
 <script setup lang="ts" generic="GameStateType extends GameState">
 import type {
   Announcement,
+  AnnouncementSegment,
   EarbudInterface,
 } from "@/data/game/earbud-interface";
 import type { Action, GameState } from "@/data/game/game";
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { Howl } from "howler";
 
 const props = defineProps<{
   interface: EarbudInterface<GameStateType>;
@@ -18,6 +20,10 @@ const emit = defineEmits<{
 
 const audioRef = ref<HTMLAudioElement | null>(null);
 const moreOptionsChosen = ref(false);
+const player = ref<Howl | null>(null);
+
+const audioSprite = computed(() => props.interface.getAudioSprite());
+const annoucementSegmentQueue = ref<AnnouncementSegment[]>([]);
 
 watch(() => props.state, handleStateUpdate);
 
@@ -72,9 +78,41 @@ function submitActionUnlessNull(action: Action | null) {
 
 function playAnnoucement(annoucement: Announcement) {
   console.log("[Annoucement]", annoucement);
+  annoucementSegmentQueue.value.push(...annoucement);
+  playNextAnnoucementSegment();
+}
+
+function playNextAnnoucementSegment() {
+  console.log(player.value?.state());
+
+  const [nextSegment, ...rest] = annoucementSegmentQueue.value;
+  annoucementSegmentQueue.value = rest;
+
+  if (nextSegment != null) {
+    player.value?.play(nextSegment.clip);
+  }
+}
+
+function handleAudioLoaded() {
+  const activationAnnoucement = props.interface.getActivationAnnoucement(
+    props.state,
+  );
+
+  if (activationAnnoucement != null) {
+    playAnnoucement(activationAnnoucement);
+  }
 }
 
 onMounted(() => {
+  player.value = new Howl({
+    src: [audioSprite.value.file],
+    sprite: audioSprite.value.toHowlerSpriteDefinition(),
+    onload: () => handleAudioLoaded(),
+    onloaderror: (id, error) =>
+      console.warn("Error loading audio sprite", error),
+    onend: () => playNextAnnoucementSegment(),
+  });
+
   audioRef.value?.play();
 
   // NOTE: Can assume mediaSession is supported in this component, as the enable
@@ -98,6 +136,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  player.value?.unload();
+  player.value = null;
+
   audioRef.value?.pause();
   navigator.mediaSession.metadata = new MediaMetadata({
     title: "Earbud mode disabled",

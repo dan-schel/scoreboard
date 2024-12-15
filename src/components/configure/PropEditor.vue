@@ -49,9 +49,3 @@ defineEmits<{
   ></PropEnumEditor>
   <p v-else>Error: Unhandled prop type.</p>
 </template>
-
-<style scoped lang="scss">
-@use "@/assets/css-template/import" as template;
-
-// TODO: Add your code here.
-</style>

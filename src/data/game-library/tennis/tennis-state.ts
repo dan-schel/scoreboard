@@ -9,7 +9,6 @@ import {
 import { FaultAction, IncrementAction } from "./tennis-actions";
 
 export class TennisState extends GameState<TennisState> {
-  // TODO: Implement configuration.
   constructor(
     readonly config: TennisConfig,
     readonly playerServing: "1" | "2",
