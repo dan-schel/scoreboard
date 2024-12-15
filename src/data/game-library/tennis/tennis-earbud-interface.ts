@@ -1,5 +1,4 @@
 import {
-  annoucement,
   AnnouncementAudioSprite,
   EarbudInterface,
   type Announcement,
@@ -17,7 +16,10 @@ import {
 } from "./announcements/clip-timings";
 import { tennisAnnoucementClipText } from "./announcements/clip-text";
 
-export class TennisEarbudInterface extends EarbudInterface<TennisState> {
+export class TennisEarbudInterface extends EarbudInterface<
+  TennisState,
+  TennisAnnoucementClip
+> {
   getIncrementPlayer1Action(_state: TennisState): Action | null {
     return IncrementAction.create(0);
   }
@@ -46,24 +48,24 @@ export class TennisEarbudInterface extends EarbudInterface<TennisState> {
     );
   }
 
-  getActivationAnnoucement(_state: TennisState): Announcement | null {
-    return annoucement<TennisAnnoucementClip>(["earbud-mode-activated"]);
+  getActivationAnnoucement(
+    _state: TennisState,
+  ): Announcement<TennisAnnoucementClip> | null {
+    return ["earbud-mode-activated"];
   }
 
-  getScoreSummaryAnnouncement(_state: TennisState): Announcement {
+  getScoreSummaryAnnouncement(
+    _state: TennisState,
+  ): Announcement<TennisAnnoucementClip> {
     // TODO: Implement this.
-    return annoucement<TennisAnnoucementClip>([]);
+    return [];
   }
 
   getStateUpdateAnnouncement(
     _newState: TennisState,
     _oldState: TennisState,
-  ): Announcement | null {
+  ): Announcement<TennisAnnoucementClip> | null {
     // TODO: Test only.
-    return annoucement<TennisAnnoucementClip>([
-      "number-1",
-      "number-0-end",
-      "break-point",
-    ]);
+    return ["number-1", "number-0-end", "break-point"];
   }
 }

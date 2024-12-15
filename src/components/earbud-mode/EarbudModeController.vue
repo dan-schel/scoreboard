@@ -1,15 +1,18 @@
-<script setup lang="ts" generic="GameStateType extends GameState">
+<script
+  setup
+  lang="ts"
+  generic="GameStateType extends GameState, AvailableClipType extends string"
+>
 import type {
   Announcement,
-  AnnouncementSegment,
   EarbudInterface,
 } from "@/data/game/earbud-interface";
 import type { Action, GameState } from "@/data/game/game";
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch, type Ref } from "vue";
 import { Howl } from "howler";
 
 const props = defineProps<{
-  interface: EarbudInterface<GameStateType>;
+  interface: EarbudInterface<GameStateType, AvailableClipType>;
   state: GameStateType;
 }>();
 
@@ -23,7 +26,7 @@ const moreOptionsChosen = ref(false);
 const player = ref<Howl | null>(null);
 
 const audioSprite = computed(() => props.interface.getAudioSprite());
-const annoucementSegmentQueue = ref<AnnouncementSegment[]>([]);
+const annoucementSegmentQueue = ref([]) as Ref<Announcement<AvailableClipType>>;
 
 watch(() => props.state, handleStateUpdate);
 
@@ -76,12 +79,14 @@ function submitActionUnlessNull(action: Action | null) {
   }
 }
 
-function playAnnoucement(annoucement: Announcement) {
+function playAnnoucement(annoucement: Announcement<AvailableClipType>) {
   console.log(
     "[Annoucement]",
-    annoucement.map((x) => audioSprite.value.clips.get(x.clip)?.text).join(" "),
+    annoucement.map((x) => audioSprite.value.clips.get(x)?.text).join(" "),
   );
-  annoucementSegmentQueue.value.push(...annoucement);
+
+  player.value?.stop();
+  annoucementSegmentQueue.value = annoucement;
   playNextAnnoucementSegment();
 }
 
@@ -90,7 +95,7 @@ function playNextAnnoucementSegment() {
   annoucementSegmentQueue.value = rest;
 
   if (nextSegment != null) {
-    player.value?.play(nextSegment.clip);
+    player.value?.play(nextSegment);
   }
 }
 

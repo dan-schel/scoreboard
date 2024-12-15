@@ -1,12 +1,7 @@
 import type { Action, GameState } from "./game";
 
-export type AnnouncementSegment = {
-  clip: string;
-};
-
-export type Announcement = AnnouncementSegment[];
-
-export type EarbudAnnouncementListener = (announcement: Announcement) => void;
+export type Announcement<AvailableClipType extends string> =
+  AvailableClipType[];
 
 export type AnnouncementAudioSpriteClip = {
   offset: number;
@@ -29,7 +24,10 @@ export class AnnouncementAudioSprite {
   }
 }
 
-export abstract class EarbudInterface<GameStateType extends GameState> {
+export abstract class EarbudInterface<
+  GameStateType extends GameState,
+  AvailableClipType extends string,
+> {
   // TODO: In future, each game should probably get to decide which actions are
   // available (and which earbud buttons they map to). E.g. faults are not
   // relevant for the basic game type.
@@ -39,18 +37,16 @@ export abstract class EarbudInterface<GameStateType extends GameState> {
 
   abstract getAudioSprite(): AnnouncementAudioSprite;
 
-  abstract getActivationAnnoucement(state: GameStateType): Announcement | null;
+  abstract getActivationAnnoucement(
+    state: GameStateType,
+  ): Announcement<AvailableClipType> | null;
 
-  abstract getScoreSummaryAnnouncement(state: GameStateType): Announcement;
+  abstract getScoreSummaryAnnouncement(
+    state: GameStateType,
+  ): Announcement<AvailableClipType>;
 
   abstract getStateUpdateAnnouncement(
     newState: GameStateType,
     oldState: GameStateType,
-  ): Announcement | null;
-}
-
-export function annoucement<AvailableAnnoucement extends string>(
-  input: AvailableAnnoucement[],
-): Announcement {
-  return input.map((clip) => ({ clip }));
+  ): Announcement<AvailableClipType> | null;
 }
