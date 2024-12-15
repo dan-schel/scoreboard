@@ -37,9 +37,11 @@ export abstract class EarbudInterface<
 
   abstract getAudioSprite(): AnnouncementAudioSprite;
 
-  abstract getActivationAnnoucement(
+  abstract getActivationAnnouncement(
     state: GameStateType,
   ): Announcement<AvailableClipType> | null;
+
+  abstract getUndoAnnouncement(): Announcement<AvailableClipType> | null;
 
   abstract getScoreSummaryAnnouncement(
     state: GameStateType,

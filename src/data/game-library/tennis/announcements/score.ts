@@ -2,33 +2,33 @@ import type { Announcement } from "@/data/game/earbud-interface";
 import {
   getClipForAccentColor,
   getClipForNumber,
-  type TennisAnnoucementClip,
+  type TennisAnnouncementClip,
 } from "./clip-ids";
 import type { TennisState } from "../tennis-state";
 
-export function getScoreAnnoucement(
+export function getScoreAnnouncement(
   state: TennisState,
-): Announcement<TennisAnnoucementClip> {
+): Announcement<TennisAnnouncementClip> {
   const specialPointType = state.getSpecialPointType();
 
   if (specialPointType !== null) {
     // This maps special point types to the corresponding clip id. It looks a
     // bit dumb because right now they're identical lol.
-    const specialPointAnnouncement: TennisAnnoucementClip = {
+    const specialPointAnnouncement: TennisAnnouncementClip = {
       "break-point": "break-point" as const,
       "set-point": "set-point" as const,
       "match-point": "match-point" as const,
     }[specialPointType];
 
-    return [...getPointsAnnoucement(state), specialPointAnnouncement];
+    return [...getPointsAnnouncement(state), specialPointAnnouncement];
   } else {
-    return getPointsAnnoucement(state);
+    return getPointsAnnouncement(state);
   }
 }
 
-function getPointsAnnoucement(
+export function getPointsAnnouncement(
   state: TennisState,
-): Announcement<TennisAnnoucementClip> {
+): Announcement<TennisAnnouncementClip> {
   const firstScore =
     state.playerServing === "1" ? state.player1Score : state.player2Score;
   const secondScore =
@@ -79,7 +79,7 @@ function getPointsAnnoucement(
 function getClipForPoints(
   input: "0" | "15" | "30" | "40",
   { end = false } = {},
-): TennisAnnoucementClip {
+): TennisAnnouncementClip {
   switch (input) {
     case "0":
       return getClipForNumber(0, { end });

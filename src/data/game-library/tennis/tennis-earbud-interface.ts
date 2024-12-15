@@ -7,19 +7,22 @@ import type { TennisState } from "./tennis-state";
 import type { Action } from "@/data/game/game";
 import { FaultAction, IncrementAction } from "./tennis-actions";
 import {
-  TennisAnnoucementsClips,
-  type TennisAnnoucementClip,
+  TennisAnnouncementsClips,
+  type TennisAnnouncementClip,
 } from "./announcements/clip-ids";
 import {
-  tennisAnnoucementClipDurations,
-  tennisAnnoucementClipOffsets,
+  tennisAnnouncementClipDurations,
+  tennisAnnouncementClipOffsets,
 } from "./announcements/clip-timings";
-import { tennisAnnoucementClipText } from "./announcements/clip-text";
-import { getScoreAnnoucement } from "./announcements/score";
+import { tennisAnnouncementClipText } from "./announcements/clip-text";
+import {
+  getPointsAnnouncement,
+  getScoreAnnouncement,
+} from "./announcements/score";
 
 export class TennisEarbudInterface extends EarbudInterface<
   TennisState,
-  TennisAnnoucementClip
+  TennisAnnouncementClip
 > {
   getIncrementPlayer1Action(_state: TennisState): Action | null {
     return IncrementAction.create(0);
@@ -37,36 +40,42 @@ export class TennisEarbudInterface extends EarbudInterface<
     return new AnnouncementAudioSprite(
       "/tennis-announcements.mp3",
       new Map(
-        TennisAnnoucementsClips.map((x) => [
+        TennisAnnouncementsClips.map((x) => [
           x,
           {
-            offset: tennisAnnoucementClipOffsets[x],
-            duration: tennisAnnoucementClipDurations[x],
-            text: tennisAnnoucementClipText[x],
+            offset: tennisAnnouncementClipOffsets[x],
+            duration: tennisAnnouncementClipDurations[x],
+            text: tennisAnnouncementClipText[x],
           },
         ]),
       ),
     );
   }
 
-  getActivationAnnoucement(
+  getActivationAnnouncement(
     _state: TennisState,
-  ): Announcement<TennisAnnoucementClip> | null {
+  ): Announcement<TennisAnnouncementClip> | null {
     return ["earbud-mode-activated"];
   }
 
+  getUndoAnnouncement(): Announcement<TennisAnnouncementClip> | null {
+    return ["undo"];
+  }
+
   getScoreSummaryAnnouncement(
-    _state: TennisState,
-  ): Announcement<TennisAnnoucementClip> {
-    // TODO: Implement this.
-    return [];
+    state: TennisState,
+  ): Announcement<TennisAnnouncementClip> {
+    // Purposely using getPointsAnnouncement instead of getScoreAnnouncement,
+    // because I think there's little value in repeating "Break point" etc. when
+    // a player manually asks for the scores to be repeated.
+    return getPointsAnnouncement(state);
   }
 
   getStateUpdateAnnouncement(
     newState: TennisState,
     _oldState: TennisState,
-  ): Announcement<TennisAnnoucementClip> | null {
+  ): Announcement<TennisAnnouncementClip> | null {
     // TODO: Test only.
-    return getScoreAnnoucement(newState);
+    return getScoreAnnouncement(newState);
   }
 }

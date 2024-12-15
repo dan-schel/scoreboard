@@ -26,7 +26,10 @@ const moreOptionsChosen = ref(false);
 const player = ref<Howl | null>(null);
 
 const audioSprite = computed(() => props.interface.getAudioSprite());
-const annoucementSegmentQueue = ref([]) as Ref<Announcement<AvailableClipType>>;
+const announcementSegmentQueue = ref([]) as Ref<
+  Announcement<AvailableClipType>
+>;
+const nonCancellableAnnoucementSegmentsRemaining = ref(-1);
 
 watch(() => props.state, handleStateUpdate);
 
@@ -37,13 +40,13 @@ function handleStateUpdate(newValue: GameStateType, oldValue: GameStateType) {
   );
 
   if (announcement != null) {
-    playAnnoucement(announcement);
+    playAnnouncement(announcement);
   }
 }
 
 function handlePlayPause() {
   if (moreOptionsChosen.value) {
-    playAnnoucement(props.interface.getScoreSummaryAnnouncement(props.state));
+    playAnnouncement(props.interface.getScoreSummaryAnnouncement(props.state));
     moreOptionsChosen.value = false;
   } else {
     // TODO: Cancel the 'more options' state after a timeout?
@@ -65,6 +68,7 @@ function handleNextTrack() {
 function handlePreviousTrack() {
   if (moreOptionsChosen.value) {
     emit("undo");
+    playUndoAnnouncement();
     moreOptionsChosen.value = false;
   } else {
     submitActionUnlessNull(
@@ -79,20 +83,48 @@ function submitActionUnlessNull(action: Action | null) {
   }
 }
 
-function playAnnoucement(annoucement: Announcement<AvailableClipType>) {
-  console.log(
-    "[Annoucement]",
-    annoucement.map((x) => audioSprite.value.clips.get(x)?.text).join(" "),
-  );
+function playAnnouncement(
+  announcement: Announcement<AvailableClipType>,
+  { cancellable = true } = {},
+) {
+  const announcementText = announcement
+    .map((x) => audioSprite.value.clips.get(x)?.text)
+    .join(" ");
+  console.log("[Announcement]", announcementText);
 
-  player.value?.stop();
-  annoucementSegmentQueue.value = annoucement;
-  playNextAnnoucementSegment();
+  // 0 = currently playing clip is non-cancellable, -1 = no non-cancellable clips
+  const resetting = nonCancellableAnnoucementSegmentsRemaining.value < 0;
+
+  if (resetting) {
+    player.value?.stop();
+  }
+
+  const currentNonCancellableClips = announcementSegmentQueue.value.slice(
+    0,
+    nonCancellableAnnoucementSegmentsRemaining.value,
+  );
+  announcementSegmentQueue.value = [
+    ...currentNonCancellableClips,
+    ...announcement,
+  ];
+
+  if (!cancellable) {
+    nonCancellableAnnoucementSegmentsRemaining.value =
+      announcementSegmentQueue.value.length;
+  }
+
+  if (resetting) {
+    playNextAnnouncementSegment();
+  }
 }
 
-function playNextAnnoucementSegment() {
-  const [nextSegment, ...rest] = annoucementSegmentQueue.value;
-  annoucementSegmentQueue.value = rest;
+function playNextAnnouncementSegment() {
+  const [nextSegment, ...rest] = announcementSegmentQueue.value;
+  announcementSegmentQueue.value = rest;
+
+  if (nonCancellableAnnoucementSegmentsRemaining.value >= 0) {
+    nonCancellableAnnoucementSegmentsRemaining.value--;
+  }
 
   if (nextSegment != null) {
     player.value?.play(nextSegment);
@@ -100,12 +132,20 @@ function playNextAnnoucementSegment() {
 }
 
 function handleAudioLoaded() {
-  const activationAnnoucement = props.interface.getActivationAnnoucement(
+  const activationAnnouncement = props.interface.getActivationAnnouncement(
     props.state,
   );
 
-  if (activationAnnoucement != null) {
-    playAnnoucement(activationAnnoucement);
+  if (activationAnnouncement != null) {
+    playAnnouncement(activationAnnouncement);
+  }
+}
+
+function playUndoAnnouncement() {
+  const undoAnnouncement = props.interface.getUndoAnnouncement();
+
+  if (undoAnnouncement != null) {
+    playAnnouncement(undoAnnouncement, { cancellable: false });
   }
 }
 
@@ -116,7 +156,7 @@ onMounted(() => {
     onload: () => handleAudioLoaded(),
     onloaderror: (id, error) =>
       console.warn("Error loading audio sprite", error),
-    onend: () => playNextAnnoucementSegment(),
+    onend: () => playNextAnnouncementSegment(),
   });
 
   audioRef.value?.play();

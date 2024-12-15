@@ -1,7 +1,7 @@
-import type { TennisAnnoucementClip } from "./clip-ids";
+import type { TennisAnnouncementClip } from "./clip-ids";
 
-export const tennisAnnoucementClipOffsets: Record<
-  TennisAnnoucementClip,
+export const tennisAnnouncementClipOffsets: Record<
+  TennisAnnouncementClip,
   number
 > = {
   "number-nil": 0,
@@ -88,8 +88,8 @@ export const tennisAnnoucementClipOffsets: Record<
   "earbud-mode-activated": 90000, // long
 };
 
-export const tennisAnnoucementClipDurations: Record<
-  TennisAnnoucementClip,
+export const tennisAnnouncementClipDurations: Record<
+  TennisAnnouncementClip,
   number
 > = {
   "number-nil": 1000,

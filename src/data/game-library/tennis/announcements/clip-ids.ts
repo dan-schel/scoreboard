@@ -1,6 +1,6 @@
 import type { AccentColor } from "@/data/game-utils/accent-color";
 
-export const TennisAnnoucementsClips = [
+export const TennisAnnouncementsClips = [
   "number-nil",
   "number-nil-end",
   "number-0",
@@ -85,12 +85,12 @@ export const TennisAnnoucementsClips = [
   "earbud-mode-activated",
 ] as const;
 
-export type TennisAnnoucementClip = (typeof TennisAnnoucementsClips)[number];
+export type TennisAnnouncementClip = (typeof TennisAnnouncementsClips)[number];
 
 export function getClipForNumber(
   input: number,
   { end = false } = {},
-): TennisAnnoucementClip {
+): TennisAnnouncementClip {
   switch (input) {
     case 0:
       return end ? "number-nil-end" : "number-nil"; // Or could use 'number-0'.
@@ -146,7 +146,7 @@ export function getClipForNumber(
 export function getClipForAccentColor(
   accentColor: AccentColor,
   { end = false } = {},
-): TennisAnnoucementClip {
+): TennisAnnouncementClip {
   switch (accentColor) {
     case "orange":
       return end ? "orange-end" : "orange";
