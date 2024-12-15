@@ -60,7 +60,7 @@ export class TennisGameInstance extends GameInstance<
     return new TennisScoreType("points", this.config);
   }
 
-  getEarbudInterface(): EarbudInterface<TennisState> | null {
+  getEarbudInterface(): EarbudInterface<TennisState, string> | null {
     return new TennisEarbudInterface();
   }
 }

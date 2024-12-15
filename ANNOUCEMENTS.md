@@ -57,6 +57,7 @@ orange leads 1 game to ...
 40 30 set point
 40 30 break point
 
+deuce
 tiebreak
 
 orange serving from the left

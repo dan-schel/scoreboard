@@ -49,7 +49,7 @@ export class BasicGameInstance extends GameInstance<
     return new BasicScoreType("points", this.config);
   }
 
-  getEarbudInterface(): EarbudInterface<BasicGameState> | null {
+  getEarbudInterface(): EarbudInterface<BasicGameState, string> | null {
     return null;
   }
 }

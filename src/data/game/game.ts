@@ -43,7 +43,7 @@ export abstract class GameInstance<
 
   abstract getScoreType(): ScoreType;
 
-  abstract getEarbudInterface(): EarbudInterface<GameStateType> | null;
+  abstract getEarbudInterface(): EarbudInterface<GameStateType, string> | null;
 }
 
 export abstract class GameState<GameStateType extends GameState = any> {

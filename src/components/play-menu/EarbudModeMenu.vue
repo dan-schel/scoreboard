@@ -9,7 +9,7 @@ import type { GameState } from "@/data/game/game";
 import PhXBold from "../icons/PhXBold.vue";
 
 defineProps<{
-  interface: EarbudInterface<GameState> | null;
+  interface: EarbudInterface<GameState, string> | null;
   isEnabled: boolean;
 }>();
 

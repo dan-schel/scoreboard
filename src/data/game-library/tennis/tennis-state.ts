@@ -93,29 +93,14 @@ export class TennisState extends GameState<TennisState> {
   }
 
   getScoreHeadline(): string | null {
-    const scoresAfterPlayer1Wins = TennisScore.awardPoint(
-      this.config,
-      this.player1Score,
-      this.player2Score,
-    );
-    const scoresAfterPlayer2Wins = TennisScore.awardPoint(
-      this.config,
-      this.player2Score,
-      this.player1Score,
-    );
+    const specialPointType = this.getSpecialPointType();
 
-    if (scoresAfterPlayer1Wins.winsMatch || scoresAfterPlayer2Wins.winsMatch) {
-      return "Match point";
-    }
-    if (scoresAfterPlayer1Wins.winsSet || scoresAfterPlayer2Wins.winsSet) {
-      return "Set point";
-    }
-
-    if (scoresAfterPlayer1Wins.winsGame && this.playerServing !== "1") {
-      return "Break point";
-    }
-    if (scoresAfterPlayer2Wins.winsGame && this.playerServing !== "2") {
-      return "Break point";
+    if (specialPointType != null) {
+      return {
+        "break-point": "Break point",
+        "set-point": "Set point",
+        "match-point": "Match point",
+      }[specialPointType];
     }
 
     if (
@@ -210,5 +195,34 @@ export class TennisState extends GameState<TennisState> {
     } else {
       throw new Error(`Invalid player index "${playerIndex}".`);
     }
+  }
+
+  getSpecialPointType(): "break-point" | "set-point" | "match-point" | null {
+    const scoresAfterPlayer1Wins = TennisScore.awardPoint(
+      this.config,
+      this.player1Score,
+      this.player2Score,
+    );
+    const scoresAfterPlayer2Wins = TennisScore.awardPoint(
+      this.config,
+      this.player2Score,
+      this.player1Score,
+    );
+
+    if (scoresAfterPlayer1Wins.winsMatch || scoresAfterPlayer2Wins.winsMatch) {
+      return "match-point";
+    }
+    if (scoresAfterPlayer1Wins.winsSet || scoresAfterPlayer2Wins.winsSet) {
+      return "set-point";
+    }
+
+    if (scoresAfterPlayer1Wins.winsGame && this.playerServing !== "1") {
+      return "break-point";
+    }
+    if (scoresAfterPlayer2Wins.winsGame && this.playerServing !== "2") {
+      return "break-point";
+    }
+
+    return null;
   }
 }

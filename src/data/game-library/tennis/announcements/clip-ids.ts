@@ -87,13 +87,13 @@ export const TennisAnnoucementsClips = [
 
 export type TennisAnnoucementClip = (typeof TennisAnnoucementsClips)[number];
 
-export function clipForNumber(
+export function getClipForNumber(
   input: number,
-  end: boolean,
+  { end = false } = {},
 ): TennisAnnoucementClip {
   switch (input) {
     case 0:
-      return end ? "number-0-end" : "number-0";
+      return end ? "number-nil-end" : "number-nil"; // Or could use 'number-0'.
     case 1:
       return end ? "number-1-end" : "number-1";
     case 2:
@@ -143,9 +143,9 @@ export function clipForNumber(
   }
 }
 
-export function clipForAccentColor(
+export function getClipForAccentColor(
   accentColor: AccentColor,
-  end: boolean,
+  { end = false } = {},
 ): TennisAnnoucementClip {
   switch (accentColor) {
     case "orange":

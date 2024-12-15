@@ -15,6 +15,7 @@ import {
   tennisAnnoucementClipOffsets,
 } from "./announcements/clip-timings";
 import { tennisAnnoucementClipText } from "./announcements/clip-text";
+import { getScoreAnnoucement } from "./announcements/score";
 
 export class TennisEarbudInterface extends EarbudInterface<
   TennisState,
@@ -62,10 +63,10 @@ export class TennisEarbudInterface extends EarbudInterface<
   }
 
   getStateUpdateAnnouncement(
-    _newState: TennisState,
+    newState: TennisState,
     _oldState: TennisState,
   ): Announcement<TennisAnnoucementClip> | null {
     // TODO: Test only.
-    return ["number-1", "number-0-end", "break-point"];
+    return getScoreAnnoucement(newState);
   }
 }

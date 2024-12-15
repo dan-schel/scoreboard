@@ -27,7 +27,7 @@ export abstract class GameHandler<GameStateType extends GameState> {
 
   abstract getPlayerCount(): number;
   abstract getScoreType(): ScoreType;
-  abstract getEarbudInterface(): EarbudInterface<GameStateType> | null;
+  abstract getEarbudInterface(): EarbudInterface<GameStateType, string> | null;
 
   // TODO: For online game handlers, this would need to be async.
   abstract do(action: Action): void;
@@ -83,7 +83,7 @@ export class LocalGameHandler<
   getScoreType(): ScoreType {
     return this.game.getScoreType();
   }
-  getEarbudInterface(): EarbudInterface<GameStateType> | null {
+  getEarbudInterface(): EarbudInterface<GameStateType, string> | null {
     return this.game.getEarbudInterface();
   }
   do(action: Action): void {
