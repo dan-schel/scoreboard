@@ -77,14 +77,15 @@ function submitActionUnlessNull(action: Action | null) {
 }
 
 function playAnnoucement(annoucement: Announcement) {
-  console.log("[Annoucement]", annoucement);
+  console.log(
+    "[Annoucement]",
+    annoucement.map((x) => audioSprite.value.clips.get(x.clip)?.text).join(" "),
+  );
   annoucementSegmentQueue.value.push(...annoucement);
   playNextAnnoucementSegment();
 }
 
 function playNextAnnoucementSegment() {
-  console.log(player.value?.state());
-
   const [nextSegment, ...rest] = annoucementSegmentQueue.value;
   annoucementSegmentQueue.value = rest;
 

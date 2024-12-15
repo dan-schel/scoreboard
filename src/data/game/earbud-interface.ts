@@ -8,10 +8,16 @@ export type Announcement = AnnouncementSegment[];
 
 export type EarbudAnnouncementListener = (announcement: Announcement) => void;
 
+export type AnnouncementAudioSpriteClip = {
+  offset: number;
+  duration: number;
+  text: string;
+};
+
 export class AnnouncementAudioSprite {
   constructor(
     readonly file: string,
-    readonly clips: Map<string, { offset: number; duration: number }>,
+    readonly clips: Map<string, AnnouncementAudioSpriteClip>,
   ) {}
 
   toHowlerSpriteDefinition() {
@@ -31,16 +37,16 @@ export abstract class EarbudInterface<GameStateType extends GameState> {
   abstract getIncrementPlayer2Action(state: GameStateType): Action | null;
   abstract getFaultAction(state: GameStateType): Action | null;
 
+  abstract getAudioSprite(): AnnouncementAudioSprite;
+
+  abstract getActivationAnnoucement(state: GameStateType): Announcement | null;
+
+  abstract getScoreSummaryAnnouncement(state: GameStateType): Announcement;
+
   abstract getStateUpdateAnnouncement(
     newState: GameStateType,
     oldState: GameStateType,
   ): Announcement | null;
-
-  abstract getScoreSummaryAnnouncement(state: GameStateType): Announcement;
-
-  abstract getActivationAnnoucement(state: GameStateType): Announcement | null;
-
-  abstract getAudioSprite(): AnnouncementAudioSprite;
 }
 
 export function annoucement<AvailableAnnoucement extends string>(

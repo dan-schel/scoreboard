@@ -1,4 +1,4 @@
-import type { TennisAnnoucementClip } from "./tennis-annoucements-clip-ids";
+import type { TennisAnnoucementClip } from "./clip-ids";
 
 export const tennisAnnoucementClipOffsets: Record<
   TennisAnnoucementClip,

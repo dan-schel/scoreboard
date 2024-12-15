@@ -10,11 +10,12 @@ import { FaultAction, IncrementAction } from "./tennis-actions";
 import {
   TennisAnnoucementsClips,
   type TennisAnnoucementClip,
-} from "./announcements/tennis-annoucements-clip-ids";
+} from "./announcements/clip-ids";
 import {
   tennisAnnoucementClipDurations,
   tennisAnnoucementClipOffsets,
-} from "./announcements/tennis-annoucements-clip-durations";
+} from "./announcements/clip-timings";
+import { tennisAnnoucementClipText } from "./announcements/clip-text";
 
 export class TennisEarbudInterface extends EarbudInterface<TennisState> {
   getIncrementPlayer1Action(_state: TennisState): Action | null {
@@ -29,6 +30,31 @@ export class TennisEarbudInterface extends EarbudInterface<TennisState> {
     return FaultAction.create();
   }
 
+  getAudioSprite(): AnnouncementAudioSprite {
+    return new AnnouncementAudioSprite(
+      "/tennis-announcements.mp3",
+      new Map(
+        TennisAnnoucementsClips.map((x) => [
+          x,
+          {
+            offset: tennisAnnoucementClipOffsets[x],
+            duration: tennisAnnoucementClipDurations[x],
+            text: tennisAnnoucementClipText[x],
+          },
+        ]),
+      ),
+    );
+  }
+
+  getActivationAnnoucement(_state: TennisState): Announcement | null {
+    return annoucement<TennisAnnoucementClip>(["earbud-mode-activated"]);
+  }
+
+  getScoreSummaryAnnouncement(_state: TennisState): Announcement {
+    // TODO: Implement this.
+    return annoucement<TennisAnnoucementClip>([]);
+  }
+
   getStateUpdateAnnouncement(
     _newState: TennisState,
     _oldState: TennisState,
@@ -39,29 +65,5 @@ export class TennisEarbudInterface extends EarbudInterface<TennisState> {
       "number-0-end",
       "break-point",
     ]);
-  }
-
-  getScoreSummaryAnnouncement(_state: TennisState): Announcement {
-    // TODO: Implement this.
-    return annoucement<TennisAnnoucementClip>([]);
-  }
-
-  getActivationAnnoucement(_state: TennisState): Announcement | null {
-    return annoucement<TennisAnnoucementClip>(["earbud-mode-activated"]);
-  }
-
-  getAudioSprite(): AnnouncementAudioSprite {
-    return new AnnouncementAudioSprite(
-      "/tennis-announcements.mp3",
-      new Map(
-        TennisAnnoucementsClips.map((x) => [
-          x,
-          {
-            offset: tennisAnnoucementClipOffsets[x],
-            duration: tennisAnnoucementClipDurations[x],
-          },
-        ]),
-      ),
-    );
   }
 }
