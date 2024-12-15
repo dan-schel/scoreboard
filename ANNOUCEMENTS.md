@@ -34,6 +34,7 @@ Advantage orange
           green
           blue
           purple
+          someone
 
 Game orange
 
@@ -41,6 +42,7 @@ orange wins
 green wins
 blue wins
 purple wins
+someone wins
 
 orange takes the first set
                  second

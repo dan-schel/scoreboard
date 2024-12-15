@@ -21,8 +21,12 @@ export class IncrementAction {
   }
 
   static execute(state: TennisState, data: unknown): TennisState {
-    const { playerIndex } = IncrementAction.json.parse(data);
+    const { playerIndex } = IncrementAction.parse(data);
     return state.withPointAwarded(playerIndex);
+  }
+
+  static parse(data: unknown): z.output<typeof IncrementAction.json> {
+    return IncrementAction.json.parse(data);
   }
 }
 

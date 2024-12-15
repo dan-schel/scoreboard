@@ -158,3 +158,20 @@ export function getClipForAccentColor(
       return end ? "purple-end" : "purple";
   }
 }
+
+export function getClipForSetNumber(setNumber: number): TennisAnnouncementClip {
+  switch (setNumber) {
+    case 1:
+      return "takes-set-1";
+    case 2:
+      return "takes-set-2";
+    case 3:
+      return "takes-set-3";
+    case 4:
+      return "takes-set-4";
+    case 5:
+      return "takes-set-5";
+    default:
+      return "takes-set-unknown";
+  }
+}

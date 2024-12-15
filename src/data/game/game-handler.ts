@@ -38,7 +38,8 @@ export class LocalGameHandler<
   GameStateType extends GameState,
 > extends GameHandler<GameStateType> {
   private _state: GameStateType;
-  private readonly undoStack = new UndoStack<GameStateType>();
+  private readonly _undoStack;
+  private _earbudInterface: EarbudInterface<GameStateType, string> | null;
 
   constructor(
     readonly game: GameInstance<GameConfigType, GameStateType>,
@@ -46,10 +47,12 @@ export class LocalGameHandler<
   ) {
     super();
     this._state = state;
+    this._undoStack = new UndoStack<GameStateType>();
+    this._earbudInterface = this.game.getEarbudInterface();
   }
 
   private _editState(newState: GameStateType): void {
-    this.undoStack.push(this._state);
+    this._undoStack.push(this._state);
     this._state = newState;
     this.notifyChange();
   }
@@ -57,20 +60,20 @@ export class LocalGameHandler<
     return this._state;
   }
   canUndo(): boolean {
-    return this.undoStack.canUndo();
+    return this._undoStack.canUndo();
   }
   canRedo(): boolean {
-    return this.undoStack.canRedo();
+    return this._undoStack.canRedo();
   }
   requestUndo(): void {
-    const prevState = this.undoStack.undo(this._state);
+    const prevState = this._undoStack.undo(this._state);
     if (prevState != null) {
       this._state = prevState;
       this.notifyChange();
     }
   }
   requestRedo(): void {
-    const prevState = this.undoStack.redo(this._state);
+    const prevState = this._undoStack.redo(this._state);
     if (prevState != null) {
       this._state = prevState;
       this.notifyChange();
@@ -84,10 +87,13 @@ export class LocalGameHandler<
     return this.game.getScoreType();
   }
   getEarbudInterface(): EarbudInterface<GameStateType, string> | null {
-    return this.game.getEarbudInterface();
+    return this._earbudInterface;
   }
   do(action: Action): void {
-    this._editState(this._state.do(action));
+    const oldState = this._state;
+    const newState = oldState.do(action);
+    this._editState(newState);
+    this._earbudInterface?.onAction(action, newState, oldState);
   }
 }
 

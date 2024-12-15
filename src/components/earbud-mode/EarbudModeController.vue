@@ -29,19 +29,19 @@ const audioSprite = computed(() => props.interface.getAudioSprite());
 const announcementSegmentQueue = ref([]) as Ref<
   Announcement<AvailableClipType>
 >;
-const nonCancellableAnnoucementSegmentsRemaining = ref(-1);
+const nonCancellableAnnouncementSegmentsRemaining = ref(-1);
 
-watch(() => props.state, handleStateUpdate);
+watch(
+  () => props.interface,
+  (newValue, oldValue) => {
+    newValue?.addAnnouncementListener(handleAnnouncement);
+    oldValue?.removeAnnouncementListener(handleAnnouncement);
+  },
+  { immediate: true },
+);
 
-function handleStateUpdate(newValue: GameStateType, oldValue: GameStateType) {
-  const announcement = props.interface.getStateUpdateAnnouncement(
-    newValue,
-    oldValue,
-  );
-
-  if (announcement != null) {
-    playAnnouncement(announcement);
-  }
+function handleAnnouncement(announcement: Announcement<AvailableClipType>) {
+  playAnnouncement(announcement);
 }
 
 function handlePlayPause() {
@@ -93,7 +93,7 @@ function playAnnouncement(
   console.log("[Announcement]", announcementText);
 
   // 0 = currently playing clip is non-cancellable, -1 = no non-cancellable clips
-  const resetting = nonCancellableAnnoucementSegmentsRemaining.value < 0;
+  const resetting = nonCancellableAnnouncementSegmentsRemaining.value < 0;
 
   if (resetting) {
     player.value?.stop();
@@ -101,7 +101,7 @@ function playAnnouncement(
 
   const currentNonCancellableClips = announcementSegmentQueue.value.slice(
     0,
-    nonCancellableAnnoucementSegmentsRemaining.value,
+    nonCancellableAnnouncementSegmentsRemaining.value,
   );
   announcementSegmentQueue.value = [
     ...currentNonCancellableClips,
@@ -109,7 +109,7 @@ function playAnnouncement(
   ];
 
   if (!cancellable) {
-    nonCancellableAnnoucementSegmentsRemaining.value =
+    nonCancellableAnnouncementSegmentsRemaining.value =
       announcementSegmentQueue.value.length;
   }
 
@@ -122,8 +122,8 @@ function playNextAnnouncementSegment() {
   const [nextSegment, ...rest] = announcementSegmentQueue.value;
   announcementSegmentQueue.value = rest;
 
-  if (nonCancellableAnnoucementSegmentsRemaining.value >= 0) {
-    nonCancellableAnnoucementSegmentsRemaining.value--;
+  if (nonCancellableAnnouncementSegmentsRemaining.value >= 0) {
+    nonCancellableAnnouncementSegmentsRemaining.value--;
   }
 
   if (nextSegment != null) {

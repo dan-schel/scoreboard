@@ -24,10 +24,39 @@ export class AnnouncementAudioSprite {
   }
 }
 
+export type AnnouncementListener<AvailableClipType extends string> = (
+  announcement: Announcement<AvailableClipType>,
+) => void;
+
 export abstract class EarbudInterface<
   GameStateType extends GameState,
   AvailableClipType extends string,
 > {
+  private readonly _announcementListeners: AnnouncementListener<AvailableClipType>[];
+
+  constructor() {
+    this._announcementListeners = [];
+  }
+
+  addAnnouncementListener(listener: AnnouncementListener<AvailableClipType>) {
+    this._announcementListeners.push(listener);
+  }
+  removeAnnouncementListener(
+    listener: AnnouncementListener<AvailableClipType>,
+  ) {
+    const index = this._announcementListeners.indexOf(listener);
+    if (index !== -1) {
+      this._announcementListeners.splice(index, 1);
+    }
+  }
+
+  onAction(action: Action, newState: GameStateType, oldState: GameStateType) {
+    const announcement = this.getActionAnnouncement(action, newState, oldState);
+    if (announcement) {
+      this._announcementListeners.forEach((l) => l(announcement));
+    }
+  }
+
   // TODO: In future, each game should probably get to decide which actions are
   // available (and which earbud buttons they map to). E.g. faults are not
   // relevant for the basic game type.
@@ -47,7 +76,8 @@ export abstract class EarbudInterface<
     state: GameStateType,
   ): Announcement<AvailableClipType>;
 
-  abstract getStateUpdateAnnouncement(
+  abstract getActionAnnouncement(
+    action: Action,
     newState: GameStateType,
     oldState: GameStateType,
   ): Announcement<AvailableClipType> | null;
